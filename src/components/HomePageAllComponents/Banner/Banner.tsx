@@ -2,7 +2,7 @@ import React from "react";
 
 const Banner = () => {
   return (
-    <div>
+    <div id="home">
       <div
         style={{ backgroundImage: `url('/assets/banner.jpeg')` }}
         className="bg-cover bg-center bg-no-repeat w-full h-[500px] md:h-[800px] pl-5 md:pl-[54px] pr-5 md:pr-[84px]"

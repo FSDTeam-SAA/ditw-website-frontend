@@ -49,7 +49,7 @@ const OurServices = () => {
     },
   ];
   return (
-    <div className="overflow-hidden relative">
+    <div id="services" className="overflow-hidden relative">
       <div className="absolute h-full w-full bg-black/20 z-10" />
       <div
         style={{ backgroundImage: `url('/assets/service/ourService_bg.jpeg')` }}
