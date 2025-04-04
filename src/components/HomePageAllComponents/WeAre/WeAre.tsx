@@ -3,7 +3,7 @@ import React from "react";
 
 const WeAre = () => {
   return (
-    <div className="container">
+    <div id="about_us" className="container">
       <div>
         <h2 className="text-4xl font-bold text-amber-400 leading-normal">
           WE ARE
@@ -12,7 +12,7 @@ const WeAre = () => {
           Your Nationwide Partner for Seamless Low Voltage Integration{" "}
         </p>
         <div className="flex flex-col md:flex-row items-start md:items-center gap-[14px]">
-          <p className="w-3/5 text-[15px] font-normal text-black leading-tight pt-[15px]">
+          <p className="w-1/2 text-[15px] font-normal text-black leading-tight pt-[15px]">
             Dyson IT Works is America&apos;s leading low voltage cabling
             company, specializing in partnering with general contractors and
             business owners across the nation. We understand the complexities of

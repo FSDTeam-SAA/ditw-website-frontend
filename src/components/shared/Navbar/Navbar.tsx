@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 import React, { useState } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { RxCross2 } from "react-icons/rx";
@@ -23,16 +24,16 @@ const Navbar = () => {
         <div className="hidden md:block">
           <ul className="flex items-center gap-[54px]">
             <li className="text-base font-semibold text-black leading-normal cursor-pointer">
-              Home
+              <Link href="#home">Home</Link>
+            </li>
+            <li  className="text-base font-semibold text-black leading-normal cursor-pointer">
+              <Link href="#about_us">About Us</Link>
             </li>
             <li className="text-base font-semibold text-black leading-normal cursor-pointer">
-              About Us
+              <Link href="#services">Services</Link>
             </li>
             <li className="text-base font-semibold text-black leading-normal cursor-pointer">
-              Services
-            </li>
-            <li className="text-base font-semibold text-black leading-normal cursor-pointer">
-              Contact Us
+              <Link href="#contact_us">Contact Us</Link>
             </li>
           </ul>
         </div>
