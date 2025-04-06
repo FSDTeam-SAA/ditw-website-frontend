@@ -136,11 +136,11 @@ const ContactUs = () => {
                     </div>
                     <div className="flex items-center mt-6">
                       <TfiEmail className="w-8 h-8 text-white mr-4 flex-shrink-0" />
-                      <p className="text-white font-medium leading-normal text-lg">CONTACT@DYSONITWORKS.COM</p>
+                      <p className="text-white font-medium leading-normal text-base md:text-lg">CONTACT@DYSONITWORKS.COM</p>
                     </div>
                     <div className="flex items-center mt-6">
                       <Phone className="h-8 w-8 text-white mr-4 flex-shrink-0" />
-                      <p className="text-white font-medium leading-normal text-lg">888-348-9552</p>
+                      <p className="text-white font-medium leading-normal text-base md:text-lg">888-348-9552</p>
                     </div>
                     <p className="text-xs font-medium leading-normal text-white pt-5">Copyright © 2025 Dyson IT Works. America&lsquo;s Low Voltage Company. All Rights Reserved. </p>
                   </div>

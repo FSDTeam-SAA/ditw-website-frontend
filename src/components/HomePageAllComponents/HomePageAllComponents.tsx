@@ -3,6 +3,7 @@ import Banner from "./Banner/Banner";
 import WeAre from "./WeAre/WeAre";
 import OurServices from "./OurServices/OurServices";
 import ContactUs from "./ContactUs/ContactUs";
+import ManagedService from "./ManagedService/ManagedService";
 
 const HomePageAllComponents = () => {
   return (
@@ -17,6 +18,10 @@ const HomePageAllComponents = () => {
 
       <section>
         <OurServices />
+      </section>
+
+      <section>
+        <ManagedService />
       </section>
 
       <section>
