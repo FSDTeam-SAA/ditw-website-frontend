@@ -1,5 +1,4 @@
-import Image from "next/image";
-import React from "react";
+import Image from "next/image"
 
 const OurServices = () => {
   const serviceData1 = [
@@ -21,18 +20,19 @@ const OurServices = () => {
       title: "Remote Project Management",
       desc: "Providing dedicated support and expertise throughout the project lifecycle.",
     },
-  ];
+  ]
+
   const serviceData2 = [
     {
       id: 1,
       image: "/assets/service/service4.jpeg",
       title: "Value Engineering & Design",
-      desc: "Optimizing low voltage designs for cost-effectiveness and performance. ",
+      desc: "Optimizing low voltage designs for cost-effectiveness and performance.",
     },
     {
       id: 2,
       image: "/assets/service/service5.jpeg",
-      title: "Nationwide Procurement & Logistics:",
+      title: "Nationwide Procurement & Logistics",
       desc: "Efficiently sourcing and delivering materials to any location.",
     },
     {
@@ -47,113 +47,104 @@ const OurServices = () => {
       title: "As-Built Documentation & Support",
       desc: "Providing comprehensive documentation and ongoing support.",
     },
-  ];
+  ]
+
   return (
-    <div id="services" className="overflow-hidden relative">
-      <div className="absolute h-full w-full bg-black/20 z-10" />
+    <div id="services" className="relative overflow-hidden">
       <div
         style={{ backgroundImage: `url('/assets/service/ourService_bg.jpeg')` }}
-        className="z-50 bg-cover bg-center bg-no-repeat bg-red-800 w-full h-auto md:h-[950px] px-3 md:pl-[39px]"
+        className="relative bg-black bg-cover bg-center bg-no-repeat w-full min-h-screen px-4 sm:px-6 lg:px-8 py-10 md:py-16"
       >
-        <div className="container">
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-yellow-400 text-left pt-[45px]">
-            OUR <span className="text-white z-40">NATIONWIDE</span> <br />{" "}
-            SERVICES
-          </h2>
-          <div className="w-full flex items-center justify-start">
-            <div className="w-60 h-1 bg-[#555be7] mt-2 ml-7" />
+        <div className="container mx-auto max-w-7xl">
+          {/* Header Section */}
+          <div className="mb-8 md:mb-12">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold">
+              <span className="text-yellow-400">OUR</span> <span className="text-white">NATIONWIDE</span>
+              <br />
+              <span className="text-yellow-400">SERVICES</span>
+            </h2>
+
+            <div className="w-full flex items-center justify-start">
+              <div className="w-32 sm:w-40 md:w-60 h-1 bg-blue-600 mt-2" />
+            </div>
+
+            <p className="text-lg sm:text-xl text-white font-bold mt-4">Loyalty - Integrity - Commitment</p>
+
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-4 gap-4">
+              <div className="sm:max-w-xl">
+                <p className="text-sm sm:text-base text-white">
+                  We are committed to building long-term partnerships with general contractors and business owners,
+                  providing the expertise and resources needed to complete projects on time and within budget.
+                </p>
+                <p className="text-base sm:text-lg text-white mt-4">Our nationwide services include:</p>
+              </div>
+              <button className="bg-indigo-700 hover:bg-indigo-800 text-white font-semibold py-2 px-6 rounded-full w-fit">
+                Get a Quote
+              </button>
+            </div>
           </div>
-          <p className="text-2xl text-white font-bold leading-normal pt-4">
-            Loyalty - Integrity - Commitment
-          </p>
-          <p className="w-full md:w-1/2 text-base font-normal text-white leading-normal pt-4">
-            We are committed to building long-term partnerships with general
-            contractors and business owners, providing the expertise and
-            resources needed to complete projects on time and within budget.
-          </p>
-          <p className="w-full md:w-1/2 text-xl font-normal text-white leading-normal py-6">
-            Our nationwide services include:
-          </p>
-          {/* second part  */}
-          <div>
-            <div className="grid grid-cols-1 md:grid-cols-7 gap-20">
-              <div className="md:col-span-3 ">
-                <h4 className="text-2xl font-bold leading-normal text-yellow-400">
-                  PROJECT MANAGEMENT
-                </h4>
-                <div className="w-full flex items-center justify-start ml-6 pb-[30px]">
-                  <div className="w-52 h-1 bg-[#555be7] mt-2" />
-                </div>
-                <div className="flex flex-col md:flex-row items-start gap-5">
-                  {serviceData1?.map((data) => {
-                    return (
-                      <div key={data.id}>
-                        <Image
-                          src={data?.image}
-                          alt="service"
-                          width={150}
-                          height={120}
-                          className="w-full md:w-[200px] h-[300px] md:h-[120px] rounded-[15px]"
-                        />
-                        <h5 className="text-lg font-bold text-white leading-normal pt-3">
-                          {data?.title}
-                        </h5>
-                        <p className="text-base font-medium text-white leading-[24px] mt-3">
-                          {data?.desc}
-                        </p>
-                      </div>
-                    );
-                  })}
-                </div>
+
+          {/* Services Sections */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+            {/* Project Management Section */}
+            <div>
+              <h4 className="text-xl sm:text-2xl font-bold text-yellow-400 mb-2">PROJECT MANAGEMENT</h4>
+              <div className="w-full flex items-center justify-start mb-4 sm:mb-6">
+                <div className="w-28 sm:w-36 md:w-52 h-1 bg-blue-600" />
               </div>
-              <div className="md:col-span-4 ">
-                <h4 className="text-2xl font-bold leading-normal text-yellow-400">
-                  END-TO-END DELIVERY
-                </h4>
-                <div className="w-full flex items-center justify-start ml-6 pb-[30px]">
-                  <div className="w-52 h-1 bg-[#555be7] mt-2" />
-                </div>
-                <div className="flex flex-col md:flex-row items-start gap-5">
-                  {serviceData2?.map((data) => {
-                    return (
-                      <div key={data.id}>
-                        <Image
-                          src={data?.image}
-                          alt="service"
-                          width={150}
-                          height={100}
-                          className="w-full md:w-[200px] h-[250px] md:h-[120px] rounded-[15px]"
-                        />
-                        <h5 className="text-lg font-bold text-white leading-normal pt-3">
-                          {data?.title}
-                        </h5>
-                        <p className="text-base font-medium text-white leading-[24px] mt-3">
-                          {data?.desc}
-                        </p>
-                      </div>
-                    );
-                  })}
-                </div>
-                {/* managed it support  */}
-                <h4 className="flex items-center gap-4 text-2xl font-bold leading-normal text-yellow-400 pt-8">
-                  MANAGED IT SUPPORT SERVICES{" "}
-                  <Image
-                    src="/assets/arrow_icon.png"
-                    alt="arrow icon"
-                    width={120}
-                    height={15}
-                  />
-                </h4>
-                <div className="w-full flex items-center justify-start ml-6 pb-[20px]">
-                  <div className="w-52 h-1 bg-[#555be7] mt-2" />
-                </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-3 md:gap-4">
+                {serviceData1?.map((data) => (
+                  <div key={data.id} className="flex flex-col">
+                    <div className="relative w-full aspect-video rounded-lg overflow-hidden">
+                      <Image src={data?.image || "/placeholder.svg"} alt={data.title} fill className="object-cover" />
+                    </div>
+                    <h5 className="text-sm sm:text-base font-bold text-white mt-2 sm:mt-3">{data?.title}</h5>
+                    <p className="text-xs sm:text-sm text-white mt-1">{data?.desc}</p>
+                  </div>
+                ))}
               </div>
+            </div>
+
+            {/* End-to-End Delivery Section */}
+            <div>
+              <h4 className="text-xl sm:text-2xl font-bold text-yellow-400 mb-2">END-TO-END DELIVERY</h4>
+              <div className="w-full flex items-center justify-start mb-4 sm:mb-6">
+                <div className="w-28 sm:w-36 md:w-52 h-1 bg-blue-600" />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-3 md:gap-4">
+                {serviceData2?.map((data) => (
+                  <div key={data.id} className="flex flex-col">
+                    <div className="relative w-full aspect-video rounded-lg overflow-hidden">
+                      <Image src={data?.image || "/placeholder.svg"} alt={data.title} fill className="object-cover" />
+                    </div>
+                    <h5 className="text-sm sm:text-base font-bold text-white mt-2 sm:mt-3">{data?.title}</h5>
+                    <p className="text-xs sm:text-sm text-white mt-1">{data?.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Managed IT Support */}
+          <div className="mt-10 sm:mt-12 flex flex-col items-center sm:items-start">
+            <div className="flex flex-col sm:flex-row items-center gap-2">
+              <h4 className="text-xl sm:text-2xl font-bold text-yellow-400 text-center sm:text-left">
+                MANAGED IT SUPPORT SERVICES
+              </h4>
+              <div className="relative w-24 h-6 sm:w-28 md:w-32 md:h-8">
+                <Image src="/assets/arrow_icon.png" alt="arrow icon" fill className="object-contain" />
+              </div>
+            </div>
+            <div className="w-full flex items-center justify-center sm:justify-start">
+              <div className="w-40 sm:w-60 h-1 bg-blue-600 mt-2" />
             </div>
           </div>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default OurServices;
+export default OurServices
