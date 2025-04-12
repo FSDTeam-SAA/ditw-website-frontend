@@ -26,7 +26,7 @@ const ContactUs = () => {
             <p className="text-sm sm:text-base font-normal leading-normal text-white text-left">
               Trusted by America&apos;s Leading Builders and Businesses
             </p>
-            <button className="text-sm sm:text-base font-semibold text-white leading-normal bg-[#555be7] py-1 px-4 rounded-full">
+            <button className="text-sm sm:text-base font-semibold text-white leading-normal bg-[#1d0fbf] hover:bg-[#2a1cc7] py-1 px-4 rounded-full">
               Get a Quote
             </button>
           </div>
