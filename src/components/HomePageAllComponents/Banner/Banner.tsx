@@ -8,7 +8,7 @@ const Banner = () => {
         className="bg-cover bg-center bg-no-repeat w-full h-[500px] md:h-[800px] pl-5 md:pl-[54px] pr-5 md:pr-[84px]"
       >
         <div className="container">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-yellow-400 text-center pt-10 md:pt-[193px]">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-yellow-400 text-center pt-10 md:pt-[193px]">
             AMERICA&lsquo;S <span className="text-white">LOW VOLTAGE</span>{" "}
             <br /> POWERHOUSE
           </h1>

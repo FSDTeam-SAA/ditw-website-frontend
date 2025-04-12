@@ -42,7 +42,7 @@ const WeAre = () => {
           Your Nationwide Partner for Seamless Low Voltage Integration
         </p>
 
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 sm:pb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-start gap-4 pb-6 sm:pb-8">
           <p className="w-full sm:max-w-xl lg:max-w-2xl text-sm sm:text-[15px] font-normal text-black leading-tight pt-4 sm:pt-[15px]">
             Dyson IT Works is America&apos;s leading low voltage cabling company, specializing in partnering with
             general contractors and business owners across the nation. We understand the complexities of large-scale
@@ -59,7 +59,7 @@ const WeAre = () => {
           {/* Features List */}
           <div className="sm:col-span-1 lg:col-span-3 space-y-4 sm:space-y-3 md:space-y-4">
             {features.map((feature) => (
-              <div key={feature.id} className="flex items-start sm:items-center gap-3 sm:gap-4">
+              <div key={feature.id} className="flex items-center gap-3 sm:gap-4">
                 <div className="flex-shrink-0 w-16 sm:w-20 md:w-24">
                   <Image
                     src={feature.icon || "/placeholder.svg"}

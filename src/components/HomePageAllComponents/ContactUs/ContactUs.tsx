@@ -3,28 +3,10 @@ import Image from "next/image"
 import { PiMapPinLine } from "react-icons/pi"
 import { TfiEmail } from "react-icons/tfi"
 import ContactForm from "./ContactForm"
+import ReviewCart from "./ReviewCart"
 
 const ContactUs = () => {
-  const reviewContent = [
-    {
-      id: 1,
-      review:
-        "Dyson IT Works handled the low voltage for our multi-site project with exceptional professionalism. Their nationwide coordination was flawless.",
-      name: "~ Matt",
-    },
-    {
-      id: 2,
-      review:
-        "Their team consistently delivers high-quality installations and meets our tight deadlines. A true nationwide partner.",
-      name: "~ John",
-    },
-    {
-      id: 3,
-      review:
-        "Dyson IT Works helped us stay on budget and on schedule for a large commercial project. Their expertise is invaluable.",
-      name: "~ Tina",
-    },
-  ]
+  
 
   return (
     <div id="contact_us">
@@ -71,25 +53,7 @@ const ContactUs = () => {
             </div>
 
             <div className="md:col-span-3">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {reviewContent?.map((data) => (
-                  <div key={data.id} className="relative mx-auto w-full max-w-[300px]">
-                    <div className="relative w-full">
-                      <Image
-                        src="/assets/contactUs/review_container.png"
-                        alt="review background"
-                        width={300}
-                        height={150}
-                        className="w-full h-auto"
-                      />
-                      <div className="absolute inset-0 flex flex-col justify-center px-6 py-4">
-                        <p className="text-xs sm:text-sm">{data.review}</p>
-                        <p className="text-xs font-normal pt-2 text-right">{data.name}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <ReviewCart/>
             </div>
           </div>
         </div>
