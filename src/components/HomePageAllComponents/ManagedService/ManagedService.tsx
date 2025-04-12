@@ -22,10 +22,10 @@ export default function ManagedService() {
                     alt="a person holding laptop"
                     width={400}
                     height={420}
-                    className="w-[120px] sm:w-[160px] h-[335px] md:h-[435px] object-cover"
+                    className="w-[120px] sm:w-[160px] h-[235px] md:h-[435px] object-cover"
                   />
                 </div>
-                <div className="w-full sm:w-[150px]">
+                <div className="w-full sm:w-[150px] -mt-10 md:mt-0">
                   <Image
                     src="/assets/service/tab_pen.png"
                     alt="a person holding laptop"
@@ -192,7 +192,7 @@ export default function ManagedService() {
 
             <div className="flex-1 flex items-center justify-center">
               <div className=" ">
-                <Image src="/assets/service/hand__mobile.png" alt="hand mobile" width={500} height={500} className="" />
+                <Image src="/assets/service/hand__mobile.png" alt="hand mobile" width={500} height={500} className="translate-z-12 w-[600px] h-[400px]" />
               </div>
             </div>
           </div>
