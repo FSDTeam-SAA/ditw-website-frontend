@@ -62,7 +62,7 @@ const OurServices = () => {
 
       {/* Content - positioned above the overlay with z-index */}
       <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 py-10 md:py-16">
-        <div className="container mx-auto max-w-7xl">
+        <div className="container">
           {/* Header Section */}
           <div className="mb-8 md:mb-12">
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold">
@@ -101,7 +101,7 @@ const OurServices = () => {
           </div>
 
           {/* Services Sections */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 ">
             {/* Project Management Section */}
             <div>
               <h4 className="text-xl sm:text-2xl font-bold text-yellow-400 mb-2">
@@ -142,7 +142,7 @@ const OurServices = () => {
                 <div className="w-28 sm:w-36 md:w-52 h-1 bg-blue-600" />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-3 md:gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-3 md:gap-4 ">
                 {serviceData2?.map((data) => (
                   <div key={data.id} className="flex flex-col">
                     <div className="relative w-full aspect-video rounded-lg overflow-hidden">

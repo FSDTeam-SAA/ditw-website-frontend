@@ -82,9 +82,9 @@ const WeAre = () => {
               style={{ backgroundImage: `url("/assets/weAre/laptop.png")` }}
               className="bg-cover bg-no-repeat bg-center w-full h-[250px] sm:h-[350px] md:h-[400px] rounded-lg"
             >
-              {/* <video loop muted controls className="flex justify-center items-center">
-                <source src="/assets/service/mov_bbb.mp4" type="video/mp4" />
-              </video> */}
+              <video loop autoPlay  controls className="flex justify-center items-center">
+                <source src="/assets/service/serviceVideo.mp4" type="video/mp4" /> 
+              </video>
             </div>
           </div>
         </div>
