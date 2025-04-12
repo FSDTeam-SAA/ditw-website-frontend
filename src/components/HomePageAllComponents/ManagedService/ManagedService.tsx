@@ -190,7 +190,7 @@ export default function ManagedService() {
               </p>
             </div>
 
-            <div className="flex-1 flex items-center justify-center rotate-[250deg]">
+            <div className="flex-1 flex items-center justify-center">
               <div className=" ">
                 <Image src="/assets/service/hand__mobile.png" alt="hand mobile" width={500} height={500} className="" />
               </div>
