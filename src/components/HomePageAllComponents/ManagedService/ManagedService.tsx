@@ -4,22 +4,25 @@ import Link from "next/link"
 export default function ManagedService() {
   return (
     <div className="overflow-x-hidden">
-      <section className="bg-gradient-to-r from-[#fcfdfd] to-[#cce5ed] py-8 md:py-12">
-        <div className="container mx-auto px-4 grid grid-cols-1 lg:grid-cols-7 gap-6 md:gap-10">
+      <section className="bg-gradient-to-r from-[#fcfdfd] to-[#cce5ed] py-6 md:py-8">
+        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-6 md:gap-10">
           {/* Column 1 - Managed IT Services */}
           <div className="lg:col-span-2 rounded-lg p-4 md:p-6 flex flex-col">
-            <h2 className="text-2xl md:text-3xl font-bold text-yellow-500 mb-4">
+            <h2 className="z-30 text-3xl md:text-4xl lg:text-5xl font-bold text-yellow-500 leading-normal">
               MANAGED <span className="text-gray-800">IT</span> <br /> SERVICES
             </h2>
+            <div className="z-30 w-full flex items-center justify-start ml-6 md:ml-8 lg:ml-10">
+              <div className="w-16 md:w-24 h-1 bg-[#555be7]" />
+            </div>
             <div className="flex-1 flex flex-col">
-              <div className="flex flex-row gap-3 md:gap-5 mb-4">
-                <div className="flex-shrink-0">
+              <div className="flex flex-row gap-3 md:gap-5 ">
+                <div className="flex-shrink-0 z-10 -mt-[44px] md:-mt-[50px]">
                   <Image
-                    src="/assets/service/serviceMan.jpeg"
+                    src="/assets/service/serviceWomen.jpeg"
                     alt="a person holding laptop"
                     width={400}
-                    height={600}
-                    className="w-[120px] sm:w-[160px] h-[300px] sm:h-[400px] object-cover"
+                    height={420}
+                    className="w-[120px] sm:w-[160px] h-[335px] md:h-[435px] object-cover"
                   />
                 </div>
                 <div className="w-full sm:w-[150px]">
@@ -30,11 +33,14 @@ export default function ManagedService() {
                     height={600}
                     className="w-[100px] sm:w-[100px] h-[120px] sm:h-[150px] object-cover"
                   />
-                  <p className="text-xs pt-3 sm:pt-5 pr-2 sm:pr-5">
+                  <div className="w-full flex items-start gap-1">
+                  <p className="text-xs ">
                     Transform your IT operations into a powerhouse with our nationwide managed IT services. Imagine
                     expert support, remote management, and on-site solutions all working in harmony to keep your
                     business running effortlessly. Our
                   </p>
+                  <Image className=" w-7 h-7 " src="/assets/service/serviceIcon9.png" alt="blulk" width={30} height={30}/>
+                  </div>
                 </div>
               </div>
               <p className="text-xs sm:text-sm">
@@ -184,14 +190,10 @@ export default function ManagedService() {
               </p>
             </div>
 
-            <div className="flex-1 flex items-center justify-center">
-              <div className="relative w-36 sm:w-48 h-60 sm:h-80">
-                <Image src="/assets/service/hand_mobile.jpeg" alt="hand mobile" fill className="object-contain" />
+            <div className="flex-1 flex items-center justify-center rotate-[250deg]">
+              <div className=" ">
+                <Image src="/assets/service/hand__mobile.png" alt="hand mobile" width={500} height={500} className="" />
               </div>
-            </div>
-
-            <div className="mt-4 text-center text-xs">
-              <p>Adobe Express</p>
             </div>
           </div>
         </div>
