@@ -128,7 +128,7 @@ const WeAre = () => {
                 playsInline
               >
                 <source
-                  src="/assets/weAre/service_video.mp4"
+                  src="https://res.cloudinary.com/dlph0bwik/video/upload/v1744520742/x6b705qdifzgq5kkngvd.mp4"
                   type="video/mp4"
                 />
                 Your browser does not support the video tag.

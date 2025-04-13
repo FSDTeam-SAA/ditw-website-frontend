@@ -13,7 +13,7 @@ const Banner = () => {
             <br /> POWERHOUSE
           </h1>
           <div className="w-full flex items-center justify-center">
-            <div className="w-80 h-1 bg-[#555be7] mt-2" />
+            <div className="w-28 md:w-32 lg:w-48 xl:w-80 h-1 bg-[#555be7] mt-2" />
           </div>
           <p className="text-base font-normal leading-normal text-white text-left md:text-right pt-[30px]">
             Building America&apos;s Connectivity. Nationwide Low <br className="hidden md:block"/> Voltage
