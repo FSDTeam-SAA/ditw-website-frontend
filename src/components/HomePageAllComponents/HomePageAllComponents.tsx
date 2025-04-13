@@ -4,10 +4,15 @@ import WeAre from "./WeAre/WeAre";
 import OurServices from "./OurServices/OurServices";
 import ContactUs from "./ContactUs/ContactUs";
 import ManagedService from "./ManagedService/ManagedService";
+import Navbar from "../shared/Navbar/Navbar";
 
 const HomePageAllComponents = () => {
   return (
     <div>
+      <section>
+        <Navbar />
+      </section>
+
       <section>
         <Banner />
       </section>
