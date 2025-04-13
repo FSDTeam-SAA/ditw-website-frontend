@@ -1,48 +1,54 @@
-"use client"
-import Image from "next/image"
-import Link from "next/link"
-import { useState, useEffect } from "react"
-import { GiHamburgerMenu } from "react-icons/gi"
-import { RxCross2 } from "react-icons/rx"
+"use client";
+import Image from "next/image";
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { GiHamburgerMenu } from "react-icons/gi";
+import { RxCross2 } from "react-icons/rx";
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
 
   // Close mobile menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as HTMLElement
-      if (isOpen && !target.closest(".mobile-menu") && !target.closest(".menu-toggle")) {
-        setIsOpen(false)
+      const target = e.target as HTMLElement;
+      if (
+        isOpen &&
+        !target.closest(".mobile-menu") &&
+        !target.closest(".menu-toggle")
+      ) {
+        setIsOpen(false);
       }
-    }
+    };
 
     // Prevent scrolling when menu is open
     if (isOpen) {
-      document.body.style.overflow = "hidden"
-      document.addEventListener("mousedown", handleClickOutside)
+      document.body.style.overflow = "hidden";
+      document.addEventListener("mousedown", handleClickOutside);
     } else {
-      document.body.style.overflow = "auto"
+      document.body.style.overflow = "auto";
     }
 
     return () => {
-      document.body.style.overflow = "auto"
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
-  }, [isOpen])
+      document.body.style.overflow = "auto";
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
 
   return (
     <div className="bg-[#D9D9D9] sticky top-0 z-50 w-full">
       <div className="container mx-auto px-4 sm:px-6 flex items-center justify-between">
         {/* logo */}
         <div>
-          <Image
-            src="/assets/logo.png"
-            alt="nav logo"
-            width={235}
-            height={90}
-            className="w-[160px] h-[60px] sm:w-[180px] sm:h-[70px] md:w-[235px] md:h-[90px]"
-          />
+          <Link href="/">
+            <Image
+              src="/assets/logo.png"
+              alt="nav logo"
+              width={235}
+              height={90}
+              className="w-[160px] h-[60px] sm:w-[180px] sm:h-[70px] md:w-[235px] md:h-[90px]"
+            />
+          </Link>
         </div>
 
         {/* large device menu part */}
@@ -70,7 +76,11 @@ const Navbar = () => {
             className="p-2 menu-toggle"
             aria-label={isOpen ? "Close menu" : "Open menu"}
           >
-            {isOpen ? <RxCross2 className="w-6 h-6" /> : <GiHamburgerMenu className="w-6 h-6" />}
+            {isOpen ? (
+              <RxCross2 className="w-6 h-6" />
+            ) : (
+              <GiHamburgerMenu className="w-6 h-6" />
+            )}
           </button>
         </div>
       </div>
@@ -87,30 +97,56 @@ const Navbar = () => {
           }`}
         >
           <div className="flex justify-between items-center p-4 border-b">
-            <Image src="/assets/logo.png" alt="nav logo" width={160} height={60} className="w-[130px] h-[50px]" />
-            <button onClick={() => setIsOpen(false)} className="p-2" aria-label="Close menu">
+            <Image
+              src="/assets/logo.png"
+              alt="nav logo"
+              width={160}
+              height={60}
+              className="w-[130px] h-[50px]"
+            />
+            <button
+              onClick={() => setIsOpen(false)}
+              className="p-2"
+              aria-label="Close menu"
+            >
               <RxCross2 className="w-6 h-6" />
             </button>
           </div>
           <div className="h-full overflow-y-auto">
             <ul className="flex flex-col items-center gap-8 p-8">
               <li className="text-base font-semibold text-black leading-normal cursor-pointer w-full text-center">
-                <Link href="#home" onClick={() => setIsOpen(false)} className="block w-full py-2">
+                <Link
+                  href="#home"
+                  onClick={() => setIsOpen(false)}
+                  className="block w-full py-2"
+                >
                   Home
                 </Link>
               </li>
               <li className="text-base font-semibold text-black leading-normal cursor-pointer w-full text-center">
-                <Link href="#about_us" onClick={() => setIsOpen(false)} className="block w-full py-2">
+                <Link
+                  href="#about_us"
+                  onClick={() => setIsOpen(false)}
+                  className="block w-full py-2"
+                >
                   About Us
                 </Link>
               </li>
               <li className="text-base font-semibold text-black leading-normal cursor-pointer w-full text-center">
-                <Link href="#services" onClick={() => setIsOpen(false)} className="block w-full py-2">
+                <Link
+                  href="#services"
+                  onClick={() => setIsOpen(false)}
+                  className="block w-full py-2"
+                >
                   Services
                 </Link>
               </li>
               <li className="text-base font-semibold text-black leading-normal cursor-pointer w-full text-center">
-                <Link href="#contact_us" onClick={() => setIsOpen(false)} className="block w-full py-2">
+                <Link
+                  href="#contact_us"
+                  onClick={() => setIsOpen(false)}
+                  className="block w-full py-2"
+                >
                   Contact Us
                 </Link>
               </li>
@@ -119,7 +155,7 @@ const Navbar = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;

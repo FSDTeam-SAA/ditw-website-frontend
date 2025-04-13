@@ -1,15 +1,17 @@
 "use client";
 import Image from "next/image";
-import React from "react";
 
 import "swiper/css";
+import "swiper/css/autoplay";
+import "swiper/css/effect-coverflow";
+import "swiper/css/virtual";
 import { Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 const breakpoints = {
-  640: {
+  0: {
     slidesPerView: 1,
-    spaceBetween: 40,
+    spaceBetween: 20,
   },
   768: {
     slidesPerView: 2,
@@ -17,7 +19,7 @@ const breakpoints = {
   },
   1024: {
     slidesPerView: 3,
-    spaceBetween: 20,
+    spaceBetween: 30,
   },
 };
 
@@ -62,24 +64,24 @@ const ReviewCart = () => {
   ];
 
   return (
-    <div className="w-full flex items-center justify-center gap-10" >
+    <div className="w-full flex items-center justify-center gap-10">
       <Swiper
         modules={[Autoplay]}
         loop={true}
-        speed={3000}
         autoplay={{
-          delay: 0,
-          disableOnInteraction: false,
+          delay: 3000,
           pauseOnMouseEnter: false,
+          disableOnInteraction: false,
+          stopOnLastSlide: false,
         }}
+        speed={3000}
+        allowTouchMove={true}
         breakpoints={breakpoints}
+        spaceBetween={12}
       >
         {reviewContent.map((data) => (
-          <SwiperSlide
-            key={data.id}
-            className="relative mx-auto w-full pr-3 md:pr-0 max-w-[300px]"
-          >
-            <div className="relative w-full">
+          <SwiperSlide key={data.id} className={`!h-auto !md:h-full`}>
+            <div className="relative w-full !h-full">
               <Image
                 src="/assets/contactUs/review_container.png"
                 alt="review background"
