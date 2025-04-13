@@ -22,7 +22,7 @@ export default function ManagedService() {
                     alt="a person holding laptop"
                     width={400}
                     height={420}
-                    className="w-[120px] sm:w-[160px] h-[297px] md:h-[435px] object-cover"
+                    className="w-[120px] sm:w-[160px] h-[297px] md:h-[435px] lg:h-[420px] object-cover"
                   />
                 </div>
                 <div className="w-full sm:w-[150px] -mt-7 md:mt-0">

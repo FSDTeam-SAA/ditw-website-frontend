@@ -43,11 +43,13 @@ export default function EditContentForm() {
     await new Promise((resolve) => setTimeout(resolve, 1500))
 
     // Here you would typically send the data to your backend
+    const logoName = logo?.name
+    
     console.log({
       title,
       subtitle,
       description,
-      logo,
+      logoName,
     })
 
     setIsSubmitting(false)
@@ -103,7 +105,7 @@ export default function EditContentForm() {
 
           <div className="space-y-2">
             <Label htmlFor="logo" className="text-sm sm:text-base">
-              Logo
+              Background Image
             </Label>
             <div className="flex flex-col items-center gap-3 sm:gap-4 sm:flex-row">
               <div className="flex h-24 w-24 sm:h-32 sm:w-32 items-center justify-center rounded-md border border-dashed">

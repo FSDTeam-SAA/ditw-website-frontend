@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Home, Users, Phone } from "lucide-react";
+import { Home, Users, Phone, BriefcaseBusiness, AppWindowMac } from "lucide-react";
 
 import {
   Sidebar,
@@ -19,7 +19,7 @@ import Image from "next/image";
 const menuItems = [
   {
     title: "Navbar",
-    icon: Home,
+    icon: BriefcaseBusiness,
     href: "/dashboard/navbar",
   },
   {
@@ -34,7 +34,7 @@ const menuItems = [
   },
   {
     title: "Services",
-    icon: Users,
+    icon: AppWindowMac,
     href: "/dashboard/services",
   },
   {
@@ -53,26 +53,26 @@ export function DashboardSidebar() {
         <SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton size="default" asChild>
+              <SidebarMenuButton size="lg" asChild className="mt-10">
                 <Link href="/">
                   <Image
                     src="/assets/logo.png"
                     alt="nav logo"
                     width={235}
                     height={90}
-                    className="w-[160px] h-[90px]"
+                    className="w-[200px] h-[60px] "
                   />
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarHeader>
-        <SidebarContent className="mt-10">
+        <SidebarContent className="mt-10 ">
           <SidebarMenu>
             {menuItems.map((item) => (
               <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton asChild isActive={pathname === item.href}>
-                  <Link href={item.href}>
+                  <Link href={item.href} className="ml-4">
                     <item.icon className="size-4" />
                     <span>{item.title}</span>
                   </Link>
