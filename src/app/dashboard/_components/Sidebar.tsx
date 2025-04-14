@@ -39,14 +39,14 @@ const menuItems = [
     href: "/dashboard/about-us",
   },
   {
-    title: "Services",
-    icon: AppWindowMac,
-    href: "/dashboard/services",
-  },
-  {
     title: "Our Services",
     icon: AppWindowMac,
     href: "/dashboard/our-services",
+  },
+  {
+    title: "Managed Services",
+    icon: AppWindowMac,
+    href: "/dashboard/managed-services",
   },
   {
     title: "Contact Us",
