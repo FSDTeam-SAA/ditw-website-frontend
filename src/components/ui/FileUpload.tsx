@@ -71,7 +71,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
 
   return (
     <div className="space-y-4">
-      <Label className="text-base font-medium leading-[26px] text-[#1F2937]">
+      <Label className="text-base font-bold text-black">
         {label}
       </Label>
       <div

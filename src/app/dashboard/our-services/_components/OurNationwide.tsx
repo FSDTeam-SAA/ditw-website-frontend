@@ -26,6 +26,9 @@ const formSchema = z.object({
   description: z.string().min(10, {
     message: "description must be at least 10 characters.",
   }),
+  buttonTitle: z.string().min(10, {
+    message: "button Title must be at least 5 characters.",
+  }),
   buttonName: z.string().min(2, {
     message: "button name must be at least 2 characters.",
   }),
@@ -34,13 +37,14 @@ const formSchema = z.object({
   }),
 });
 
-const FirstForm = () => {
+const OurNationwide = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
       subTitle: "",
       description: "",
+      buttonTitle: "",
       buttonName: "",
       buttonUrl: "",
     },
@@ -48,8 +52,6 @@ const FirstForm = () => {
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
     console.log(values);
   }
   return (
@@ -60,6 +62,8 @@ const FirstForm = () => {
             onSubmit={form.handleSubmit(onSubmit)}
             className="space-y-3 border shadow-lg p-10 rounded-lg"
           >
+            <h2 className="text-2xl font-bold text-black text-center">Our Service Heading
+            </h2>
             {/* title  */}
             <FormField
               control={form.control}
@@ -102,11 +106,27 @@ const FirstForm = () => {
                     Description
                   </FormLabel>
                   <FormControl>
-                  <Textarea
-                            placeholder="Enter a detailed description"
-                            className="min-h-[100px]"
-                            {...field}
-                          />
+                    <Textarea
+                      placeholder="Enter a detailed description"
+                      className="min-h-[100px]"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {/* Button Title  */}
+            <FormField
+              control={form.control}
+              name="buttonTitle"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-base font-bold text-black">
+                    Button Title
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="Button Title" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -167,4 +187,4 @@ const FirstForm = () => {
   );
 };
 
-export default FirstForm;
+export default OurNationwide;
