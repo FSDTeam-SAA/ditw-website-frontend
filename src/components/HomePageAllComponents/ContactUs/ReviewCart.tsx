@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import { FaStar } from "react-icons/fa";
 
 import "swiper/css";
 import "swiper/css/autoplay";
@@ -90,7 +91,14 @@ const ReviewCart = () => {
                 className="w-full h-auto"
               />
               <div className="absolute inset-0 flex flex-col justify-center px-6 py-4">
-                <p className="text-xs sm:text-sm">{data.review}</p>
+                <div className="flex items-center gap-2">
+                  <span><FaStar className="w-5 h-5 text-yellow-500"/></span>
+                  <span><FaStar className="w-5 h-5 text-yellow-500"/></span>
+                  <span><FaStar className="w-5 h-5 text-yellow-500"/></span>
+                  <span><FaStar className="w-5 h-5 text-yellow-500"/></span>
+                  <span><FaStar className="w-5 h-5 text-yellow-500"/></span>
+                </div>
+                <p className="text-xs sm:text-sm pt-3">{data.review}</p>
                 <p className="text-xs font-normal pt-2 text-right">
                   {data.name}
                 </p>
