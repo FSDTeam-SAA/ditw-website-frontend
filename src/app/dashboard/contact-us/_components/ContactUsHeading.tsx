@@ -14,6 +14,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { ColorPicker } from "@/components/ui/ColorPicker";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -28,9 +31,19 @@ const formSchema = z.object({
   buttonUrl: z.string().min(2, {
     message: "button url must be at least 2 characters.",
   }),
+  backgroundColor: z.string().min(4, {
+    message: "Please pick a background color.",
+  }),
 });
 
 const ContactUsHeading = () => {
+  const [selectedColor, setSelectedColor] = useState<string>("");
+  const [formData, setFormData] = useState<{ backgroundColor: string }>({
+    backgroundColor: "",
+  });
+
+  console.log(setFormData)
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -38,14 +51,28 @@ const ContactUsHeading = () => {
       subTitle: "",
       buttonName: "",
       buttonUrl: "",
+      backgroundColor: "",
     },
   });
 
+  const handleColorChange = (color: string) => {
+    setSelectedColor(color);
+    form.setValue("backgroundColor", color); // Update form value directly
+  };
+
+  // const handleColorChange = (color: string) => {
+  //   setSelectedColor(color);
+  //   setFormData((prev) => ({ ...prev, backgroundColor: color }));
+  // };
+
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+    const fullData = {
+      ...values,
+      backgroundColor: selectedColor,
+    };
+    console.log(fullData);
+    // console.log(values);
   }
   return (
     <div className="p-10">
@@ -56,8 +83,16 @@ const ContactUsHeading = () => {
             className="space-y-3 border shadow-lg p-10 rounded-lg"
           >
             <h2 className="text-2xl font-bold text-black text-center">
-            Contact Us Heading
+              Contact Us Heading
             </h2>
+            <div className="space-y-2">
+              <Label>Background Color</Label>
+              <ColorPicker
+                selectedColor={selectedColor}
+                onColorChange={handleColorChange}
+                previousColor={formData.backgroundColor}
+              />
+            </div>
             {/* title  */}
             <FormField
               control={form.control}
