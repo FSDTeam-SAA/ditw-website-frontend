@@ -1,9 +1,12 @@
-import React from 'react';
+import React from "react";
+import FirstForm from "./_components/FirstForm";
+import SecondForm from "./_components/SecondForm";
 
 const Page = () => {
   return (
     <div>
-      about us
+      <FirstForm />
+      <SecondForm />
     </div>
   );
 };
