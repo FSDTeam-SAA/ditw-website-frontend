@@ -2,7 +2,13 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Home, Users, Phone, BriefcaseBusiness, AppWindowMac } from "lucide-react";
+import {
+  Home,
+  Users,
+  Phone,
+  BriefcaseBusiness,
+  AppWindowMac,
+} from "lucide-react";
 
 import {
   Sidebar,
@@ -36,6 +42,11 @@ const menuItems = [
     title: "Services",
     icon: AppWindowMac,
     href: "/dashboard/services",
+  },
+  {
+    title: "Our Services",
+    icon: AppWindowMac,
+    href: "/dashboard/our-services",
   },
   {
     title: "Contact Us",
@@ -72,7 +83,7 @@ export function DashboardSidebar() {
             {menuItems.map((item) => (
               <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton asChild isActive={pathname === item.href}>
-                  <Link href={item.href} className="ml-4">
+                  <Link href={item.href}>
                     <item.icon className="size-4" />
                     <span>{item.title}</span>
                   </Link>
