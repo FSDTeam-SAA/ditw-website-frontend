@@ -113,42 +113,67 @@ export default function Page() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     if (validateForm()) {
-      // Log all form data to console
-      console.log("Form data submitted:", {
-        itemname: formData.itemname,
-        itemlink: formData.itemlink,
-        itemname2: formData.itemname2,
-        itemlink2: formData.itemlink2,
-        itemname3: formData.itemname3,
-        itemlink3: formData.itemlink3,
-        itemname4: formData.itemname4,
-        itemlink4: formData.itemlink4,
-        image: formData.image ? formData.image.name : "No image uploaded",
-      });
+      const formPayload = new FormData();
+      formPayload.append("itemname1", formData.itemname);
+      formPayload.append("itemlink1", formData.itemlink);
+      formPayload.append("itemname2", formData.itemname2);
+      formPayload.append("itemlink2", formData.itemlink2);
+      formPayload.append("itemname3", formData.itemname3);
+      formPayload.append("itemlink3", formData.itemlink3);
+      formPayload.append("itemname4", formData.itemname4);
+      formPayload.append("itemlink4", formData.itemlink4);
+      if (formData.image) {
+        formPayload.append("image", formData.image);
+      }
 
-      // Reset form after successful submission
-      setFormData({
-        itemname: "",
-        itemlink: "",
-        itemname2: "",
-        itemlink2: "",
-        itemname3: "",
-        itemlink3: "",
-        itemname4: "",
-        itemlink4: "",
-        image: null,
-      });
-      setImagePreview(null);
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/navbar`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzQ0NzE1MzE0LCJleHAiOjE3NDQ3MTg5MTQsIm5iZiI6MTc0NDcxNTMxNCwianRpIjoiZVpLWGtoYnpVTEo1UWk4aSIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.CLR5rgYxCUu0e_NT8VlAQEX1MapXJHvE1zK2MaL8-V4`,
+            },
 
-      alert("Form submitted successfully! Check the console for form data.");
+            body: formPayload,
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Something went wrong while submitting the form.");
+        }
+
+        const result = await response.json();
+        console.log("Server response:", result);
+
+        // Reset the form
+        setFormData({
+          itemname: "",
+          itemlink: "",
+          itemname2: "",
+          itemlink2: "",
+          itemname3: "",
+          itemlink3: "",
+          itemname4: "",
+          itemlink4: "",
+          image: null,
+        });
+        setImagePreview(null);
+
+        alert("Form submitted successfully!");
+      } catch (error) {
+        console.error("Submission error:", error);
+        alert("Failed to submit form. Check console for details.");
+      }
     } else {
       console.log("Form has validation errors");
     }
   };
+
 
   return (
     <div className="p-10">
