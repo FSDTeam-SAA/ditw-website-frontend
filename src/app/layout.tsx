@@ -5,6 +5,7 @@ import AppProvider from "@/components/Provider/AppProvider";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AuthProvider from "@/components/Provider/SessionProvider";
+import { Toaster } from "sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,6 +26,7 @@ export default function RootLayout({
           <AppProvider>
             {children}
             <ToastContainer position="top-right" autoClose={3000} />
+            <Toaster position="top-right" />
           </AppProvider>
         </AuthProvider>
       </body>

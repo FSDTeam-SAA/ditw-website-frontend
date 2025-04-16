@@ -17,6 +17,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import FileUpload from "@/components/ui/FileUpload";
+import { useSession } from "next-auth/react";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   title1: z.string().min(2, {
@@ -52,7 +55,7 @@ const formSchema = z.object({
 });
 
 const SecondForm = () => {
-  const [image, setImage] = useState<File | null>(null);
+  const [img, setImg] = useState<File | null>(null);
   const [video, setVideo] = useState<File | null>(null);
 
   const [icon1, setIcon1] = useState<File | null>(null);
@@ -61,7 +64,10 @@ const SecondForm = () => {
   const [icon4, setIcon4] = useState<File | null>(null);
   const [icon5, setIcon5] = useState<File | null>(null);
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const session = useSession();
+  const token = (session?.data?.user as { token?: string })?.token;
+  console.log(token);
+  // const queryClient = useQueryClient();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -79,67 +85,81 @@ const SecondForm = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsSubmitting(true);
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["aboutUs-secondForm"],
+    mutationFn: async (formData: FormData) => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/aboutus-section2`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        }
+      );
 
-    // Create a complete form data object including files
-    const formData = {
-      ...values,
-      icon1: icon1
-        ? {
-            name: icon1.name,
-            type: icon1.type,
-            size: icon1.size,
-          }
-        : null,
-      icon2: icon2
-        ? {
-            name: icon2.name,
-            type: icon2.type,
-            size: icon2.size,
-          }
-        : null,
-      icon3: icon3
-        ? {
-            name: icon3.name,
-            type: icon3.type,
-            size: icon3.size,
-          }
-        : null,
-      icon4: icon4
-        ? {
-            name: icon4.name,
-            type: icon4.type,
-            size: icon4.size,
-          }
-        : null,
-      icon5: icon5
-        ? {
-            name: icon5.name,
-            type: icon5.type,
-            size: icon5.size,
-          }
-        : null,
-      image: image
-        ? {
-            name: image.name,
-            type: image.type,
-            size: image.size,
-          }
-        : null,
-      video: video
-        ? {
-            name: video.name,
-            type: video.type,
-            size: video.size,
-          }
-        : null,
-    };
+      console.log(response);
+
+      return response.json();
+    },
+    onSuccess: (data) => {
+      if (!data?.success) {
+        toast.error(data.message, {
+          position: "top-right",
+          richColors: true,
+        });
+        return;
+      }
+      form.reset();
+      toast.success(data.message, {
+        position: "top-right",
+        richColors: true,
+      });
+      // queryClient.invalidateQueries({ queryKey: ["second-form"] });
+    },
+  });
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+
+    const formData = new FormData();
+
+    formData.append("title1", values.title1);
+    formData.append("title2", values.title2);
+    formData.append("title3", values.title3);
+    formData.append("title4", values.title4);
+    formData.append("title5", values.title5);
+    formData.append("description1", values.description1);
+    formData.append("description2", values.description2);
+    formData.append("description3", values.description3);
+    formData.append("description4", values.description4);
+    formData.append("description5", values.description5);
+    if(icon1){
+      formData.append("icon1", icon1)
+    }
+    if(icon2){
+      formData.append("icon2", icon2)
+    }
+    if(icon3){
+      formData.append("icon3", icon3)
+    }
+    if(icon4){
+      formData.append("icon4", icon4)
+    }
+    if(icon5){
+      formData.append("icon5", icon5)
+    }
+    if(img){
+      formData.append("img", img)
+    }
+    if(video){
+      formData.append("video", video)
+    }
+
 
     // Log the complete form data to console
     console.log("Form submission data:", formData);
-
-    setIsSubmitting(false);
+    mutate(formData);
   }
 
   return (
@@ -425,8 +445,8 @@ const SecondForm = () => {
               <FileUpload
                 type="image"
                 label="Add Image"
-                file={image}
-                setFile={setImage}
+                file={img}
+                setFile={setImg}
               />
               <FileUpload
                 type="video"
@@ -440,9 +460,9 @@ const SecondForm = () => {
               <Button
                 className="bg-blue-500 hover:bg-blue-600 text-lg font-bold px-10 py-2"
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isPending}
               >
-                {isSubmitting ? "Submitting..." : "Submit"}
+                {isPending ? "Submitting..." : "Submit"}
               </Button>
             </div>
           </form>

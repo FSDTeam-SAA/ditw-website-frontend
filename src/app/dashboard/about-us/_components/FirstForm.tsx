@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useSession } from "next-auth/react";
 import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -38,7 +39,8 @@ const formSchema = z.object({
 const FirstForm = () => {
   const { data: session } = useSession();
   const token = (session?.user as { token?: string })?.token;
-console.log(token)
+  // console.log(token)
+  // const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -50,44 +52,48 @@ console.log(token)
     },
   });
 
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationKey: ["about-us-first-form"],
     mutationFn: async (formData: FormData) => {
-      const response = await fetch("http://127.0.0.1:8000/api/aboutus", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          // ❌ DO NOT SET 'Content-Type' when using FormData
-        },
-        body: formData,
-      });
-
-      console.log(response)
-
-      if (!response.ok) {
-        throw new Error("Failed to submit form");
-      }
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/aboutus`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        }
+      );
 
       return response.json();
     },
+
     onSuccess: (data) => {
-      console.log("✅ Form submitted successfully:", data);
-    },
-    onError: (error) => {
-      console.error("❌ Submission error:", error);
+      if (!data?.success) {
+        toast.error(data.message, {
+          position: "top-right",
+          richColors: true,
+        });
+        return;
+      }
+      form.reset();
+      toast.success(data.message, {
+        position: "top-right",
+        richColors: true,
+      });
+      // queryClient.invalidateQueries({ queryKey: ["first-form"] });
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     const formData = new FormData();
-    
+
     formData.append("title", values.title);
     formData.append("subtitle", values.subtitle);
     formData.append("description", values.description);
     formData.append("button_name", values.button_name);
     formData.append("button_url", values.button_url);
-
-   
 
     mutate(formData);
   }
@@ -193,10 +199,11 @@ console.log(token)
 
           <div className="pt-4">
             <Button
+            disabled={isPending}
               className="bg-blue-500 text-lg font-bold px-10 py-2"
               type="submit"
             >
-              Submit
+              {isPending ? "Submitting" : "Submit"}
             </Button>
           </div>
         </form>

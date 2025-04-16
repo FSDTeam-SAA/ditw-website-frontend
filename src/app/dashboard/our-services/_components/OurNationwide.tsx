@@ -15,44 +15,89 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useSession } from "next-auth/react";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   title: z.string().min(2, {
     message: "title must be at least 2 characters.",
   }),
-  subTitle: z.string().min(5, {
+  subtitle: z.string().min(5, {
     message: "sub title must be at least 5 characters.",
   }),
   description: z.string().min(10, {
     message: "description must be at least 10 characters.",
   }),
-  buttonTitle: z.string().min(10, {
+  button_title: z.string().min(10, {
     message: "button Title must be at least 5 characters.",
   }),
-  buttonName: z.string().min(2, {
+  button_name: z.string().min(2, {
     message: "button name must be at least 2 characters.",
   }),
-  buttonUrl: z.string().min(2, {
+  button_url: z.string().min(2, {
     message: "button url must be at least 2 characters.",
   }),
 });
 
 const OurNationwide = () => {
+  const session = useSession();
+  const token = (session?.data?.user as { token?: string })?.token;
+  console.log(token);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
-      subTitle: "",
+      subtitle: "",
       description: "",
-      buttonTitle: "",
-      buttonName: "",
-      buttonUrl: "",
+      button_title: "",
+      button_name: "",
+      button_url: "",
+    },
+  });
+
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["our-nationwide"],
+    mutationFn: (formData: FormData) =>
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/services/heading`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      }).then((res) => res.json()),
+
+    onSuccess: (data) => {
+      if (!data?.success) {
+        toast.error(data.message, {
+          position: "top-right",
+          richColors: true,
+        });
+        return;
+      }
+      form.reset();
+      toast.success(data.message, {
+        position: "top-right",
+        richColors: true,
+      });
     },
   });
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
+    const formData = new FormData();
+
+    formData.append("title", values.title);
+    formData.append("subtitle", values.subtitle);
+    formData.append("description", values.description);
+    formData.append("button_title", values.button_title);
+    formData.append("button_name", values.button_name);
+    formData.append("button_url", values.button_url);
+
     console.log(values);
+
+    mutate(formData);
   }
   return (
     <div className="p-10">
@@ -62,7 +107,8 @@ const OurNationwide = () => {
             onSubmit={form.handleSubmit(onSubmit)}
             className="space-y-3 border shadow-lg p-10 rounded-lg"
           >
-            <h2 className="text-2xl font-bold text-black text-center">Our Service Heading
+            <h2 className="text-2xl font-bold text-black text-center">
+              Our Service Heading
             </h2>
             {/* title  */}
             <FormField
@@ -83,7 +129,7 @@ const OurNationwide = () => {
             {/* sub title  */}
             <FormField
               control={form.control}
-              name="subTitle"
+              name="subtitle"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-base font-bold text-black">
@@ -119,7 +165,7 @@ const OurNationwide = () => {
             {/* Button Title  */}
             <FormField
               control={form.control}
-              name="buttonTitle"
+              name="button_title"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-base font-bold text-black">
@@ -139,7 +185,7 @@ const OurNationwide = () => {
               <div className="md:col-span-1">
                 <FormField
                   control={form.control}
-                  name="buttonName"
+                  name="button_name"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-base font-bold text-black">
@@ -156,7 +202,7 @@ const OurNationwide = () => {
               <div className="md:col-span-1">
                 <FormField
                   control={form.control}
-                  name="buttonUrl"
+                  name="button_url"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-base font-bold text-black">
@@ -174,10 +220,11 @@ const OurNationwide = () => {
 
             <div className="pt-4">
               <Button
+              disabled={isPending}
                 className="bg-blue-500 text-lg font-bold px-10 py-2"
                 type="submit"
               >
-                Submit
+                {isPending ? "Submitting..." : "Submit"}
               </Button>
             </div>
           </form>
