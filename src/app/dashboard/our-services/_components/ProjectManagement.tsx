@@ -17,6 +17,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import FileUpload from "@/components/ui/FileUpload";
+import { useSession } from "next-auth/react";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   heading: z.string().min(2, {
@@ -43,11 +46,13 @@ const formSchema = z.object({
 });
 
 const ProjectManagement = () => {
-  const [image1, setImage1] = useState<File | null>(null);
-  const [image2, setImage2] = useState<File | null>(null);
-  const [image3, setImage3] = useState<File | null>(null);
+  const session = useSession();
+  const token = (session?.data?.user as { token?: string })?.token;
+  // console.log(token);
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [img1, setImg1] = useState<File | null>(null);
+  const [img2, setImg2] = useState<File | null>(null);
+  const [img3, setImg3] = useState<File | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -62,39 +67,61 @@ const ProjectManagement = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsSubmitting(true);
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["project-management"],
+    mutationFn: (formData: FormData) =>
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/services/projectmanagement`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        }
+      ).then((res) => res.json()),
 
-    // Create a complete form data object including files
-    const formData = {
-      ...values,
-      image1: image1
-        ? {
-            name: image1.name,
-            type: image1.type,
-            size: image1.size,
-          }
-        : null,
-      image2: image2
-        ? {
-            name: image2.name,
-            type: image2.type,
-            size: image2.size,
-          }
-        : null,
-      image3: image3
-        ? {
-            name: image3.name,
-            type: image3.type,
-            size: image3.size,
-          }
-        : null,
-    };
+    onSuccess: (data) => {
+      if (!data?.success) {
+        toast.error(data.message, {
+          position: "top-right",
+          richColors: true,
+        });
+        return;
+      }
+      form.reset();
+      toast.success(data.message, {
+        position: "top-right",
+        richColors: true,
+      });
+    },
+  });
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    const formData = new FormData();
+
+    formData.append("heading", values.heading);
+    formData.append("title1", values.title1);
+    formData.append("title2", values.title2);
+    formData.append("title3", values.title3);
+    formData.append("description1", values.description1);
+    formData.append("description2", values.description2);
+    formData.append("description3", values.description3);
+
+    if (img1) {
+      formData.append("img1", img1);
+    }
+    if (img2) {
+      formData.append("img1", img2);
+    }
+    if (img3) {
+      formData.append("img1", img3);
+    }
+
+    mutate(formData);
 
     // Log the complete form data to console
     console.log("Form submission data:", formData);
-
-    setIsSubmitting(false);
   }
 
   return (
@@ -105,7 +132,8 @@ const ProjectManagement = () => {
             onSubmit={form.handleSubmit(onSubmit)}
             className="space-y-6 border shadow-lg p-10 rounded-lg"
           >
-            <h2 className="text-2xl font-bold text-black text-center">PROJECT MANAGEMENT
+            <h2 className="text-2xl font-bold text-black text-center">
+              PROJECT MANAGEMENT
             </h2>
             {/* heading  */}
             <FormField
@@ -172,8 +200,8 @@ const ProjectManagement = () => {
                 <FileUpload
                   type="image"
                   label="Add Image"
-                  file={image1}
-                  setFile={setImage1}
+                  file={img1}
+                  setFile={setImg1}
                 />
               </div>
             </div>
@@ -226,8 +254,8 @@ const ProjectManagement = () => {
                 <FileUpload
                   type="image"
                   label="Add Image"
-                  file={image2}
-                  setFile={setImage2}
+                  file={img2}
+                  setFile={setImg2}
                 />
               </div>
             </div>
@@ -280,8 +308,8 @@ const ProjectManagement = () => {
                 <FileUpload
                   type="image"
                   label="Add Image"
-                  file={image3}
-                  setFile={setImage3}
+                  file={img3}
+                  setFile={setImg3}
                 />
               </div>
             </div>
@@ -290,9 +318,9 @@ const ProjectManagement = () => {
               <Button
                 className="bg-blue-500 hover:bg-blue-600 text-lg font-bold px-10 py-2"
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isPending}
               >
-                {isSubmitting ? "Submitting..." : "Submit"}
+                {isPending ? "Submitting..." : "Submit"}
               </Button>
             </div>
           </form>
