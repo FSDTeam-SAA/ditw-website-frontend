@@ -4,6 +4,7 @@ import "./globals.css";
 import AppProvider from "@/components/Provider/AppProvider";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import AuthProvider from "@/components/Provider/SessionProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,10 +21,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} antialiased overflow-x-hidden`}>
-        <AppProvider>
-          {children}
-          <ToastContainer position="top-right" autoClose={3000} />
-        </AppProvider>
+        <AuthProvider>
+          <AppProvider>
+            {children}
+            <ToastContainer position="top-right" autoClose={3000} />
+          </AppProvider>
+        </AuthProvider>
       </body>
     </html>
   );
