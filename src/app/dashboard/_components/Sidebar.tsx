@@ -8,6 +8,7 @@ import {
   Phone,
   BriefcaseBusiness,
   AppWindowMac,
+  MessageCircleCode,
 } from "lucide-react";
 
 import {
@@ -52,6 +53,11 @@ const menuItems = [
     title: "Contact Us",
     icon: Phone,
     href: "/dashboard/contact-us",
+  },
+  {
+    title: "Review",
+    icon: MessageCircleCode,
+    href: "/dashboard/review",
   },
 ];
 
