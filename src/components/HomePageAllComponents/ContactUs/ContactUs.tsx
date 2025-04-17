@@ -43,9 +43,9 @@ const ContactUs = () => {
               </h4>
               <div className="w-full flex items-center justify-center md:justify-start mt-2">
                 <Image
-                  src="/assets/arrow_icon.png"
+                  src="/assets/contactUs/contact_right_icon.png"
                   alt="arrow icon"
-                  width={120}
+                  width={100}
                   height={15}
                   className="w-24 sm:w-auto"
                 />

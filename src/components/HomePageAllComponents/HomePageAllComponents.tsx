@@ -9,7 +9,7 @@ import Navbar from "../shared/Navbar/Navbar";
 const HomePageAllComponents = () => {
   return (
     <div>
-      <section>
+      <section className="sticky top-0 z-50">
         <Navbar />
       </section>
 

@@ -78,9 +78,9 @@ export default function ManagedService() {
                   <Image
                     src="/assets/service/serviceIcon1.png"
                     alt="service icon"
-                    width={90}
-                    height={60}
-                    className="w-[50px] sm:w-[65px] h-[35px] sm:h-[45px]"
+                    width={40}
+                    height={40}
+                    className="w-[40px] h-[40px]"
                   />
                 </div>
                 <p className="text-xs">No long-term contracts and no cancellation fees</p>
@@ -90,9 +90,9 @@ export default function ManagedService() {
                   <Image
                     src="/assets/service/serviceIcon2.png"
                     alt="service icon"
-                    width={90}
-                    height={60}
-                    className="w-[50px] sm:w-[65px] h-[35px] sm:h-[45px]"
+                    width={40}
+                    height={40}
+                    className="w-[40px] h-[40px]"
                   />
                 </div>
                 <p className="text-xs">Solutions customized to fit your business</p>
@@ -102,9 +102,9 @@ export default function ManagedService() {
                   <Image
                     src="/assets/service/serviceIcon3.png"
                     alt="service icon"
-                    width={90}
-                    height={60}
-                    className="w-[50px] sm:w-[65px] h-[35px] sm:h-[45px]"
+                    width={40}
+                    height={40}
+                    className="w-[40px] h-[40px]"
                   />
                 </div>
                 <p className="text-xs">Options to fit businesses of all sizes</p>
@@ -114,9 +114,9 @@ export default function ManagedService() {
                   <Image
                     src="/assets/service/serviceIcon4.png"
                     alt="service icon"
-                    width={90}
-                    height={60}
-                    className="w-[50px] sm:w-[65px] h-[35px] sm:h-[45px]"
+                    width={40}
+                    height={40}
+                    className="w-[40px] h-[40px]"
                   />
                 </div>
                 <p className="text-xs">Support from IT Experts both centralized and local-based</p>
@@ -126,9 +126,9 @@ export default function ManagedService() {
                   <Image
                     src="/assets/service/serviceIcon5.png"
                     alt="service icon"
-                    width={90}
-                    height={60}
-                    className="w-[50px] sm:w-[65px] h-[35px] sm:h-[45px]"
+                    width={40}
+                    height={40}
+                    className="w-[40px] h-[40px]"
                   />
                 </div>
                 <p className="text-xs">Predictable costs with flat rate pricing</p>
@@ -138,9 +138,9 @@ export default function ManagedService() {
                   <Image
                     src="/assets/service/serviceIcon6.png"
                     alt="service icon"
-                    width={90}
-                    height={60}
-                    className="w-[50px] sm:w-[65px] h-[35px] sm:h-[45px]"
+                    width={40}
+                    height={40}
+                    className="w-[40px] h-[40px]"
                   />
                 </div>
                 <p className="text-xs">A dedicated support team just for your company</p>
@@ -150,9 +150,9 @@ export default function ManagedService() {
                   <Image
                     src="/assets/service/serviceIcon7.png"
                     alt="service icon"
-                    width={90}
-                    height={60}
-                    className="w-[50px] sm:w-[65px] h-[35px] sm:h-[45px]"
+                    width={40}
+                    height={40}
+                    className="w-[40px] h-[40px]"
                   />
                 </div>
                 <p className="text-xs">Easy access 24/7/365 in 15 minutes or less</p>
@@ -162,9 +162,9 @@ export default function ManagedService() {
                   <Image
                     src="/assets/service/serviceIcon8.png"
                     alt="service icon"
-                    width={90}
-                    height={60}
-                    className="w-[50px] sm:w-[65px] h-[35px] sm:h-[45px]"
+                    width={40}
+                    height={40}
+                    className="w-[40px] h-[40px]"
                   />
                 </div>
                 <p className="text-xs">Proactive IT Support that fixes issues before they happen</p>

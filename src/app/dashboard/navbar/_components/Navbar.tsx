@@ -62,8 +62,8 @@ export default function Navbar() {
   const { data } = useSession();
   const token = (data?.user as { token?: string })?.token || "";
 
-  const [logoImage, setLogoImage] = useState<File | null>(null);
-  const [bgImage, setBgImage] = useState<File | null>(null);
+  const [logo, setLogo] = useState<File | null>(null);
+  const [back_img, setBackImage] = useState<File | null>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -100,9 +100,7 @@ export default function Navbar() {
       }
 
       form.reset();
-      setLogoImage(null);
-      setBgImage(null);
-
+      
       toast.success(data.message || "Submitted successfully!", {
         position: "top-right",
         richColors: true,
@@ -117,8 +115,8 @@ export default function Navbar() {
       if (value) formData.append(key, value);
     });
 
-    if (logoImage) formData.append("logoImage", logoImage);
-    if (bgImage) formData.append("bgImage", bgImage);
+    if (logo) formData.append("logo", logo);
+    if (back_img) formData.append("back_img", back_img);
 
     console.log("form summitted successfully", formData)
 
@@ -138,14 +136,14 @@ export default function Navbar() {
             <FileUpload
               type="image"
               label="Add Logo"
-              file={logoImage}
-              setFile={setLogoImage}
+              file={logo}
+              setFile={setLogo}
             />
             <FileUpload
               type="image"
               label="Add Background Image"
-              file={bgImage}
-              setFile={setBgImage}
+              file={back_img}
+              setFile={setBackImage}
             />
           </div>
 
