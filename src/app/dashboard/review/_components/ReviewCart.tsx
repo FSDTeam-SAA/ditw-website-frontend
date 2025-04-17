@@ -24,6 +24,13 @@ const formSchema = z.object({
   reviewContent: z.string().min(10, {
     message: "First Description must be at least 10 characters.",
   }),
+  rating: z
+    .number({
+      required_error: "Rating is required",
+      invalid_type_error: "Rating must be a number",
+    })
+    .min(1, "Minimum rating is 1")
+    .max(5, "Maximum rating is 5"),
 });
 
 const ReviewCart = () => {
@@ -110,13 +117,40 @@ const ReviewCart = () => {
                         Review Content
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter a review Content" {...field} />
+                        <Input
+                          placeholder="Enter a review Content"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
+            </div>
+
+            <div>
+              <FormField
+                control={form.control}
+                name="rating"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Rating (1 to 5)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        min={1}
+                        max={5}
+                        placeholder="Enter a rating"
+                        {...field}
+                        value={field.value ?? ""}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
 
             {/* image part  */}

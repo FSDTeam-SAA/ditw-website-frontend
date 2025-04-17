@@ -16,9 +16,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import FileUpload from "@/components/ui/FileUpload";
+import { useSession } from "next-auth/react";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 const formSchema = z.object({
-  heading: z.string().min(2, {
+  title: z.string().min(2, {
     message: "Heading must be at least 2 characters.",
   }),
   location: z.string().min(6, {
@@ -27,37 +30,57 @@ const formSchema = z.object({
 });
 
 const OurAddress = () => {
-  const [icon, setIcon] = useState<File | null>(null);
+  const session = useSession();
+  const token = (session?.data?.user as { token?: string })?.token;
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [icon, setIcon] = useState<File | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      heading: "",
+      title: "",
       location: "",
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsSubmitting(true);
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["contact-us-address"],
+    mutationFn: (formData: FormData) =>
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/address`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      }).then((res) => res.json()),
 
-    // Create a complete form data object including files
-    const formData = {
-      ...values,
-      icon: icon
-        ? {
-            name: icon.name,
-            type: icon.type,
-            size: icon.size,
-          }
-        : null,
-    };
+    onSuccess: (data) => {
+      if (!data?.success) {
+        toast.error(data.message || "Something went wrong", {
+          position: "top-right",
+          richColors: true,
+        });
+        return;
+      }
+      form.reset();
+      toast.success(data.message, {
+        position: "top-right",
+        richColors: true,
+      });
+    },
+  });
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    const formData = new FormData();
+    formData.append("title", values.title);
+    formData.append("location", values.location);
+    if (icon) {
+      formData.append("icon", icon);
+    }
 
     // Log the complete form data to console
     console.log("Form submission data:", formData);
-
-    setIsSubmitting(false);
+    mutate(formData);
   }
 
   return (
@@ -75,10 +98,10 @@ const OurAddress = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 shadow-lg p-6 border rounded-lg">
               <div className="md:col-span-1">
                 <div>
-                  {/* heading */}
+                  {/* title */}
                   <FormField
                     control={form.control}
-                    name="heading"
+                    name="title"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-base font-bold text-black">
@@ -125,9 +148,9 @@ const OurAddress = () => {
               <Button
                 className="bg-blue-500 hover:bg-blue-600 text-lg font-bold px-10 py-2"
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isPending}
               >
-                {isSubmitting ? "Submitting..." : "Submit"}
+                {isPending ? "Submitting..." : "Submit"}
               </Button>
             </div>
           </form>
