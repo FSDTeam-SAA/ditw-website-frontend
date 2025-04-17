@@ -17,68 +17,83 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import FileUpload from "@/components/ui/FileUpload";
 import { Textarea } from "@/components/ui/textarea";
+import { useMutation } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
+import { toast } from "react-toastify";
 
 const formSchema = z.object({
-  heading: z.string().min(2, {
+  title: z.string().min(2, {
     message: "Heading must be at least 2 characters.",
   }),
-  firstDescription: z.string().min(10, {
+  description1: z.string().min(10, {
     message: "First Description must be at least 10 characters.",
   }),
-  secondDescription: z.string().min(10, {
+  description2: z.string().min(10, {
     message: "Second Description must be at least 10 characters.",
   }),
 });
 
 const ManagedIt = () => {
-  const [image, setImage] = useState<File | null>(null);
+  const session = useSession();
+  const token = (session?.data?.user as { token?: string })?.token;
+
+  const [img, setImage] = useState<File | null>(null);
   const [icon1, setIcon1] = useState<File | null>(null);
   const [icon2, setIcon2] = useState<File | null>(null);
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      heading: "",
-      firstDescription: "",
-      secondDescription: "",
+      title: "",
+      description1: "",
+      description2: "",
+    },
+  });
+
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["our contact"],
+    mutationFn: (formData: FormData) =>
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/ourcontact`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      }).then((res) => res.json()),
+
+    onSuccess: (data) => {
+      if (!data?.success) {
+        toast.error(data.message || "Something went wrong", {
+          position: "top-right",
+        });
+        return;
+      }
+      form.reset();
+      toast.success(data.message, {
+        position: "top-right",
+      });
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsSubmitting(true);
+    const formData = new FormData();
+    formData.append("title", values.title);
+    formData.append("description1", values.description1);
+    formData.append("description2", values.description2);
 
-    // Create a complete form data object including files
-    const formData = {
-      ...values,
-      image: image
-        ? {
-            name: image.name,
-            type: image.type,
-            size: image.size,
-          }
-        : null,
-      icon1: icon1
-        ? {
-            name: icon1.name,
-            type: icon1.type,
-            size: icon1.size,
-          }
-        : null,
-      icon2: icon2
-        ? {
-            name: icon2.name,
-            type: icon2.type,
-            size: icon2.size,
-          }
-        : null,
-    };
+    if (icon1) {
+      formData.append("icon1", icon1);
+    }
+    if (icon2) {
+      formData.append("icon2", icon2);
+    }
+    if (img) {
+      formData.append("img", img);
+    }
 
     // Log the complete form data to console
     console.log("Form submission data:", formData);
-
-    setIsSubmitting(false);
+    mutate(formData);
   }
 
   return (
@@ -100,7 +115,7 @@ const ManagedIt = () => {
                   {/* Title */}
                   <FormField
                     control={form.control}
-                    name="heading"
+                    name="title"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-base font-bold text-black">
@@ -118,7 +133,7 @@ const ManagedIt = () => {
                   {/* first description */}
                   <FormField
                     control={form.control}
-                    name="firstDescription"
+                    name="description1"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-base font-bold text-black">
@@ -140,7 +155,7 @@ const ManagedIt = () => {
                   {/* second description */}
                   <FormField
                     control={form.control}
-                    name="secondDescription"
+                    name="description2"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-base font-bold text-black">
@@ -164,7 +179,7 @@ const ManagedIt = () => {
                   <FileUpload
                     type="image"
                     label="Add Image"
-                    file={image}
+                    file={img}
                     setFile={setImage}
                   />
                 </div>
@@ -191,9 +206,9 @@ const ManagedIt = () => {
               <Button
                 className="bg-blue-500 hover:bg-blue-600 text-lg font-bold px-10 py-2"
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isPending}
               >
-                {isSubmitting ? "Submitting..." : "Submit"}
+                {isPending ? "Submitting..." : "Submit"}
               </Button>
             </div>
           </form>

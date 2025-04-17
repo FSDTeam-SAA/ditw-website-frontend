@@ -16,6 +16,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import FileUpload from "@/components/ui/FileUpload";
+import { useSession } from "next-auth/react";
+import { toast } from "react-toastify";
+import { useMutation } from "@tanstack/react-query";
 
 const formSchema = z.object({
   heading: z.string().min(2, {
@@ -24,19 +27,20 @@ const formSchema = z.object({
   email: z.string().min(6, {
     message: "email must be needed",
   }),
-  phoneNumber: z.string().min(6, {
+  phone: z.string().min(6, {
     message: "phone Number must be at least 11 characters.",
   }),
-  copyRightMessage: z.string().min(6, {
+  copyright: z.string().min(6, {
     message: "copy right message must be needed",
   }),
 });
 
 const OurContact = () => {
-  const [emailIcon, setEmailIcon] = useState<File | null>(null);
-  const [phoneIcon, setPhoneIcon] = useState<File | null>(null);
+  const session = useSession();
+  const token = (session?.data?.user as { token?: string })?.token;
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [email_icon, setEmailIcon] = useState<File | null>(null);
+  const [phone_icon, setPhoneIcon] = useState<File | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -46,32 +50,49 @@ const OurContact = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsSubmitting(true);
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["our contact"],
+    mutationFn: (formData: FormData) =>
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/ourcontact`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      }).then((res) => res.json()),
 
-    // Create a complete form data object including files
-    const formData = {
-      ...values,
-      emailIcon: emailIcon
-        ? {
-            name: emailIcon.name,
-            type: emailIcon.type,
-            size: emailIcon.size,
-          }
-        : null,
-      phoneIcon: phoneIcon
-        ? {
-            name: phoneIcon.name,
-            type: phoneIcon.type,
-            size: phoneIcon.size,
-          }
-        : null,
-    };
+    onSuccess: (data) => {
+      if (!data?.success) {
+        toast.error(data.message || "Something went wrong", {
+          position: "top-right",
+        });
+        return;
+      }
+      form.reset();
+      toast.success(data.message, {
+        position: "top-right",
+      });
+    },
+  });
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    const formData = new FormData();
+
+    formData.append("heading", values.heading);
+    formData.append("email", values.email);
+    formData.append("phone", values.phone);
+    formData.append("copyright", values.copyright);
+
+    if (email_icon) {
+      formData.append("email_icon", email_icon);
+    }
+    if (phone_icon) {
+      formData.append("phone_icon", phone_icon);
+    }
 
     // Log the complete form data to console
     console.log("Form submission data:", formData);
-
-    setIsSubmitting(false);
+    mutate(formData);
   }
 
   return (
@@ -114,7 +135,7 @@ const OurContact = () => {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-base font-bold text-black">
-                          Email Icon
+                          Email
                         </FormLabel>
                         <FormControl>
                           <Input placeholder="Enter a Email" {...field} />
@@ -128,7 +149,7 @@ const OurContact = () => {
                   <FileUpload
                     type="image"
                     label="Add Email Icon"
-                    file={emailIcon}
+                    file={email_icon}
                     setFile={setEmailIcon}
                   />
                 </div>
@@ -138,11 +159,11 @@ const OurContact = () => {
                   {/* phone number */}
                   <FormField
                     control={form.control}
-                    name="phoneNumber"
+                    name="phone"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-base font-bold text-black">
-                          Phone Number Icon
+                          Phone Number
                         </FormLabel>
                         <FormControl>
                           <Input placeholder="Enter a Email" {...field} />
@@ -156,7 +177,7 @@ const OurContact = () => {
                   <FileUpload
                     type="image"
                     label="Add Phone Icon"
-                    file={phoneIcon}
+                    file={phone_icon}
                     setFile={setPhoneIcon}
                   />
                 </div>
@@ -166,14 +187,17 @@ const OurContact = () => {
             <div>
               <FormField
                 control={form.control}
-                name="copyRightMessage"
+                name="copyright"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-base font-bold text-black">
                       Copy Ritht Message
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter a copy right message" {...field} />
+                      <Input
+                        placeholder="Enter a copy right message"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -185,9 +209,9 @@ const OurContact = () => {
               <Button
                 className="bg-blue-500 hover:bg-blue-600 text-lg font-bold px-10 py-2"
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isPending}
               >
-                {isSubmitting ? "Submitting..." : "Submit"}
+                {isPending ? "Submitting..." : "Submit"}
               </Button>
             </div>
           </form>

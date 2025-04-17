@@ -40,7 +40,7 @@ const formSchema = z.object({
 });
 
 const Banner = () => {
-    const [back_img, setBack_img] = useState<File | null>(null);
+  const [back_img, setBack_img] = useState<File | null>(null);
   const session = useSession();
   const token = (session?.data?.user as { token?: string })?.token;
   console.log(token);
@@ -92,9 +92,11 @@ const Banner = () => {
     formData.append("description", values.description);
     formData.append("button_name", values.button_name);
     formData.append("button_url", values.button_url);
-    if(back_img){formData.append("back_img", back_img)}
+    if (back_img) {
+      formData.append("back_img", back_img);
+    }
 
-    console.log(values);
+    console.log(formData);
 
     mutate(formData);
   }
@@ -203,17 +205,17 @@ const Banner = () => {
 
             {/* background image  */}
             <div>
-            <FileUpload
-            type="image"
-            label="Add Background Image"
-            file={back_img}
-            setFile={setBack_img}
-          />
+              <FileUpload
+                type="image"
+                label="Add Background Image"
+                file={back_img}
+                setFile={setBack_img}
+              />
             </div>
 
             <div className="pt-4">
               <Button
-              disabled={isPending}
+                disabled={isPending}
                 className="bg-blue-500 text-lg font-bold px-10 py-2"
                 type="submit"
               >

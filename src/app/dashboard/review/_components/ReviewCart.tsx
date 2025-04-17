@@ -16,6 +16,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import FileUpload from "@/components/ui/FileUpload";
+import { useMutation } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -34,45 +37,64 @@ const formSchema = z.object({
 });
 
 const ReviewCart = () => {
-  const [star, setStar] = useState<File | null>(null);
-  const [image, setImage] = useState<File | null>(null);
+   const session = useSession();
+    const token = (session?.data?.user as { token?: string })?.token;
+    console.log(token);
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [image, setImage] = useState<File | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       reviewContent: "",
+      rating : 1,
+    },
+  });
+
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["banner"],
+    mutationFn: (formData: FormData) =>
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/review/content`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      }).then((res) => res.json()),
+
+    onSuccess: (data) => {
+      if (!data?.success) {
+        toast.error(data.message, {
+          position: "top-right",
+          richColors: true,
+        });
+        return;
+      }
+      form.reset();
+      toast.success(data.message, {
+        position: "top-right",
+        richColors: true,
+      });
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsSubmitting(true);
 
-    // Create a complete form data object including files
-    const formData = {
-      ...values,
-      image: image
-        ? {
-            name: image.name,
-            type: image.type,
-            size: image.size,
-          }
-        : null,
-      star: star
-        ? {
-            name: star.name,
-            type: star.type,
-            size: star.size,
-          }
-        : null,
-    };
+    const formData = new FormData();
+
+    formData.append("name", values.name);
+    formData.append("reviewContent", values.reviewContent);
+    formData.append("rating", values.rating.toString())
+    if(image){
+      formData.append("image", image)
+    }
+
+
 
     // Log the complete form data to console
     console.log("Form submission data:", formData);
-
-    setIsSubmitting(false);
+    mutate(formData)
   }
 
   return (
@@ -154,32 +176,22 @@ const ReviewCart = () => {
             </div>
 
             {/* image part  */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              <div className="md:col-span-1">
-                <FileUpload
-                  type="image"
-                  label="Add Star"
-                  file={star}
-                  setFile={setStar}
-                />
-              </div>
-              <div className="md:col-span-1">
-                <FileUpload
-                  type="image"
-                  label="Add Background Image"
-                  file={image}
-                  setFile={setImage}
-                />
-              </div>
+            <div>
+              <FileUpload
+                type="image"
+                label="Add Background Image"
+                file={image}
+                setFile={setImage}
+              />
             </div>
 
             <div className="pt-4">
               <Button
                 className="bg-blue-500 hover:bg-blue-600 text-lg font-bold px-10 py-2"
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isPending}
               >
-                {isSubmitting ? "Submitting..." : "Submit"}
+                {isPending ? "Submitting..." : "Submit"}
               </Button>
             </div>
           </form>
