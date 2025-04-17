@@ -17,63 +17,89 @@ import { Input } from "@/components/ui/input";
 import { ColorPicker } from "@/components/ui/ColorPicker";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
+import { useMutation } from "@tanstack/react-query";
 
 const formSchema = z.object({
   title: z.string().min(2, {
-    message: "title must be at least 2 characters.",
+    message: "Title must be at least 2 characters.",
   }),
-  subTitle: z.string().min(6, {
-    message: "subTitle must be at least 10 characters.",
+  subtitle: z.string().min(6, {
+    message: "Subtitle must be at least 6 characters.",
   }),
-  buttonName: z.string().min(2, {
-    message: "button name must be at least 2 characters.",
+  button_name: z.string().min(2, {
+    message: "Button name must be at least 2 characters.",
   }),
-  buttonUrl: z.string().min(2, {
-    message: "button url must be at least 2 characters.",
+  button_url: z.string().min(2, {
+    message: "Button URL must be at least 2 characters.",
   }),
-  backgroundColor: z.string().min(4, {
+  color: z.string().min(4, {
     message: "Please pick a background color.",
   }),
 });
 
 const ContactUsHeading = () => {
-  const [selectedColor, setSelectedColor] = useState<string>("");
-  const [formData, setFormData] = useState<{ backgroundColor: string }>({
-    backgroundColor: "",
-  });
+  const session = useSession();
+  const token = (session?.data?.user as { token?: string })?.token;
 
-  console.log(setFormData)
+  const [selectedColor, setSelectedColor] = useState<string>("");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
-      subTitle: "",
-      buttonName: "",
-      buttonUrl: "",
-      backgroundColor: "",
+      subtitle: "",
+      button_name: "",
+      button_url: "",
+      color: "",
     },
   });
 
   const handleColorChange = (color: string) => {
     setSelectedColor(color);
-    form.setValue("backgroundColor", color); // Update form value directly
+    form.setValue("color", color);
   };
 
-  // const handleColorChange = (color: string) => {
-  //   setSelectedColor(color);
-  //   setFormData((prev) => ({ ...prev, backgroundColor: color }));
-  // };
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["contact-us-heading"],
+    mutationFn: (formData: FormData) =>
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contact`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      }).then((res) => res.json()),
 
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    const fullData = {
-      ...values,
-      backgroundColor: selectedColor,
-    };
-    console.log(fullData);
-    // console.log(values);
-  }
+    onSuccess: (data) => {
+      if (!data?.success) {
+        toast.error(data.message || "Something went wrong", {
+          position: "top-right",
+          richColors: true,
+        });
+        return;
+      }
+      form.reset();
+      setSelectedColor("");
+      toast.success(data.message, {
+        position: "top-right",
+        richColors: true,
+      });
+    },
+  });
+
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    const formData = new FormData();
+    formData.append("title", values.title);
+    formData.append("subtitle", values.subtitle);
+    formData.append("button_name", values.button_name);
+    formData.append("button_url", values.button_url);
+    formData.append("color", selectedColor);
+
+    mutate(formData);
+  };
+
   return (
     <div className="p-10">
       <div>
@@ -85,15 +111,17 @@ const ContactUsHeading = () => {
             <h2 className="text-2xl font-bold text-black text-center">
               Contact Us Heading
             </h2>
+
             <div className="space-y-2">
               <Label>Background Color</Label>
               <ColorPicker
                 selectedColor={selectedColor}
                 onColorChange={handleColorChange}
-                previousColor={formData.backgroundColor}
+                previousColor={selectedColor}
               />
             </div>
-            {/* title  */}
+
+            {/* title */}
             <FormField
               control={form.control}
               name="title"
@@ -109,10 +137,11 @@ const ContactUsHeading = () => {
                 </FormItem>
               )}
             />
-            {/* sub title  */}
+
+            {/* subtitle */}
             <FormField
               control={form.control}
-              name="subTitle"
+              name="subtitle"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-base font-bold text-black">
@@ -126,51 +155,47 @@ const ContactUsHeading = () => {
               )}
             />
 
-            {/* button  */}
+            {/* button name and url */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              {/* button name  */}
-              <div className="md:col-span-1">
-                <FormField
-                  control={form.control}
-                  name="buttonName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-base font-bold text-black">
-                        Button Name
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="Button Name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="md:col-span-1">
-                <FormField
-                  control={form.control}
-                  name="buttonUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-base font-bold text-black">
-                        Button Url
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="Button Url" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              <FormField
+                control={form.control}
+                name="button_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-base font-bold text-black">
+                      Button Name
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Button Name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="button_url"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-base font-bold text-black">
+                      Button URL
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Button URL" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
 
             <div className="pt-4">
               <Button
-                className="bg-blue-500 text-lg font-bold px-10 py-2"
                 type="submit"
+                className="bg-blue-500 text-lg font-bold px-10 py-2"
+                disabled={isPending}
               >
-                Submit
+                {isPending ? "Submitting..." : "Submit"}
               </Button>
             </div>
           </form>
