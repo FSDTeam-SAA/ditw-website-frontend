@@ -100,7 +100,7 @@ export default function Navbar() {
 
   
 
-  console.log(data?.data?.itemname1);
+  // console.log(data?.data?.itemname1);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),

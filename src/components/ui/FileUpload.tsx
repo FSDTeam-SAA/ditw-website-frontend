@@ -5,9 +5,9 @@ import { X } from "lucide-react";
 
 type FileUploadProps = {
   label: string;
-  file: File | null;
+  file: File | null ;
   setFile: (file: File | null) => void;
-  existingUrl?: string;
+  existingUrl?: string | null;
   type?: "image" | "video";
 };
 
