@@ -76,7 +76,7 @@ const ContactUsHeading = () => {
       ).then((res) => res.json()),
   });
 
-  console.log(data?.data.color)
+  // console.log(data?.data.color)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

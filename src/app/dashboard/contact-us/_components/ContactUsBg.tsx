@@ -25,10 +25,10 @@ const formSchema = z.object({
   title: z.string().min(2, {
     message: "Heading must be at least 2 characters.",
   }),
-  description: z.string().min(2, {
+  sub_title: z.string().min(2, {
     message: "Description must be at least 10 characters.",
   }),
-  backgroundColor: z.string().min(4, {
+  back_img: z.string().min(4, {
     message: "Please pick a background color.",
   }),
 });
@@ -43,20 +43,20 @@ const ContactUsBg = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
-      description: "",
-      backgroundColor: "",
+      sub_title: "",
+      back_img: "",
     },
   });
 
-  const handleColorChange = (backgroundColor: string) => {
-    setSelectedColor(backgroundColor);
-    form.setValue("backgroundColor", backgroundColor);
+  const handleColorChange = (back_img: string) => {
+    setSelectedColor(back_img);
+    form.setValue("back_img", back_img);
   };
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["management-it-support"],
     mutationFn: (formData: FormData) =>
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/services/support`, {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/footer`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -84,9 +84,9 @@ const ContactUsBg = () => {
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     const formData = new FormData();
     formData.append("title", values.title);
-    formData.append("description", values.description);
+    formData.append("sub_title", values.sub_title);
 
-    formData.append("backgroundColor", selectedColor);
+    formData.append("back_img", selectedColor);
     console.log(formData);
 
     mutate(formData);
@@ -125,7 +125,7 @@ const ContactUsBg = () => {
           <div className="mt-4">
                 <FormField
                   control={form.control}
-                  name="description"
+                  name="sub_title"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-base font-bold text-black">
