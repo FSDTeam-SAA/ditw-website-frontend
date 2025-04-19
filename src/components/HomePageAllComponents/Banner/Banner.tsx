@@ -9,11 +9,13 @@ type BannerProps = {
 const Banner : React.FC<BannerProps> = ({data}) => {
   if (!data) return null;
 
+  console.log(data.back_img)
+
   return (
     <div id="home">
       <div
         // style={{ backgroundImage: `url('/assets/banner.jpeg')` }}
-        style={{ backgroundImage: `url(${data?.back_img})` }}
+        style={{ backgroundImage: `url(${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/Banners/${data.back_img})` }}
         className="bg-cover bg-center bg-no-repeat w-full h-[500px] md:h-[800px] pl-5 md:pl-[54px] pr-5 md:pr-[84px]"
       >
         <div className="container">

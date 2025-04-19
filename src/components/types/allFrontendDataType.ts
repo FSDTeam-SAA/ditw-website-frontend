@@ -49,10 +49,34 @@ export type Address = {
     created_at: string;
     updated_at: string;
   };
+
+ export type aboutSecondPartDataType = {
+    id: number;
+    title1: string;
+    description1: string;
+    icon1: string;
+    title2: string;
+    description2: string;
+    icon2: string;
+    title3: string;
+    description3: string;
+    icon3: string;
+    title4: string;
+    description4: string;
+    icon4: string;
+    title5: string;
+    description5: string;
+    icon5: string;
+    img: string;
+    video: string;
+    created_at: string; // ISO date string
+    updated_at: string; // ISO date string
+  };
+  
   
   export type AllHomeDataResponse = {
     // home: any[];
-    // aboutsec2: any[]; 
+    aboutsec2: aboutSecondPartDataType[]; 
     address: Address[];
     banner: Banner[];
     // body1: any[];

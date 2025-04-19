@@ -51,9 +51,9 @@ const ManagedIt = () => {
   });
 
   const { mutate, isPending } = useMutation({
-    mutationKey: ["our contact"],
+    mutationKey: ["managed-it"],
     mutationFn: (formData: FormData) =>
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/ourcontact`, {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/managedservices/it`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

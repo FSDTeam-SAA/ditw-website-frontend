@@ -16,9 +16,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import FileUpload from "@/components/ui/FileUpload";
+import { useMutation } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
+import { toast } from "react-toastify";
 
 const formSchema = z.object({
-  heading: z.string().min(2, {
+  title: z.string().min(2, {
     message: "Heading must be at least 2 characters.",
   }),
   description: z.string().min(10, {
@@ -27,45 +30,61 @@ const formSchema = z.object({
 });
 
 const PoweredByMrpc = () => {
+  const session = useSession();
+    const token = (session?.data?.user as { token?: string })?.token;
+
   const [logo, setLogo] = useState<File | null>(null);
   const [image, setImage] = useState<File | null>(null);
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      heading: "",
+      title: "",
       description: "",
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsSubmitting(true);
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["powered-by-mrpc"],
+    mutationFn: (formData: FormData) =>
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/managedservices/poweredbymrpc`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      }).then((res) => res.json()),
 
-    // Create a complete form data object including files
-    const formData = {
-      ...values,
-      image: image
-        ? {
-            name: image.name,
-            type: image.type,
-            size: image.size,
-          }
-        : null,
-      logo: logo
-        ? {
-            name: logo.name,
-            type: logo.type,
-            size: logo.size,
-          }
-        : null,
-    };
+      onSuccess: (data) => {
+        if (!data?.success) {
+          toast.error(data.message || "Submission failed");
+          return;
+        }
+  
+        form.reset();
+        setImage(null);
+        setLogo(null);
+  
+        toast.success(data.message || "Submitted successfully!");
+      },
+  });
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    
+    const formData = new FormData();
+    formData.append("title", values.title);
+    formData.append("description", values.description);
+    if (logo) {
+      formData.append("logo", logo);
+    }
+    if (image) {
+      formData.append("image", image);
+    }
 
     // Log the complete form data to console
     console.log("Form submission data:", formData);
 
-    setIsSubmitting(false);
+    mutate(formData);
   }
 
   return (
@@ -86,7 +105,7 @@ const PoweredByMrpc = () => {
                 {/* Title */}
                 <FormField
                   control={form.control}
-                  name="heading"
+                  name="title"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-base font-bold text-black">
@@ -143,9 +162,9 @@ const PoweredByMrpc = () => {
               <Button
                 className="bg-blue-500 hover:bg-blue-600 text-lg font-bold px-10 py-2"
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isPending}
               >
-                {isSubmitting ? "Submitting..." : "Submit"}
+                {isPending ? "Submitting..." : "Submit"}
               </Button>
             </div>
           </form>

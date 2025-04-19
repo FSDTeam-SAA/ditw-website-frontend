@@ -16,10 +16,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import FileUpload from "@/components/ui/FileUpload";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import { useSession } from "next-auth/react";
 
 const formSchema = z.object({
   heading: z.string().min(2, {
     message: "heading must be at least 2 characters.",
+  }),
+  title: z.string().min(5, {
+    message: "Title must be at least 5 characters.",
   }),
   title1: z.string().min(5, {
     message: "Title must be at least 5 characters.",
@@ -39,85 +45,104 @@ const formSchema = z.object({
   title6: z.string().min(5, {
     message: "Title must be at least 5 characters.",
   }),
+  title7: z.string().min(5, {
+    message: "Title must be at least 5 characters.",
+  }),
 });
 
 const ManagedFeature = () => {
-  const [image1, setImage1] = useState<File | null>(null);
-  const [image2, setImage2] = useState<File | null>(null);
-  const [image3, setImage3] = useState<File | null>(null);
-  const [image4, setImage4] = useState<File | null>(null);
-  const [image5, setImage5] = useState<File | null>(null);
-  const [image6, setImage6] = useState<File | null>(null);
+  const session = useSession();
+  const token = (session?.data?.user as { token?: string })?.token;
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [icon, setIcon] = useState<File | null>(null);
+  const [icon1, setIcon1] = useState<File | null>(null);
+  const [icon2, setIcon2] = useState<File | null>(null);
+  const [icon3, setIcon3] = useState<File | null>(null);
+  const [icon4, setIcon4] = useState<File | null>(null);
+  const [icon5, setIcon5] = useState<File | null>(null);
+  const [icon6, setIcon6] = useState<File | null>(null);
+  const [icon7, setIcon7] = useState<File | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       heading: "",
+      title: "",
       title1: "",
       title2: "",
       title3: "",
       title4: "",
       title5: "",
       title6: "",
+      title7: "",
+    },
+  });
+
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["powered-by-mrpc"],
+    mutationFn: (formData: FormData) =>
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/managedservices/poweredbymrpc`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        }
+      ).then((res) => res.json()),
+
+    onSuccess: (data) => {
+      if (!data?.success) {
+        toast.error(data.message || "Submission failed");
+        return;
+      }
+
+      form.reset();
+
+      toast.success(data.message || "Submitted successfully!");
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsSubmitting(true);
-
-    // Create a complete form data object including files
-    const formData = {
-      ...values,
-      image1: image1
-        ? {
-            name: image1.name,
-            type: image1.type,
-            size: image1.size,
-          }
-        : null,
-      image2: image2
-        ? {
-            name: image2.name,
-            type: image2.type,
-            size: image2.size,
-          }
-        : null,
-      image3: image3
-        ? {
-            name: image3.name,
-            type: image3.type,
-            size: image3.size,
-          }
-        : null,
-      image4: image4
-        ? {
-            name: image4.name,
-            type: image4.type,
-            size: image4.size,
-          }
-        : null,
-      image5: image5
-        ? {
-            name: image5.name,
-            type: image5.type,
-            size: image5.size,
-          }
-        : null,
-      image6: image6
-        ? {
-            name: image6.name,
-            type: image6.type,
-            size: image6.size,
-          }
-        : null,
-    };
+    const formData = new FormData();
+    formData.append("heading", values.heading);
+    formData.append("title", values.title);
+    formData.append("title1", values.title1);
+    formData.append("title2", values.title2);
+    formData.append("title3", values.title3);
+    formData.append("title4", values.title4);
+    formData.append("title5", values.title5);
+    formData.append("title6", values.title6);
+    formData.append("title7", values.title7);
+    if (icon) {
+      formData.append("icon", icon);
+    }
+    if (icon1) {
+      formData.append("icon1", icon1);
+    }
+    if (icon2) {
+      formData.append("icon2", icon2);
+    }
+    if (icon3) {
+      formData.append("icon3", icon3);
+    }
+    if (icon4) {
+      formData.append("icon4", icon4);
+    }
+    if (icon5) {
+      formData.append("icon5", icon5);
+    }
+    if (icon6) {
+      formData.append("icon6", icon6);
+    }
+    if (icon7) {
+      formData.append("icon7", icon7);
+    }
 
     // Log the complete form data to console
     console.log("Form submission data:", formData);
-
-    setIsSubmitting(false);
+    mutate(formData);
   }
 
   return (
@@ -129,7 +154,7 @@ const ManagedFeature = () => {
             className="space-y-6 border shadow-lg p-10 rounded-lg"
           >
             <h2 className="text-2xl font-bold text-black text-center">
-              PROJECT MANAGEMENT
+              Managed Services Feature
             </h2>
             {/* heading  */}
             <FormField
@@ -147,178 +172,243 @@ const ManagedFeature = () => {
                 </FormItem>
               )}
             />
-            {/* first part  */}
-            <div>
-              <div>
-                <FileUpload
-                  type="image"
-                  label="Add Icon"
-                  file={image1}
-                  setFile={setImage1}
-                />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              <div className="md:col-span-1">
+                {/* first part  */}
+                <div>
+                  <div>
+                    <FileUpload
+                      type="image"
+                      label="Add Icon"
+                      file={icon}
+                      setFile={setIcon}
+                    />
+                  </div>
+                  <div className="pt-4">
+                    {/* title */}
+                    <FormField
+                      control={form.control}
+                      name="title"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-base font-bold text-black">
+                            Title
+                          </FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter a title" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+                {/* two part  */}
+                <div>
+                  <div>
+                    <FileUpload
+                      type="image"
+                      label="Add Icon"
+                      file={icon1}
+                      setFile={setIcon1}
+                    />
+                  </div>
+                  <div className="pt-4">
+                    {/* title */}
+                    <FormField
+                      control={form.control}
+                      name="title1"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-base font-bold text-black">
+                            Title
+                          </FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter a title" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+                {/* three part  */}
+                <div>
+                  <div>
+                    <FileUpload
+                      type="image"
+                      label="Add Icon"
+                      file={icon2}
+                      setFile={setIcon2}
+                    />
+                  </div>
+                  <div className="pt-4">
+                    {/* title */}
+                    <FormField
+                      control={form.control}
+                      name="title2"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-base font-bold text-black">
+                            Title
+                          </FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter a title" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+                {/* foure part  */}
+                <div>
+                  <div>
+                    <FileUpload
+                      type="image"
+                      label="Add Icon"
+                      file={icon3}
+                      setFile={setIcon3}
+                    />
+                  </div>
+                  <div className="pt-4">
+                    {/* title */}
+                    <FormField
+                      control={form.control}
+                      name="title3"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-base font-bold text-black">
+                            Title
+                          </FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter a title" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
               </div>
-              <div className="pt-4">
-                {/* title */}
-                <FormField
-                  control={form.control}
-                  name="title1"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-base font-bold text-black">
-                        Title
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter a title" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
-            {/* two part  */}
-            <div>
-              <div>
-                <FileUpload
-                  type="image"
-                  label="Add Icon"
-                  file={image2}
-                  setFile={setImage2}
-                />
-              </div>
-              <div className="pt-4">
-                {/* title */}
-                <FormField
-                  control={form.control}
-                  name="title2"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-base font-bold text-black">
-                        Title
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter a title" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
-            {/* three part  */}
-            <div>
-              <div>
-                <FileUpload
-                  type="image"
-                  label="Add Icon"
-                  file={image3}
-                  setFile={setImage3}
-                />
-              </div>
-              <div className="pt-4">
-                {/* title */}
-                <FormField
-                  control={form.control}
-                  name="title3"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-base font-bold text-black">
-                        Title
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter a title" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
-            {/* foure part  */}
-            <div>
-              <div>
-                <FileUpload
-                  type="image"
-                  label="Add Icon"
-                  file={image4}
-                  setFile={setImage4}
-                />
-              </div>
-              <div className="pt-4">
-                {/* title */}
-                <FormField
-                  control={form.control}
-                  name="title4"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-base font-bold text-black">
-                        Title
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter a title" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
-            {/* five part  */}
-            <div>
-              <div>
-                <FileUpload
-                  type="image"
-                  label="Add Icon"
-                  file={image5}
-                  setFile={setImage5}
-                />
-              </div>
-              <div className="pt-4">
-                {/* title */}
-                <FormField
-                  control={form.control}
-                  name="title5"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-base font-bold text-black">
-                        Title
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter a title" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
-            {/* six part  */}
-            <div>
-              <div>
-                <FileUpload
-                  type="image"
-                  label="Add Icon"
-                  file={image6}
-                  setFile={setImage6}
-                />
-              </div>
-              <div className="pt-4">
-                {/* title */}
-                <FormField
-                  control={form.control}
-                  name="title6"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-base font-bold text-black">
-                        Title
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter a title" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              <div className="md:col-span-1">
+                {/* five part  */}
+                <div>
+                  <div>
+                    <FileUpload
+                      type="image"
+                      label="Add Icon"
+                      file={icon4}
+                      setFile={setIcon4}
+                    />
+                  </div>
+                  <div className="pt-4">
+                    {/* title */}
+                    <FormField
+                      control={form.control}
+                      name="title4"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-base font-bold text-black">
+                            Title
+                          </FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter a title" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+                {/* six part  */}
+                <div>
+                  <div>
+                    <FileUpload
+                      type="image"
+                      label="Add Icon"
+                      file={icon5}
+                      setFile={setIcon5}
+                    />
+                  </div>
+                  <div className="pt-4">
+                    {/* title */}
+                    <FormField
+                      control={form.control}
+                      name="title5"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-base font-bold text-black">
+                            Title
+                          </FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter a title" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+                {/* seven part  */}
+                <div>
+                  <div>
+                    <FileUpload
+                      type="image"
+                      label="Add Icon"
+                      file={icon6}
+                      setFile={setIcon6}
+                    />
+                  </div>
+                  <div className="pt-4">
+                    {/* title */}
+                    <FormField
+                      control={form.control}
+                      name="title6"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-base font-bold text-black">
+                            Title
+                          </FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter a title" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+                {/* eight part  */}
+                <div>
+                  <div>
+                    <FileUpload
+                      type="image"
+                      label="Add Icon"
+                      file={icon7}
+                      setFile={setIcon7}
+                    />
+                  </div>
+                  <div className="pt-4">
+                    {/* title */}
+                    <FormField
+                      control={form.control}
+                      name="title7"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-base font-bold text-black">
+                            Title
+                          </FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter a title" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -326,9 +416,9 @@ const ManagedFeature = () => {
               <Button
                 className="bg-blue-500 hover:bg-blue-600 text-lg font-bold px-10 py-2"
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isPending}
               >
-                {isSubmitting ? "Submitting..." : "Submit"}
+                {isPending ? "Submitting..." : "Submit"}
               </Button>
             </div>
           </form>

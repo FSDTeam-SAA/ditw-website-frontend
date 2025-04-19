@@ -24,7 +24,7 @@ const HomePageAllComponents = () => {
     }).then((res)=>res.json()),
     enabled: !!token,
   })
-  console.log(data)
+  console.log("dfddd", data?.aboutsec2?.[0])
   return (
     <div>
       <section className="sticky top-0 z-50">
@@ -36,7 +36,7 @@ const HomePageAllComponents = () => {
       </section>
 
       <section>
-        <WeAre />
+        <WeAre data={data?.about?.[0]} aboutUsSecondData={data?.aboutsec2?.[0]}/>
       </section>
 
       <section>
