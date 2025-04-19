@@ -91,7 +91,6 @@ export default function Navbar() {
   const token = (session?.data?.user as { token?: string })?.token;
 
   const [logo, setLogo] = useState<File | null>(null);
-  const [back_img, setBackImage] = useState<File | null>(null);
   const [selectedColor, setSelectedColor] = useState<string>("#dddddd");
 
   const { data, isLoading, isError, error } = useQuery<NavbarResponse>({
@@ -109,6 +108,7 @@ export default function Navbar() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      back_img: "",
       itemname1: "",
       itemlink1: "",
       itemname2: "",
@@ -117,13 +117,14 @@ export default function Navbar() {
       itemlink3: "",
       itemname4: "",
       itemlink4: "",
-      back_img: "",
+      
     },
   });
 
   useEffect(() => {
     if (data?.data) {
       form.reset({
+        back_img: data.data.back_img || "",
         itemname1: data.data.itemname1 || "",
         itemlink1: data.data.itemlink1 || "",
         itemname2: data.data.itemname2 || "",
@@ -132,7 +133,7 @@ export default function Navbar() {
         itemlink3: data.data.itemlink3 || "",
         itemname4: data.data.itemname4 || "",
         itemlink4: data.data.itemlink4 || "",
-        back_img: data.data.back_img || "",
+        
       });
     }
   }, [data, form]);
@@ -141,6 +142,7 @@ export default function Navbar() {
     setSelectedColor(back_img);
     form.setValue("back_img", back_img);
   };
+
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["navbar-settings"],
@@ -160,8 +162,8 @@ export default function Navbar() {
       }
 
       form.reset();
+      setSelectedColor("");
       setLogo(null);
-      setBackImage(null);
 
       toast.success(data.message || "Submitted successfully!");
     },
@@ -175,7 +177,7 @@ export default function Navbar() {
     });
 
     if (logo) formData.append("logo", logo);
-    if (back_img) formData.append("back_img", back_img);
+    formData.append("back_img", selectedColor);
 
     console.log("form summitted successfully", formData);
 
@@ -210,14 +212,16 @@ export default function Navbar() {
               setFile={setLogo}
               existingUrl={data?.data?.logo}
             />
-            <div className="space-y-2">
-              <Label>Background Color</Label>
+            <div>
+          <Label className="text-base font-bold text-black">
+                Background Color
+              </Label>
               <ColorPicker
                 selectedColor={selectedColor}
                 onColorChange={handleColorChange}
                 previousColor={selectedColor}
               />
-            </div>
+          </div>
           </div>
 
           <h2 className="text-lg font-semibold pt-6">Header Menu Items</h2>

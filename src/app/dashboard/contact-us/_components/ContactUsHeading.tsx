@@ -36,7 +36,7 @@ const formSchema = z.object({
   button_url: z.string().min(2, {
     message: "Button URL must be at least 2 characters.",
   }),
-  color: z.string().min(4, {
+  color: z.string().min(6, {
     message: "Please pick a background color.",
   }),
 });
