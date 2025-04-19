@@ -14,11 +14,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FileUpload from "@/components/ui/FileUpload";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import Loading from "@/components/shared/Loading/Loading";
+import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
 
 const formSchema = z.object({
   heading: z.string().min(2, {
@@ -35,6 +37,22 @@ const formSchema = z.object({
   }),
 });
 
+type ContactDetailsResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    id: number;
+    heading: string;
+    email: string;
+    phone: string;
+    email_icon: string | null;
+    phone_icon: string | null;
+    copyright: string;
+    created_at: string; // ISO 8601 date string
+    updated_at: string; // ISO 8601 date string
+  };
+};
+
 const OurContact = () => {
   const session = useSession();
   const token = (session?.data?.user as { token?: string })?.token;
@@ -42,13 +60,37 @@ const OurContact = () => {
   const [email_icon, setEmailIcon] = useState<File | null>(null);
   const [phone_icon, setPhoneIcon] = useState<File | null>(null);
 
+  const { data, isLoading, isError, error } = useQuery<ContactDetailsResponse>({
+    queryKey: ["our contact"],
+    queryFn: () =>
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/ourcontact`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).then((res) => res.json()),
+  });
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       heading: "",
       email: "",
+      copyright : "",
+      phone : "",
     },
   });
+
+  useEffect(() => {
+    if (data?.data) {
+      form.reset({
+        heading: data.data.heading || "",
+        email: data.data.email || "",
+        copyright: data.data.copyright || "",
+        phone: data.data.phone || "",
+
+      });
+    }
+  }, [data, form]);
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["our contact"],
@@ -93,6 +135,14 @@ const OurContact = () => {
     // Log the complete form data to console
     console.log("Form submission data:", formData);
     mutate(formData);
+  }
+
+  if (isLoading) {
+    return <Loading />;
+  } else if (isError) {
+    <div className="w-full h-[500px]">
+      <ErrorContainer message={error?.message || "Something went Wrong"} />
+    </div>;
   }
 
   return (
@@ -151,6 +201,7 @@ const OurContact = () => {
                     label="Add Email Icon"
                     file={email_icon}
                     setFile={setEmailIcon}
+                    existingUrl={data?.data?.email_icon}
                   />
                 </div>
               </div>
@@ -179,6 +230,7 @@ const OurContact = () => {
                     label="Add Phone Icon"
                     file={phone_icon}
                     setFile={setPhoneIcon}
+                    existingUrl={data?.data?.phone_icon}
                   />
                 </div>
               </div>

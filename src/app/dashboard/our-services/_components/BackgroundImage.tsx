@@ -4,14 +4,42 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import FileUpload from "@/components/ui/FileUpload";
 import { useSession } from "next-auth/react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import Loading from "@/components/shared/Loading/Loading";
+import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
+
+type BackgroundImageResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    id: number;
+    back_img: string;
+    created_at: string; // ISO 8601 date string
+    updated_at: string; // ISO 8601 date string
+  };
+};
 
 const BackgroundImage = () => {
   const { data: session } = useSession();
   const token = (session?.user as { token?: string })?.token;
   // console.log(token)
   const [back_img, setBack_img] = useState<File | null>(null);
+
+  const { data, isLoading, isError, error } = useQuery<BackgroundImageResponse>(
+    {
+      queryKey: ["services-background"],
+      queryFn: () =>
+        fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/services/background`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        ).then((res) => res.json()),
+    }
+  );
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["background-image"],
@@ -51,6 +79,14 @@ const BackgroundImage = () => {
     console.log("Form submission data:", formData);
   };
 
+  if (isLoading) {
+    return <Loading />;
+  } else if (isError) {
+    <div className="w-full h-[500px]">
+      <ErrorContainer message={error?.message || "Something went Wrong"} />
+    </div>;
+  }
+
   return (
     <div className="p-10">
       <form
@@ -67,6 +103,7 @@ const BackgroundImage = () => {
             label="Add Background Image"
             file={back_img}
             setFile={setBack_img}
+            existingUrl={data?.data?.back_img}
           />
         </div>
 

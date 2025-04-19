@@ -14,12 +14,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FileUpload from "@/components/ui/FileUpload";
 import { Textarea } from "@/components/ui/textarea";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
+import Loading from "@/components/shared/Loading/Loading";
+import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -33,6 +35,22 @@ const formSchema = z.object({
   }),
 });
 
+type ManagedITServicesResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    id: number;
+    title: string;
+    description1: string;
+    description2: string;
+    img: string;
+    icon1: string;
+    icon2: string;
+    created_at: string; // ISO 8601 date string
+    updated_at: string; // ISO 8601 date string
+  };
+};
+
 const ManagedIt = () => {
   const session = useSession();
   const token = (session?.data?.user as { token?: string })?.token;
@@ -40,6 +58,17 @@ const ManagedIt = () => {
   const [img, setImage] = useState<File | null>(null);
   const [icon1, setIcon1] = useState<File | null>(null);
   const [icon2, setIcon2] = useState<File | null>(null);
+
+
+  const { data, isLoading, isError, error } = useQuery<ManagedITServicesResponse>({
+    queryKey: ["managed it"],
+    queryFn: () =>
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/managedservices/it`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).then((res) => res.json()),
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -49,6 +78,16 @@ const ManagedIt = () => {
       description2: "",
     },
   });
+
+  useEffect(() => {
+      if (data?.data) {
+        form.reset({
+          title: data.data.title || "",
+          description1: data.data.description1 || "",
+          description2: data.data.description2 || "",
+        });
+      }
+    }, [data, form]);
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["managed-it"],
@@ -94,6 +133,14 @@ const ManagedIt = () => {
     // Log the complete form data to console
     console.log("Form submission data:", formData);
     mutate(formData);
+  }
+
+  if (isLoading) {
+    return <Loading />;
+  } else if (isError) {
+    <div className="w-full h-[500px]">
+      <ErrorContainer message={error?.message || "Something went Wrong"} />
+    </div>;
   }
 
   return (
@@ -181,6 +228,7 @@ const ManagedIt = () => {
                     label="Add Image"
                     file={img}
                     setFile={setImage}
+                    existingUrl={data?.data?.img}
                   />
                 </div>
                 <div className="pt-3">
@@ -189,6 +237,7 @@ const ManagedIt = () => {
                     label="Frist Icon"
                     file={icon1}
                     setFile={setIcon1}
+                    existingUrl={data?.data?.icon1}
                   />
                 </div>
                 <div className="pt-3">
@@ -197,6 +246,7 @@ const ManagedIt = () => {
                     label="Second Icon"
                     file={icon2}
                     setFile={setIcon2}
+                    existingUrl={data?.data?.icon2}
                   />
                 </div>
               </div>

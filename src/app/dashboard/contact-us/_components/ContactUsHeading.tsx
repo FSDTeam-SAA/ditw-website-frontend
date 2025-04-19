@@ -16,10 +16,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { ColorPicker } from "@/components/ui/ColorPicker";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import Loading from "@/components/shared/Loading/Loading";
+import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -39,11 +41,42 @@ const formSchema = z.object({
   }),
 });
 
+type ContactInfoResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    id: number;
+    color: string;
+    title: string;
+    subtitle: string;
+    button_name: string;
+    button_url: string;
+    created_at: string; // ISO 8601 date string
+    updated_at: string; // ISO 8601 date string
+  };
+};
+
+
 const ContactUsHeading = () => {
   const session = useSession();
   const token = (session?.data?.user as { token?: string })?.token;
 
   const [selectedColor, setSelectedColor] = useState<string>("");
+
+  const { data, isLoading, isError, error } = useQuery<ContactInfoResponse>({
+    queryKey: ["contact-us-heading"],
+    queryFn: () =>
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contact`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      ).then((res) => res.json()),
+  });
+
+  console.log(data?.data.color)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -55,6 +88,18 @@ const ContactUsHeading = () => {
       color: "",
     },
   });
+
+  useEffect(() => {
+      if (data?.data) {
+        form.reset({
+          title: data.data.title || "",
+          subtitle: data.data.subtitle || "",
+          button_name: data.data.button_name || "",
+          button_url: data.data.button_url || "",
+          color: data.data.color || "",
+        });
+      }
+    }, [data, form]);
 
   const handleColorChange = (color: string) => {
     setSelectedColor(color);
@@ -99,6 +144,14 @@ const ContactUsHeading = () => {
 
     mutate(formData);
   };
+
+  if (isLoading) {
+    return <Loading />;
+  } else if (isError) {
+    <div className="w-full h-[500px]">
+      <ErrorContainer message={error?.message || "Something went Wrong"} />
+    </div>;
+  }
 
   return (
     <div className="p-10">

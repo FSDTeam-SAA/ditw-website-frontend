@@ -22,6 +22,8 @@ import FileUpload from "@/components/ui/FileUpload";
 import { toast } from "react-toastify";
 import Loading from "@/components/shared/Loading/Loading";
 import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
+import { Label } from "@/components/ui/label";
+import { ColorPicker } from "@/components/ui/ColorPicker";
 
 // data type
 type NavbarResponse = {
@@ -77,6 +79,9 @@ const formSchema = z.object({
     .refine((val) => !val || val.includes("#"), {
       message: "Item link must include a # character",
     }),
+  back_img: z.string().min(6, {
+    message: "Please pick a background color.",
+  }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -87,6 +92,7 @@ export default function Navbar() {
 
   const [logo, setLogo] = useState<File | null>(null);
   const [back_img, setBackImage] = useState<File | null>(null);
+  const [selectedColor, setSelectedColor] = useState<string>("#dddddd");
 
   const { data, isLoading, isError, error } = useQuery<NavbarResponse>({
     queryKey: ["navbar"],
@@ -97,8 +103,6 @@ export default function Navbar() {
         },
       }).then((res) => res.json()),
   });
-
-  
 
   // console.log(data?.data?.itemname1);
 
@@ -113,6 +117,7 @@ export default function Navbar() {
       itemlink3: "",
       itemname4: "",
       itemlink4: "",
+      back_img: "",
     },
   });
 
@@ -127,9 +132,15 @@ export default function Navbar() {
         itemlink3: data.data.itemlink3 || "",
         itemname4: data.data.itemname4 || "",
         itemlink4: data.data.itemlink4 || "",
+        back_img: data.data.back_img || "",
       });
     }
   }, [data, form]);
+
+  const handleColorChange = (back_img: string) => {
+    setSelectedColor(back_img);
+    form.setValue("back_img", back_img);
+  };
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["navbar-settings"],
@@ -171,14 +182,13 @@ export default function Navbar() {
     mutate(formData);
   };
 
-  if(isLoading){
-    return <Loading/>
-  }
-  else if (isError) {
+  if (isLoading) {
+    return <Loading />;
+  } else if (isError) {
     <div className="w-full h-[500px]">
-        <ErrorContainer message={error?.message || "Something went Wrong"} />
-      </div>
-  } 
+      <ErrorContainer message={error?.message || "Something went Wrong"} />
+    </div>;
+  }
   // else if (data && data.data && data.data.length === 0) {
   //   <NotFound message="Oops! No data available. Modify your filters or check your internet connection." />
   // }
@@ -200,13 +210,14 @@ export default function Navbar() {
               setFile={setLogo}
               existingUrl={data?.data?.logo}
             />
-            <FileUpload
-              type="image"
-              label="Add Background Image"
-              file={back_img}
-              setFile={setBackImage}
-              existingUrl={data?.data?.back_img}
-            />
+            <div className="space-y-2">
+              <Label>Background Color</Label>
+              <ColorPicker
+                selectedColor={selectedColor}
+                onColorChange={handleColorChange}
+                previousColor={selectedColor}
+              />
+            </div>
           </div>
 
           <h2 className="text-lg font-semibold pt-6">Header Menu Items</h2>
@@ -218,7 +229,9 @@ export default function Navbar() {
                 name={`itemname${i}` as keyof FormValues}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-base font-bold text-black">Item Name {i}</FormLabel>
+                    <FormLabel className="text-base font-bold text-black">
+                      Item Name {i}
+                    </FormLabel>
                     <FormControl>
                       <Input placeholder={`Item name ${i}`} {...field} />
                     </FormControl>
@@ -231,7 +244,9 @@ export default function Navbar() {
                 name={`itemlink${i}` as keyof FormValues}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-base font-bold text-black">Item Link {i}</FormLabel>
+                    <FormLabel className="text-base font-bold text-black">
+                      Item Link {i}
+                    </FormLabel>
                     <FormControl>
                       <Input placeholder={`#itemlink${i}`} {...field} />
                     </FormControl>

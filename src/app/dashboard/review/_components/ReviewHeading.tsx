@@ -14,13 +14,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FileUpload from "@/components/ui/FileUpload";
 import { useSession } from "next-auth/react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import { ColorPicker } from "@/components/ui/ColorPicker";
+import Loading from "@/components/shared/Loading/Loading";
+import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -31,12 +33,36 @@ const formSchema = z.object({
   }),
 });
 
+type CustomerFeedbackResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    id: number;
+    title: string;
+    back_color: string;
+    img: string | null;
+    created_at: string; // ISO 8601 timestamp
+    updated_at: string; // ISO 8601 timestamp
+  };
+};
+
 const ReviewHeading = () => {
   const { data: session } = useSession();
   const [selectedColor, setSelectedColor] = useState<string>("");
-  const [icon, setIcon] = useState<File | null>(null);
+  const [img, setImage] = useState<File | null>(null);
 
   const token = (session?.user as { token?: string })?.token;
+
+  const { data, isLoading, isError, error } =
+    useQuery<CustomerFeedbackResponse>({
+      queryKey: ["review heading"],
+      queryFn: () =>
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/review/heading`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }).then((res) => res.json()),
+    });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -45,6 +71,15 @@ const ReviewHeading = () => {
       backgroundColor: "",
     },
   });
+
+  useEffect(() => {
+    if (data?.data) {
+      form.reset({
+        title: data.data.title || "",
+        backgroundColor: data.data.back_color || "",
+      });
+    }
+  }, [data, form]);
 
   const handleColorChange = (color: string) => {
     setSelectedColor(color);
@@ -72,7 +107,7 @@ const ReviewHeading = () => {
       }
       form.reset();
       setSelectedColor("");
-      setIcon(null);
+      setImage(null);
       toast.success(data.message, {
         position: "top-right",
         richColors: true,
@@ -82,16 +117,24 @@ const ReviewHeading = () => {
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     const formData = new FormData();
-    if (icon) {
-      formData.append("icon", icon);
+    if (img) {
+      formData.append("img", img);
     }
     formData.append("title", values.title);
 
     formData.append("backgroundColor", values.backgroundColor);
-    console.log(formData)
+    console.log(formData);
 
     mutate(formData);
   };
+
+  if (isLoading) {
+    return <Loading />;
+  } else if (isError) {
+    <div className="w-full h-[500px]">
+      <ErrorContainer message={error?.message || "Something went Wrong"} />
+    </div>;
+  }
 
   return (
     <div className="p-10">
@@ -123,7 +166,9 @@ const ReviewHeading = () => {
               />
 
               <div className="pt-4">
-                <Label className="text-base font-bold text-black">Background Color</Label>
+                <Label className="text-base font-bold text-black">
+                  Background Color
+                </Label>
                 <ColorPicker
                   selectedColor={selectedColor}
                   onColorChange={handleColorChange}
@@ -136,8 +181,9 @@ const ReviewHeading = () => {
               <FileUpload
                 type="image"
                 label="Add Icon"
-                file={icon}
-                setFile={setIcon}
+                file={img}
+                setFile={setImage}
+                existingUrl={data?.data?.img}
               />
             </div>
           </div>
