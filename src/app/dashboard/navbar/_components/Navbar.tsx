@@ -15,11 +15,34 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { toast } from "sonner";
-import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import FileUpload from "@/components/ui/FileUpload";
+import { toast } from "react-toastify";
+import Loading from "@/components/shared/Loading/Loading";
+import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
+
+// data type
+type NavbarResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    id: number;
+    logo: string; // URL to logo image
+    back_img: string; // URL to background image
+    itemname1: string;
+    itemlink1: string;
+    itemname2: string;
+    itemlink2: string;
+    itemname3: string;
+    itemlink3: string;
+    itemname4: string;
+    itemlink4: string;
+    created_at: string; // ISO date string
+    updated_at: string; // ISO date string
+  };
+};
 
 // ✅ Zod Schema with optional fields properly validated
 const formSchema = z.object({
@@ -59,11 +82,25 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export default function Navbar() {
-  const { data } = useSession();
-  const token = (data?.user as { token?: string })?.token || "";
+  const session = useSession();
+  const token = (session?.data?.user as { token?: string })?.token;
 
   const [logo, setLogo] = useState<File | null>(null);
   const [back_img, setBackImage] = useState<File | null>(null);
+
+  const { data, isLoading, isError, error } = useQuery<NavbarResponse>({
+    queryKey: ["navbar"],
+    queryFn: () =>
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/navbar`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).then((res) => res.json()),
+  });
+
+  
+
+  // console.log(data?.data?.itemname1);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -79,6 +116,21 @@ export default function Navbar() {
     },
   });
 
+  useEffect(() => {
+    if (data?.data) {
+      form.reset({
+        itemname1: data.data.itemname1 || "",
+        itemlink1: data.data.itemlink1 || "",
+        itemname2: data.data.itemname2 || "",
+        itemlink2: data.data.itemlink2 || "",
+        itemname3: data.data.itemname3 || "",
+        itemlink3: data.data.itemlink3 || "",
+        itemname4: data.data.itemname4 || "",
+        itemlink4: data.data.itemlink4 || "",
+      });
+    }
+  }, [data, form]);
+
   const { mutate, isPending } = useMutation({
     mutationKey: ["navbar-settings"],
     mutationFn: (formData: FormData) =>
@@ -92,19 +144,15 @@ export default function Navbar() {
 
     onSuccess: (data) => {
       if (!data?.success) {
-        toast.error(data.message || "Submission failed", {
-          position: "top-right",
-          richColors: true,
-        });
+        toast.error(data.message || "Submission failed");
         return;
       }
 
       form.reset();
-      
-      toast.success(data.message || "Submitted successfully!", {
-        position: "top-right",
-        richColors: true,
-      });
+      setLogo(null);
+      setBackImage(null);
+
+      toast.success(data.message || "Submitted successfully!");
     },
   });
 
@@ -118,10 +166,22 @@ export default function Navbar() {
     if (logo) formData.append("logo", logo);
     if (back_img) formData.append("back_img", back_img);
 
-    console.log("form summitted successfully", formData)
+    console.log("form summitted successfully", formData);
 
     mutate(formData);
   };
+
+  if(isLoading){
+    return <Loading/>
+  }
+  else if (isError) {
+    <div className="w-full h-[500px]">
+        <ErrorContainer message={error?.message || "Something went Wrong"} />
+      </div>
+  } 
+  // else if (data && data.data && data.data.length === 0) {
+  //   <NotFound message="Oops! No data available. Modify your filters or check your internet connection." />
+  // }
 
   return (
     <div className="p-10">
@@ -138,12 +198,14 @@ export default function Navbar() {
               label="Add Logo"
               file={logo}
               setFile={setLogo}
+              existingUrl={data?.data?.logo}
             />
             <FileUpload
               type="image"
               label="Add Background Image"
               file={back_img}
               setFile={setBackImage}
+              existingUrl={data?.data?.back_img}
             />
           </div>
 
@@ -156,7 +218,7 @@ export default function Navbar() {
                 name={`itemname${i}` as keyof FormValues}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Item Name {i}</FormLabel>
+                    <FormLabel className="text-base font-bold text-black">Item Name {i}</FormLabel>
                     <FormControl>
                       <Input placeholder={`Item name ${i}`} {...field} />
                     </FormControl>
@@ -169,7 +231,7 @@ export default function Navbar() {
                 name={`itemlink${i}` as keyof FormValues}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Item Link {i}</FormLabel>
+                    <FormLabel className="text-base font-bold text-black">Item Link {i}</FormLabel>
                     <FormControl>
                       <Input placeholder={`#itemlink${i}`} {...field} />
                     </FormControl>

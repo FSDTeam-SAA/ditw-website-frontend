@@ -16,10 +16,31 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useSession } from "next-auth/react";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import FileUpload from "@/components/ui/FileUpload";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import Loading from "@/components/shared/Loading/Loading";
+import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
+
+
+type BannerResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    id: number;
+    heading: string;
+    title: string;
+    subtitle: string;
+    description: string;
+    button_name: string;
+    button_url: string;
+    back_img: string | null;
+    created_at: string;
+    updated_at: string;
+  };
+};
+
 
 const formSchema = z.object({
   heading: z.string().min(2, {
@@ -45,6 +66,18 @@ const Banner = () => {
   const token = (session?.data?.user as { token?: string })?.token;
   console.log(token);
 
+   const { data, isLoading, isError, error } = useQuery<BannerResponse>({
+      queryKey: ["banner"],
+      queryFn: () =>
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/banner`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }).then((res) => res.json()),
+    });
+
+    console.log(data?.data)
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -55,6 +88,18 @@ const Banner = () => {
       button_url: "",
     },
   });
+
+  useEffect(() => {
+    if (data?.data) {
+      form.reset({
+        heading: data.data.heading || "",
+        title: data.data.title || "",
+        description: data.data.description || "",
+        button_name: data.data.button_name || "",
+        button_url: data.data.button_url || "",
+      });
+    }
+  }, [data, form]);
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["banner"],
@@ -67,21 +112,19 @@ const Banner = () => {
         body: formData,
       }).then((res) => res.json()),
 
-    onSuccess: (data) => {
-      if (!data?.success) {
-        toast.error(data.message, {
-          position: "top-right",
-          richColors: true,
-        });
-        return;
-      }
-      form.reset();
-      toast.success(data.message, {
-        position: "top-right",
-        richColors: true,
-      });
-    },
-  });
+      onSuccess: (data) => {
+        if (!data?.success) {
+          toast.error(data.message || "Submission failed");
+          return;
+        }
+  
+        form.reset();
+        setBack_img(null);
+  
+        toast.success(data.message || "Submitted successfully!");
+      },
+    });
+  
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -100,6 +143,15 @@ const Banner = () => {
 
     mutate(formData);
   }
+
+  if(isLoading){
+    return <Loading/>
+  }
+  else if (isError) {
+    <div className="w-full h-[500px]">
+        <ErrorContainer message={error?.message || "Something went Wrong"} />
+      </div>
+  } 
   return (
     <div className="p-10">
       <div>
@@ -210,6 +262,7 @@ const Banner = () => {
                 label="Add Background Image"
                 file={back_img}
                 setFile={setBack_img}
+                existingUrl={data?.data?.back_img} 
               />
             </div>
 
