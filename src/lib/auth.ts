@@ -15,11 +15,44 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
+      // async authorize(credentials) {
+      //   if (!credentials?.email || !credentials?.password) {
+      //     throw new Error("Please enter email and password");
+      //   }
+
+      //   try {
+      //     const res = await fetch(`${process.env.BACKEND_URL}/api/login`, {
+      //       method: "POST",
+      //       headers: { "Content-Type": "application/json" },
+      //       body: JSON.stringify({
+      //         email: credentials.email,
+      //         password: credentials.password,
+      //       }),
+      //     });
+
+      //     const data = await res.json();
+      //     console.log("Auth API Response:", data);
+
+      //     // if (!res.ok || !data?.user || !data?.user?.id || !data?.token) {
+      //     //   throw new Error(data.message || "Invalid credentials");
+      //     // }
+
+      //     return {
+      //       id: data?.id,
+      //       name: data?.name,
+      //       email: data?.email,
+      //       token: data?.token,
+      //     };
+      //   } catch (error) {
+      //     console.error("Authentication error:", error);
+      //     throw new Error("Authentication failed. Please try again.");
+      //   }
+      // },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Please enter email and password");
         }
-
+      
         try {
           const res = await fetch(`${process.env.BACKEND_URL}/api/login`, {
             method: "POST",
@@ -29,14 +62,15 @@ export const authOptions: NextAuthOptions = {
               password: credentials.password,
             }),
           });
-
+      
           const data = await res.json();
           console.log("Auth API Response:", data);
-
-          // if (!res.ok || !data?.user || !data?.user?.id || !data?.token) {
-          //   throw new Error(data.message || "Invalid credentials");
-          // }
-
+      
+          // Check if token exists (login successful)
+          if (!res.ok || !data?.token) {
+            throw new Error(data?.message || "Invalid email or password");
+          }
+      
           return {
             id: data?.id,
             name: data?.name,
@@ -45,9 +79,11 @@ export const authOptions: NextAuthOptions = {
           };
         } catch (error) {
           console.error("Authentication error:", error);
-          throw new Error("Authentication failed. Please try again.");
+          throw new Error("Invalid email or password");
         }
       },
+      
+
     }),
   ],
   callbacks: {

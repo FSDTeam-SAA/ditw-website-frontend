@@ -15,6 +15,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useSession } from "next-auth/react";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -32,6 +35,9 @@ const formSchema = z.object({
 });
 
 const WhyChooseUs = () => {
+  const session = useSession();
+  const token = (session?.data?.user as { token?: string })?.token;
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -42,9 +48,42 @@ const WhyChooseUs = () => {
     },
   });
 
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["banner"],
+    mutationFn: (formData: FormData) =>
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/managedservices/whychooseus`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        }
+      ).then((res) => res.json()),
+
+    onSuccess: (data) => {
+      if (!data?.success) {
+        toast.error(data.message || "Submission failed");
+        return;
+      }
+
+      form.reset();
+
+      toast.success(data.message || "Submitted successfully!");
+    },
+  });
+
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    const formData = new FormData();
+
+    formData.append("title", values.title);
+    formData.append("description", values.description);
+    formData.append("button_name", values.buttonName);
+    formData.append("button_url", values.buttonUrl);
+    console.log("FormData Submitted Successfully", formData);
+    mutate(formData);
   }
   return (
     <div className="px-10 pb-10">
@@ -135,10 +174,11 @@ const WhyChooseUs = () => {
 
             <div className="pt-4">
               <Button
+                disabled={isPending}
                 className="bg-blue-500 text-lg font-bold px-10 py-2"
                 type="submit"
               >
-                Submit
+                {isPending ? "Submitting..." : "Submit"}
               </Button>
             </div>
           </form>

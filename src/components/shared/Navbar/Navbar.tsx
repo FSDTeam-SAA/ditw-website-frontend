@@ -52,7 +52,7 @@ const Navbar: React.FC<NavbarProps> = ({ data }) => {
           <Link href="/">
             <Image
               // src="/assets/logo.png"
-              src={data?.logo?.startsWith("http") ? data?.logo : `/assets/logo.png`}
+              src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/Navbars/${data?.logo}`}
               alt="nav logo"
               width={235}
               height={90}
@@ -67,29 +67,29 @@ const Navbar: React.FC<NavbarProps> = ({ data }) => {
             <li className="text-sm lg:text-base font-semibold text-black leading-normal cursor-pointer">
               {/* <Link href="#home"> */}
               <Link href={data?.itemlink1}>
-              {/* Home */} 
-              {data?.itemname1}
+                {/* Home */}
+                {data?.itemname1}
               </Link>
             </li>
             <li className="text-sm lg:text-base font-semibold text-black leading-normal cursor-pointer">
               {/* <Link href="#about_us">  */}
-              <Link href={data?.itemname2}> 
-              {/* About Us */}
-              {data?.itemname2}
+              <Link href={data?.itemname2}>
+                {/* About Us */}
+                {data?.itemname2}
               </Link>
             </li>
             <li className="text-sm lg:text-base font-semibold text-black leading-normal cursor-pointer">
               {/* <Link href="#services"> */}
               <Link href={data?.itemlink3}>
-              {/* Services */}
-              {data?.itemname3}
+                {/* Services */}
+                {data?.itemname3}
               </Link>
             </li>
             <li className="text-sm lg:text-base font-semibold text-black leading-normal cursor-pointer">
               {/* <Link href="#contact_us"> */}
               <Link href={data?.itemname4}>
-              {/* Contact Us */}
-              {data?.itemname4}
+                {/* Contact Us */}
+                {data?.itemname4}
               </Link>
             </li>
           </ul>
@@ -124,7 +124,7 @@ const Navbar: React.FC<NavbarProps> = ({ data }) => {
         >
           <div className="flex justify-between items-center p-4 border-b">
             <Image
-              src="/assets/logo.png"
+              src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/Navbars/${data?.logo}`}
               alt="nav logo"
               width={160}
               height={60}
@@ -141,40 +141,16 @@ const Navbar: React.FC<NavbarProps> = ({ data }) => {
           <div className="h-full overflow-y-auto">
             <ul className="flex flex-col items-center gap-8 p-8">
               <li className="text-base font-semibold text-black leading-normal cursor-pointer w-full text-center">
-                <Link
-                  href="#home"
-                  onClick={() => setIsOpen(false)}
-                  className="block w-full py-2"
-                >
-                  Home
-                </Link>
+                <Link href={data?.itemlink1}>{data?.itemname1}</Link>
               </li>
               <li className="text-base font-semibold text-black leading-normal cursor-pointer w-full text-center">
-                <Link
-                  href="#about_us"
-                  onClick={() => setIsOpen(false)}
-                  className="block w-full py-2"
-                >
-                  About Us
-                </Link>
+                <Link href={data?.itemlink2}>{data?.itemname2}</Link>
               </li>
               <li className="text-base font-semibold text-black leading-normal cursor-pointer w-full text-center">
-                <Link
-                  href="#services"
-                  onClick={() => setIsOpen(false)}
-                  className="block w-full py-2"
-                >
-                  Services
-                </Link>
+                <Link href={data?.itemlink3}>{data?.itemname3}</Link>
               </li>
               <li className="text-base font-semibold text-black leading-normal cursor-pointer w-full text-center">
-                <Link
-                  href="#contact_us"
-                  onClick={() => setIsOpen(false)}
-                  className="block w-full py-2"
-                >
-                  Contact Us
-                </Link>
+                <Link href={data?.itemlink4}>{data?.itemname4}</Link>
               </li>
             </ul>
           </div>

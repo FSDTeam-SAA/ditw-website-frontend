@@ -18,42 +18,42 @@ import { useState } from "react";
 import FileUpload from "@/components/ui/FileUpload";
 import { useMutation } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 const formSchema = z.object({
   name: z.string().min(2, {
     message: "Heading must be at least 2 characters.",
   }),
-  reviewContent: z.string().min(10, {
+  content: z.string().min(10, {
     message: "First Description must be at least 10 characters.",
   }),
-  rating: z
+  star: z
     .number({
       required_error: "Rating is required",
       invalid_type_error: "Rating must be a number",
     })
-    .min(1, "Minimum rating is 1")
-    .max(5, "Maximum rating is 5"),
+    .min(1, "Minimum star is 1")
+    .max(5, "Maximum star is 5"),
 });
 
 const ReviewCart = () => {
-   const session = useSession();
-    const token = (session?.data?.user as { token?: string })?.token;
-    console.log(token);
+  const session = useSession();
+  const token = (session?.data?.user as { token?: string })?.token;
+  console.log(token);
 
-  const [image, setImage] = useState<File | null>(null);
+  const [back_img, setImage] = useState<File | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      reviewContent: "",
-      rating : 1,
+      content: "",
+      star: 1,
     },
   });
 
   const { mutate, isPending } = useMutation({
-    mutationKey: ["banner"],
+    mutationKey: ["review-content"],
     mutationFn: (formData: FormData) =>
       fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/review/content`, {
         method: "POST",
@@ -65,36 +65,29 @@ const ReviewCart = () => {
 
     onSuccess: (data) => {
       if (!data?.success) {
-        toast.error(data.message, {
-          position: "top-right",
-          richColors: true,
-        });
+        toast.error(data.message || "Submission failed");
         return;
       }
+
       form.reset();
-      toast.success(data.message, {
-        position: "top-right",
-        richColors: true,
-      });
+
+      toast.success(data.message || "Submitted successfully!");
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-
     const formData = new FormData();
 
     formData.append("name", values.name);
-    formData.append("reviewContent", values.reviewContent);
-    formData.append("rating", values.rating.toString())
-    if(image){
-      formData.append("image", image)
+    formData.append("content", values.content);
+    formData.append("star", values.star.toString());
+    if (back_img) {
+      formData.append("back_img", back_img);
     }
-
-
 
     // Log the complete form data to console
     console.log("Form submission data:", formData);
-    mutate(formData)
+    mutate(formData);
   }
 
   return (
@@ -132,7 +125,7 @@ const ReviewCart = () => {
               <div className="md:col-span-1">
                 <FormField
                   control={form.control}
-                  name="reviewContent"
+                  name="content"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-base font-bold text-black">
@@ -154,7 +147,7 @@ const ReviewCart = () => {
             <div>
               <FormField
                 control={form.control}
-                name="rating"
+                name="star"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Rating (1 to 5)</FormLabel>
@@ -163,7 +156,7 @@ const ReviewCart = () => {
                         type="number"
                         min={1}
                         max={5}
-                        placeholder="Enter a rating"
+                        placeholder="Enter a star"
                         {...field}
                         value={field.value ?? ""}
                         onChange={(e) => field.onChange(Number(e.target.value))}
@@ -175,12 +168,12 @@ const ReviewCart = () => {
               />
             </div>
 
-            {/* image part  */}
+            {/* back_img part  */}
             <div>
               <FileUpload
                 type="image"
                 label="Add Background Image"
-                file={image}
+                file={back_img}
                 setFile={setImage}
               />
             </div>
