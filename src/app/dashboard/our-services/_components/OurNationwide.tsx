@@ -16,8 +16,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useSession } from "next-auth/react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import Loading from "@/components/shared/Loading/Loading";
+import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
+import { useEffect } from "react";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -40,10 +43,37 @@ const formSchema = z.object({
   }),
 });
 
+type ServiceHeadingResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    id: number;
+    title: string;
+    subtitle: string;
+    description: string;
+    button_title: string;
+    button_name: string;
+    button_url: string;
+    created_at: string; // ISO 8601 date string
+    updated_at: string; // ISO 8601 date string
+  };
+};
+
+
 const OurNationwide = () => {
   const session = useSession();
   const token = (session?.data?.user as { token?: string })?.token;
   console.log(token);
+
+  const { data, isLoading, isError, error } = useQuery<ServiceHeadingResponse>({
+      queryKey: ["our-service-heading"],
+      queryFn: () =>
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/services/heading`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }).then((res) => res.json()),
+    });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -56,6 +86,19 @@ const OurNationwide = () => {
       button_url: "",
     },
   });
+
+   useEffect(() => {
+        if (data?.data) {
+          form.reset({
+            title: data.data.title || "",
+            subtitle: data.data.subtitle || "",
+            description: data.data.description || "",
+            button_title: data.data.button_title || "",
+            button_name: data.data.button_name || "",
+            button_url: data.data.button_url || "",
+          });
+        }
+      }, [data, form]);
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["our-nationwide"],
@@ -98,6 +141,14 @@ const OurNationwide = () => {
     console.log(values);
 
     mutate(formData);
+  }
+
+  if (isLoading) {
+    return <Loading />;
+  } else if (isError) {
+    <div className="w-full h-[500px]">
+      <ErrorContainer message={error?.message || "Something went Wrong"} />
+    </div>;
   }
   return (
     <div className="p-10">

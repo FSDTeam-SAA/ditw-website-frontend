@@ -14,7 +14,7 @@ type weAreProps = {
 };
 
 const WeAre: React.FC<weAreProps> = ({ data, aboutUsSecondData }) => {
-  console.log("dfdf", aboutUsSecondData)
+  console.log("dfdf", aboutUsSecondData);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -123,6 +123,7 @@ const WeAre: React.FC<weAreProps> = ({ data, aboutUsSecondData }) => {
               </div>
             ))} */}
 
+            {/* first  */}
             <div className="flex items-center gap-1">
               <div className="flex-shrink-0 w-16 sm:w-20 md:w-24">
                 <Image
@@ -138,6 +139,78 @@ const WeAre: React.FC<weAreProps> = ({ data, aboutUsSecondData }) => {
                   {aboutUsSecondData?.title1}
                 </strong>{" "}
                 {aboutUsSecondData?.description1}
+              </p>
+            </div>
+            {/* two  */}
+            <div className="flex items-center gap-1">
+              <div className="flex-shrink-0 w-16 sm:w-20 md:w-24">
+                <Image
+                  src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/AboutSec2/icons/${aboutUsSecondData?.icon2}`}
+                  alt={aboutUsSecondData?.title2}
+                  width={100}
+                  height={20}
+                  className="w-full h-auto"
+                />
+              </div>
+              <p className="text-xs sm:text-sm font-normal text-black leading-tight">
+                <strong className="font-bold text-[#555be7]">
+                  {aboutUsSecondData?.title2}
+                </strong>{" "}
+                {aboutUsSecondData?.description2}
+              </p>
+            </div>
+            {/* three  */}
+            <div className="flex items-center gap-1">
+              <div className="flex-shrink-0 w-16 sm:w-20 md:w-24">
+                <Image
+                  src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/AboutSec2/icons/${aboutUsSecondData?.icon3}`}
+                  alt={aboutUsSecondData?.title3}
+                  width={100}
+                  height={20}
+                  className="w-full h-auto"
+                />
+              </div>
+              <p className="text-xs sm:text-sm font-normal text-black leading-tight">
+                <strong className="font-bold text-[#555be7]">
+                  {aboutUsSecondData?.title3}
+                </strong>{" "}
+                {aboutUsSecondData?.description3}
+              </p>
+            </div>
+            {/* four  */}
+            <div className="flex items-center gap-1">
+              <div className="flex-shrink-0 w-16 sm:w-20 md:w-24">
+                <Image
+                  src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/AboutSec2/icons/${aboutUsSecondData?.icon4}`}
+                  alt={aboutUsSecondData?.title4}
+                  width={100}
+                  height={20}
+                  className="w-full h-auto"
+                />
+              </div>
+              <p className="text-xs sm:text-sm font-normal text-black leading-tight">
+                <strong className="font-bold text-[#555be7]">
+                  {aboutUsSecondData?.title4}
+                </strong>{" "}
+                {aboutUsSecondData?.description4}
+              </p>
+            </div>
+            {/* five  */}
+            <div className="flex items-center gap-1">
+              <div className="flex-shrink-0 w-16 sm:w-20 md:w-24">
+                <Image
+                  src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/AboutSec2/icons/${aboutUsSecondData?.icon5}`}
+                  alt={aboutUsSecondData?.title5}
+                  width={100}
+                  height={20}
+                  className="w-full h-auto"
+                />
+              </div>
+              <p className="text-xs sm:text-sm font-normal text-black leading-tight">
+                <strong className="font-bold text-[#555be7]">
+                  {aboutUsSecondData?.title5}
+                </strong>{" "}
+                {aboutUsSecondData?.description5}
               </p>
             </div>
           </div>

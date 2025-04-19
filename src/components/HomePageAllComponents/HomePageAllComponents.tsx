@@ -48,7 +48,7 @@ const HomePageAllComponents = () => {
       </section>
 
       <section>
-        <ContactUs />
+        <ContactUs data={data?.address?.[0]}/>
       </section>
     </div>
   );

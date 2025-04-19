@@ -23,7 +23,6 @@ import { toast } from "react-toastify";
 import Loading from "@/components/shared/Loading/Loading";
 import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
 
-
 type BannerResponse = {
   success: boolean;
   message: string;
@@ -40,7 +39,6 @@ type BannerResponse = {
     updated_at: string;
   };
 };
-
 
 const formSchema = z.object({
   heading: z.string().min(2, {
@@ -66,17 +64,17 @@ const Banner = () => {
   const token = (session?.data?.user as { token?: string })?.token;
   console.log(token);
 
-   const { data, isLoading, isError, error } = useQuery<BannerResponse>({
-      queryKey: ["banner"],
-      queryFn: () =>
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/banner`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }).then((res) => res.json()),
-    });
+  const { data, isLoading, isError, error } = useQuery<BannerResponse>({
+    queryKey: ["banner"],
+    queryFn: () =>
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/banner`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).then((res) => res.json()),
+  });
 
-    console.log(data?.data)
+  console.log(data?.data);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -112,19 +110,18 @@ const Banner = () => {
         body: formData,
       }).then((res) => res.json()),
 
-      onSuccess: (data) => {
-        if (!data?.success) {
-          toast.error(data.message || "Submission failed");
-          return;
-        }
-  
-        form.reset();
-        setBack_img(null);
-  
-        toast.success(data.message || "Submitted successfully!");
-      },
-    });
-  
+    onSuccess: (data) => {
+      if (!data?.success) {
+        toast.error(data.message || "Submission failed");
+        return;
+      }
+
+      form.reset();
+      setBack_img(null);
+
+      toast.success(data.message || "Submitted successfully!");
+    },
+  });
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -144,14 +141,13 @@ const Banner = () => {
     mutate(formData);
   }
 
-  if(isLoading){
-    return <Loading/>
-  }
-  else if (isError) {
+  if (isLoading) {
+    return <Loading />;
+  } else if (isError) {
     <div className="w-full h-[500px]">
-        <ErrorContainer message={error?.message || "Something went Wrong"} />
-      </div>
-  } 
+      <ErrorContainer message={error?.message || "Something went Wrong"} />
+    </div>;
+  }
   return (
     <div className="p-10">
       <div>
@@ -262,7 +258,7 @@ const Banner = () => {
                 label="Add Background Image"
                 file={back_img}
                 setFile={setBack_img}
-                existingUrl={data?.data?.back_img} 
+                existingUrl={data?.data?.back_img}
               />
             </div>
 

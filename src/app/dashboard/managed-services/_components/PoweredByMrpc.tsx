@@ -14,11 +14,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FileUpload from "@/components/ui/FileUpload";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
+import Loading from "@/components/shared/Loading/Loading";
+import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -29,12 +31,39 @@ const formSchema = z.object({
   }),
 });
 
+type MRPCResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    id: number;
+    title: string;
+    description: string;
+    img: string;
+    logo: string;
+    created_at: string; // ISO 8601 date string
+    updated_at: string; // ISO 8601 date string
+  };
+};
+
 const PoweredByMrpc = () => {
   const session = useSession();
-    const token = (session?.data?.user as { token?: string })?.token;
+  const token = (session?.data?.user as { token?: string })?.token;
+
+  const { data, isLoading, isError, error } = useQuery<MRPCResponse>({
+    queryKey: ["powered-by-mrpc"],
+    queryFn: () =>
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/managedservices/poweredbymrpc`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      ).then((res) => res.json()),
+  });
 
   const [logo, setLogo] = useState<File | null>(null);
-  const [image, setImage] = useState<File | null>(null);
+  const [img, setImage] = useState<File | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -44,47 +73,66 @@ const PoweredByMrpc = () => {
     },
   });
 
+  useEffect(() => {
+    if (data?.data) {
+      form.reset({
+        title: data.data.title || "",
+        description: data.data.description || "",
+      });
+    }
+  }, [data, form]);
+
   const { mutate, isPending } = useMutation({
     mutationKey: ["powered-by-mrpc"],
     mutationFn: (formData: FormData) =>
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/managedservices/poweredbymrpc`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      }).then((res) => res.json()),
-
-      onSuccess: (data) => {
-        if (!data?.success) {
-          toast.error(data.message || "Submission failed");
-          return;
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/managedservices/poweredbymrpc`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
         }
-  
-        form.reset();
-        setImage(null);
-        setLogo(null);
-  
-        toast.success(data.message || "Submitted successfully!");
-      },
+      ).then((res) => res.json()),
+
+    onSuccess: (data) => {
+      if (!data?.success) {
+        toast.error(data.message || "Submission failed");
+        return;
+      }
+
+      form.reset();
+      setImage(null);
+      setLogo(null);
+
+      toast.success(data.message || "Submitted successfully!");
+    },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    
     const formData = new FormData();
     formData.append("title", values.title);
     formData.append("description", values.description);
     if (logo) {
       formData.append("logo", logo);
     }
-    if (image) {
-      formData.append("image", image);
+    if (img) {
+      formData.append("img", img);
     }
 
     // Log the complete form data to console
     console.log("Form submission data:", formData);
 
     mutate(formData);
+  }
+
+  if (isLoading) {
+    return <Loading />;
+  } else if (isError) {
+    <div className="w-full h-[500px]">
+      <ErrorContainer message={error?.message || "Something went Wrong"} />
+    </div>;
   }
 
   return (
@@ -146,14 +194,16 @@ const PoweredByMrpc = () => {
                   label="Add Logo"
                   file={logo}
                   setFile={setLogo}
+                  existingUrl={data?.data?.logo}
                 />
               </div>
               <div className="md:col-span-1">
                 <FileUpload
                   type="image"
                   label="Add Image"
-                  file={image}
+                  file={img}
                   setFile={setImage}
+                  existingUrl={data?.data?.img}
                 />
               </div>
             </div>

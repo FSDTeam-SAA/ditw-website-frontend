@@ -15,11 +15,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FileUpload from "@/components/ui/FileUpload";
 import { useSession } from "next-auth/react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import Loading from "@/components/shared/Loading/Loading";
+import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
 
 const formSchema = z.object({
   heading: z.string().min(2, {
@@ -51,10 +53,43 @@ const formSchema = z.object({
   }),
 });
 
+type SectionFeatureResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    id: number;
+    heading: string;
+    title1: string;
+    description1: string | null;
+    img1: string | null;
+    title2: string;
+    description2: string | null;
+    img2: string | null;
+    title3: string;
+    description3: string | null;
+    img3: string | null;
+    title4: string;
+    description4: string | null;
+    img4: string | null;
+    created_at: string; // ISO 8601 date string
+    updated_at: string; // ISO 8601 date string
+  };
+};
+
 const EndToEndDelivery = () => {
   const session = useSession();
-    const token = (session?.data?.user as { token?: string })?.token;
-    console.log(token);
+  const token = (session?.data?.user as { token?: string })?.token;
+  console.log(token);
+
+  const { data, isLoading, isError, error } = useQuery<SectionFeatureResponse>({
+    queryKey: ["end-to-end-delivery"],
+    queryFn: () =>
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/services/delivery`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).then((res) => res.json()),
+  });
 
   const [img1, setImg1] = useState<File | null>(null);
   const [img2, setImg2] = useState<File | null>(null);
@@ -75,6 +110,22 @@ const EndToEndDelivery = () => {
       description4: "",
     },
   });
+
+  useEffect(() => {
+    if (data?.data) {
+      form.reset({
+        heading: data.data.heading || "",
+        title1: data.data.title1 || "",
+        description1: data.data.description1 || "",
+        title2: data.data.title2 || "",
+        description2: data.data.description2 || "",
+        title3: data.data.title3 || "",
+        description3: data.data.description3 || "",
+        title4: data.data.title4 || "",
+        description4: data.data.description4 || "",
+      });
+    }
+  }, [data, form]);
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["banner"],
@@ -131,8 +182,15 @@ const EndToEndDelivery = () => {
     // Log the complete form data to console
     console.log("Form submission data:", formData);
 
-    mutate(formData)
-    
+    mutate(formData);
+  }
+
+  if (isLoading) {
+    return <Loading />;
+  } else if (isError) {
+    <div className="w-full h-[500px]">
+      <ErrorContainer message={error?.message || "Something went Wrong"} />
+    </div>;
   }
 
   return (
@@ -213,6 +271,7 @@ const EndToEndDelivery = () => {
                   label="Add Image"
                   file={img1}
                   setFile={setImg1}
+                  existingUrl={data?.data?.img1}
                 />
               </div>
             </div>
@@ -267,6 +326,7 @@ const EndToEndDelivery = () => {
                   label="Add Image"
                   file={img2}
                   setFile={setImg2}
+                  existingUrl={data?.data?.img2}
                 />
               </div>
             </div>
@@ -321,6 +381,7 @@ const EndToEndDelivery = () => {
                   label="Add Image"
                   file={img3}
                   setFile={setImg3}
+                  existingUrl={data?.data?.img3}
                 />
               </div>
             </div>
@@ -375,6 +436,7 @@ const EndToEndDelivery = () => {
                   label="Add Image"
                   file={img4}
                   setFile={setImg4}
+                  existingUrl={data?.data?.img4}
                 />
               </div>
             </div>

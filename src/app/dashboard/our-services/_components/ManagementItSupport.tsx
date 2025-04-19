@@ -14,11 +14,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FileUpload from "@/components/ui/FileUpload";
 import { useSession } from "next-auth/react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import Loading from "@/components/shared/Loading/Loading";
+import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -26,10 +28,32 @@ const formSchema = z.object({
   }),
 });
 
+type serviceSupportDataType = {
+  success: boolean;
+  message: string;
+  data: {
+    id: number;
+    title: string;
+    icon: string;
+    created_at: string; // ISO 8601 date string
+    updated_at: string; // ISO 8601 date string
+  };
+};
+
 const ManagementItSupport = () => {
   const session = useSession();
   const token = (session?.data?.user as { token?: string })?.token;
   console.log(token);
+
+  const { data, isLoading, isError, error } = useQuery<serviceSupportDataType>({
+    queryKey: ["services-support"],
+    queryFn: () =>
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/services/support`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).then((res) => res.json()),
+  });
 
   const [icon, setIcon] = useState<File | null>(null);
 
@@ -39,6 +63,14 @@ const ManagementItSupport = () => {
       title: "",
     },
   });
+
+  useEffect(() => {
+    if (data?.data) {
+      form.reset({
+        title: data.data.title || "",
+      });
+    }
+  }, [data, form]);
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["management-it-support"],
@@ -68,9 +100,8 @@ const ManagementItSupport = () => {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-
     const formData = new FormData();
-    if(icon){
+    if (icon) {
       formData.append("icon", icon);
     }
     formData.append("title", values.title);
@@ -78,8 +109,15 @@ const ManagementItSupport = () => {
     // Log the complete form data to console
     console.log("Form submission data:", formData);
 
-    mutate(formData)
+    mutate(formData);
+  }
 
+  if (isLoading) {
+    return <Loading />;
+  } else if (isError) {
+    <div className="w-full h-[500px]">
+      <ErrorContainer message={error?.message || "Something went Wrong"} />
+    </div>;
   }
 
   return (
@@ -121,6 +159,7 @@ const ManagementItSupport = () => {
                   label="Add Icon"
                   file={icon}
                   setFile={setIcon}
+                  existingUrl={data?.data?.icon}
                 />
               </div>
             </div>

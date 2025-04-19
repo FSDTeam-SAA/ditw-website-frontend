@@ -14,11 +14,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FileUpload from "@/components/ui/FileUpload";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
+import Loading from "@/components/shared/Loading/Loading";
+import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -36,12 +38,36 @@ const formSchema = z.object({
     .max(5, "Maximum star is 5"),
 });
 
+type ReviewContentResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    id: number;
+    name: string;
+    star: number; // rating, e.g., from 1 to 5
+    back_img: string;
+    content: string;
+    created_at: string; // ISO 8601 timestamp
+    updated_at: string; // ISO 8601 timestamp
+  };
+};
+
 const ReviewCart = () => {
   const session = useSession();
   const token = (session?.data?.user as { token?: string })?.token;
   console.log(token);
 
   const [back_img, setImage] = useState<File | null>(null);
+
+  const { data, isLoading, isError, error } = useQuery<ReviewContentResponse>({
+    queryKey: ["review cart content"],
+    queryFn: () =>
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/review/content`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).then((res) => res.json()),
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -51,6 +77,16 @@ const ReviewCart = () => {
       star: 1,
     },
   });
+
+  useEffect(() => {
+    if (data?.data) {
+      form.reset({
+        name: data.data.name,
+        content: data.data.content,
+        star: data.data.star,
+      });
+    }
+  }, [data, form]);
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["review-content"],
@@ -88,6 +124,14 @@ const ReviewCart = () => {
     // Log the complete form data to console
     console.log("Form submission data:", formData);
     mutate(formData);
+  }
+
+  if (isLoading) {
+    return <Loading />;
+  } else if (isError) {
+    <div className="w-full h-[500px]">
+      <ErrorContainer message={error?.message || "Something went Wrong"} />
+    </div>;
   }
 
   return (
@@ -175,6 +219,7 @@ const ReviewCart = () => {
                 label="Add Background Image"
                 file={back_img}
                 setFile={setImage}
+                existingUrl={data?.data?.back_img}
               />
             </div>
 

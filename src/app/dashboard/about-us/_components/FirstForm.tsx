@@ -15,8 +15,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useSession } from "next-auth/react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useEffect } from "react";
+import Loading from "@/components/shared/Loading/Loading";
+import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -36,11 +39,38 @@ const formSchema = z.object({
   }),
 });
 
+type AboutUsResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    id: number;
+    title: string;
+    subtitle: string;
+    description: string;
+    button_name: string;
+    button_url: string;
+    created_at: string; // ISO 8601 date string
+    updated_at: string; // ISO 8601 date string
+  };
+};
+
 const FirstForm = () => {
   const { data: session } = useSession();
   const token = (session?.user as { token?: string })?.token;
   // console.log(token)
   // const queryClient = useQueryClient();
+
+  const { data, isLoading, isError, error } = useQuery<AboutUsResponse>({
+    queryKey: ["about-us-first-form"],
+    queryFn: () =>
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/aboutus`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).then((res) => res.json()),
+  });
+
+  console.log(data?.data);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -51,6 +81,18 @@ const FirstForm = () => {
       button_url: "",
     },
   });
+
+  useEffect(() => {
+    if (data?.data) {
+      form.reset({
+        title: data.data.title || "",
+        subtitle: data.data.subtitle || "",
+        description: data.data.description || "",
+        button_name: data.data.button_name || "",
+        button_url: data.data.button_url || "",
+      });
+    }
+  }, [data, form]);
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["about-us-first-form"],
@@ -96,6 +138,14 @@ const FirstForm = () => {
     formData.append("button_url", values.button_url);
 
     mutate(formData);
+  }
+
+  if (isLoading) {
+    return <Loading />;
+  } else if (isError) {
+    <div className="w-full h-[500px]">
+      <ErrorContainer message={error?.message || "Something went Wrong"} />
+    </div>;
   }
 
   return (
@@ -199,7 +249,7 @@ const FirstForm = () => {
 
           <div className="pt-4">
             <Button
-            disabled={isPending}
+              disabled={isPending}
               className="bg-blue-500 text-lg font-bold px-10 py-2"
               type="submit"
             >

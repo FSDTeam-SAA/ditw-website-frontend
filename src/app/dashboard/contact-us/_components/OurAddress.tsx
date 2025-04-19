@@ -14,11 +14,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FileUpload from "@/components/ui/FileUpload";
 import { useSession } from "next-auth/react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import Loading from "@/components/shared/Loading/Loading";
+import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -29,11 +31,38 @@ const formSchema = z.object({
   }),
 });
 
+type AddressDataResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    id: number;
+    title: string;
+    location: string;
+    icon: string | null;
+    created_at: string; // ISO 8601 date string
+    updated_at: string; // ISO 8601 date string
+  };
+};
+
+
 const OurAddress = () => {
   const session = useSession();
   const token = (session?.data?.user as { token?: string })?.token;
 
   const [icon, setIcon] = useState<File | null>(null);
+
+  const { data, isLoading, isError, error } = useQuery<AddressDataResponse>({
+    queryKey: ["contact-us-address"],
+    queryFn: () =>
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/address`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      ).then((res) => res.json()),
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -42,6 +71,15 @@ const OurAddress = () => {
       location: "",
     },
   });
+
+  useEffect(() => {
+        if (data?.data) {
+          form.reset({
+            title: data.data.title || "",
+            location: data.data.location || "",
+          });
+        }
+      }, [data, form]);
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["contact-us-address"],
@@ -81,6 +119,14 @@ const OurAddress = () => {
     // Log the complete form data to console
     console.log("Form submission data:", formData);
     mutate(formData);
+  }
+
+  if (isLoading) {
+    return <Loading />;
+  } else if (isError) {
+    <div className="w-full h-[500px]">
+      <ErrorContainer message={error?.message || "Something went Wrong"} />
+    </div>;
   }
 
   return (
@@ -140,6 +186,7 @@ const OurAddress = () => {
                   label="Add Location Icon"
                   file={icon}
                   setFile={setIcon}
+                  existingUrl={data?.data?.icon}
                 />
               </div>
             </div>

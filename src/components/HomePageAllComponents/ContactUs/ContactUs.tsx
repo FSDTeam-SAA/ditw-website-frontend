@@ -1,12 +1,17 @@
-import { Phone } from "lucide-react"
-import Image from "next/image"
-import { PiMapPinLine } from "react-icons/pi"
-import { TfiEmail } from "react-icons/tfi"
-import ContactForm from "./ContactForm"
-import ReviewCart from "./ReviewCart"
+import { Phone } from "lucide-react";
+import Image from "next/image";
+import { TfiEmail } from "react-icons/tfi";
+import ContactForm from "./ContactForm";
+import ReviewCart from "./ReviewCart";
+import { Address } from "@/components/types/allFrontendDataType";
+import React from "react";
 
-const ContactUs = () => {
-  
+type contactUsProps = {
+  data?: Address;
+};
+
+const ContactUs: React.FC<contactUsProps> = ({ data }) => {
+  console.log(data);
 
   return (
     <div id="contact_us">
@@ -53,7 +58,7 @@ const ContactUs = () => {
             </div>
 
             <div className="md:col-span-3">
-            <ReviewCart/>
+              <ReviewCart />
             </div>
           </div>
         </div>
@@ -71,8 +76,9 @@ const ContactUs = () => {
                   <div className="w-32 sm:w-48 h-1 bg-[#3847af] ml-3" />
                 </div>
                 <p className="mb-4 sm:mb-6 text-sm sm:text-base font-medium text-gray-300 pt-3">
-                  Our team is ready to help! Give us a call or email us anytime - we&#39;re happy to answer any
-                  questions you have. No pressure, no obligations.
+                  Our team is ready to help! Give us a call or email us anytime
+                  - we&#39;re happy to answer any questions you have. No
+                  pressure, no obligations.
                 </p>
                 <ContactForm />
               </div>
@@ -81,22 +87,29 @@ const ContactUs = () => {
               <div className="lg:col-span-2">
                 <div>
                   <div className="mb-8 sm:mb-10">
-                    <h2 className="text-2xl sm:text-3xl font-bold text-white pt-4 sm:pt-[18px] pb-2">OUR ADDRESS</h2>
+                    <h2 className="text-2xl sm:text-3xl font-bold text-white pt-4 sm:pt-[18px] pb-2">
+                      {data?.title}
+                    </h2>
                     <div className="w-full flex items-center justify-start">
                       <div className="w-24 sm:w-36 h-1 bg-[#3847af] ml-6 sm:ml-9" />
                     </div>
-                    <div className="flex items-start mt-4 sm:mt-[18px]">
-                      <PiMapPinLine className="w-6 h-6 sm:w-8 sm:h-8 text-white mr-3 sm:mr-4 flex-shrink-0 mt-1" />
+                    <div className="flex items-center gap-2 mt-4 sm:mt-[18px]">
+                      <Image
+                        src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/Addresses/${data?.icon}`}
+                        alt="location icon"
+                        width={24}
+                        height={24}
+                      />
                       <p className="text-white font-medium leading-normal text-base sm:text-lg">
-                        3948 LEGACY DRIVE | STE 106
-                        <br />
-                        PLANO, TEXAS 75023
+                        {data?.location}
                       </p>
                     </div>
                   </div>
 
                   <div>
-                    <h2 className="text-2xl sm:text-3xl font-bold text-white pb-2">OUR CONTACT</h2>
+                    <h2 className="text-2xl sm:text-3xl font-bold text-white pb-2">
+                      OUR CONTACT
+                    </h2>
                     <div className="w-full flex items-center justify-start">
                       <div className="w-16 sm:w-20 h-1 bg-[#3847af] ml-12 sm:ml-16" />
                     </div>
@@ -113,7 +126,8 @@ const ContactUs = () => {
                       </p>
                     </div>
                     <p className="text-xs font-medium leading-normal text-white pt-5">
-                      Copyright © 2025 Dyson IT Works. America&lsquo;s Low Voltage Company. All Rights Reserved.
+                      Copyright © 2025 Dyson IT Works. America&lsquo;s Low
+                      Voltage Company. All Rights Reserved.
                     </p>
                   </div>
                 </div>
@@ -123,7 +137,7 @@ const ContactUs = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ContactUs
+export default ContactUs;

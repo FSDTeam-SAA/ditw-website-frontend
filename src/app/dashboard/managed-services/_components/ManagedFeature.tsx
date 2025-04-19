@@ -14,11 +14,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FileUpload from "@/components/ui/FileUpload";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { useSession } from "next-auth/react";
+import Loading from "@/components/shared/Loading/Loading";
+import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
 
 const formSchema = z.object({
   heading: z.string().min(2, {
@@ -50,9 +52,49 @@ const formSchema = z.object({
   }),
 });
 
+type ManagedFeatureResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    id: number;
+    heading: string;
+    title: string;
+    icon: string;
+    title1: string;
+    icon1: string;
+    title2: string;
+    icon2: string;
+    title3: string;
+    icon3: string;  
+    icon4: string;
+    title4: string;
+    icon5: string;
+    title5: string;
+    icon6: string;
+    title6: string;
+    icon7: string;
+    title7: string;
+    created_at: string; // ISO 8601 date string
+    updated_at: string; // ISO 8601 date string
+  };
+};
+
 const ManagedFeature = () => {
   const session = useSession();
   const token = (session?.data?.user as { token?: string })?.token;
+
+  const { data, isLoading, isError, error } = useQuery<ManagedFeatureResponse>({
+    queryKey: ["managed-feature-items"],
+    queryFn: () =>
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/managedservices/projectmanagement`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      ).then((res) => res.json()),
+  });
 
   const [icon, setIcon] = useState<File | null>(null);
   const [icon1, setIcon1] = useState<File | null>(null);
@@ -77,6 +119,22 @@ const ManagedFeature = () => {
       title7: "",
     },
   });
+
+  useEffect(() => {
+    if (data?.data) {
+      form.reset({
+        heading: data.data.heading || "",
+        title: data.data.title || "",
+        title1: data.data.title1 || "",
+        title2: data.data.title2 || "",
+        title3: data.data.title3 || "",
+        title4: data.data.title4 || "",
+        title5: data.data.title5 || "",
+        title6: data.data.title6 || "",
+        title7: data.data.title7 || "",
+      });
+    }
+  }, [data, form]);
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["powered-by-mrpc"],
@@ -145,6 +203,14 @@ const ManagedFeature = () => {
     mutate(formData);
   }
 
+  if (isLoading) {
+    return <Loading />;
+  } else if (isError) {
+    <div className="w-full h-[500px]">
+      <ErrorContainer message={error?.message || "Something went Wrong"} />
+    </div>;
+  }
+
   return (
     <div className="px-10 pb-10">
       <div>
@@ -183,6 +249,7 @@ const ManagedFeature = () => {
                       label="Add Icon"
                       file={icon}
                       setFile={setIcon}
+                      existingUrl={data?.data?.icon}
                     />
                   </div>
                   <div className="pt-4">
@@ -212,6 +279,7 @@ const ManagedFeature = () => {
                       label="Add Icon"
                       file={icon1}
                       setFile={setIcon1}
+                      existingUrl={data?.data?.icon1}
                     />
                   </div>
                   <div className="pt-4">
@@ -241,6 +309,7 @@ const ManagedFeature = () => {
                       label="Add Icon"
                       file={icon2}
                       setFile={setIcon2}
+                      existingUrl={data?.data?.icon2}
                     />
                   </div>
                   <div className="pt-4">
@@ -270,6 +339,7 @@ const ManagedFeature = () => {
                       label="Add Icon"
                       file={icon3}
                       setFile={setIcon3}
+                      existingUrl={data?.data?.icon3}
                     />
                   </div>
                   <div className="pt-4">
@@ -301,6 +371,7 @@ const ManagedFeature = () => {
                       label="Add Icon"
                       file={icon4}
                       setFile={setIcon4}
+                      existingUrl={data?.data?.icon4}
                     />
                   </div>
                   <div className="pt-4">
@@ -330,6 +401,7 @@ const ManagedFeature = () => {
                       label="Add Icon"
                       file={icon5}
                       setFile={setIcon5}
+                      existingUrl={data?.data?.icon5}
                     />
                   </div>
                   <div className="pt-4">
@@ -359,6 +431,7 @@ const ManagedFeature = () => {
                       label="Add Icon"
                       file={icon6}
                       setFile={setIcon6}
+                      existingUrl={data?.data?.icon6}
                     />
                   </div>
                   <div className="pt-4">
@@ -388,6 +461,7 @@ const ManagedFeature = () => {
                       label="Add Icon"
                       file={icon7}
                       setFile={setIcon7}
+                      existingUrl={data?.data?.icon7}
                     />
                   </div>
                   <div className="pt-4">
