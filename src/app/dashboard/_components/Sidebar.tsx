@@ -22,6 +22,8 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { signOut } from "next-auth/react";
 
 const menuItems = [
   {
@@ -84,7 +86,7 @@ export function DashboardSidebar() {
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarHeader>
-        <SidebarContent className="mt-10 ">
+        <SidebarContent className="mt-10 px-5">
           <SidebarMenu>
             {menuItems.map((item) => (
               <SidebarMenuItem key={item.href}>
@@ -97,7 +99,17 @@ export function DashboardSidebar() {
               </SidebarMenuItem>
             ))}
           </SidebarMenu>
+          <div className="pt-20 md:pt-24 lg:pt-28 xl:pt-32">
+            <Button
+              onClick={() => signOut({ callbackUrl: "/" })}
+              className="w-full "
+              variant={"destructive"}
+            >
+              Log Out
+            </Button>
+          </div>
         </SidebarContent>
+
         <SidebarRail />
       </Sidebar>
       <div className="md:hidden fixed top-4 left-4 z-50">
