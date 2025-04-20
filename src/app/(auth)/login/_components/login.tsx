@@ -57,11 +57,12 @@ export function LoginForm() {
       console.log("Login successful:", values);
       toast.success("Login successful");
       router.push("/dashboard");
-    } catch (error) {
-      if (error) {
-        console.error("Login error:", error);
-      }
-    } finally {
+    } 
+    catch (error: unknown) {
+      const err = error as Error;
+      toast.error(`Login failed: ${err.message}`);
+    }
+     finally {
       setIsLoading(false); // Stop loading state
     }
   }
