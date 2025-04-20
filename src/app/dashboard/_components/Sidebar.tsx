@@ -9,11 +9,13 @@ import {
   BriefcaseBusiness,
   AppWindowMac,
   MessageCircleCode,
+  LogOut,
 } from "lucide-react";
 
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -24,6 +26,9 @@ import {
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { signOut } from "next-auth/react";
+import { useState } from "react";
+import LogoutModal from "@/components/shared/Modals/logoutModal";
+import { toast } from "react-toastify";
 
 const menuItems = [
   {
@@ -64,7 +69,21 @@ const menuItems = [
 ];
 
 export function DashboardSidebar() {
+  const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+
+  const handleLogout = async () => {
+    try {
+      toast.success("You have successfully logged out!"); // Show toast first
+
+      setTimeout(async () => {
+        await signOut({ callbackUrl: "/" }); // Redirect after toast is shown
+      }, 2000); // Wait for 2 seconds to let toast appear
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast.error("Failed to log out. Please try again."); // Show error toast
+    }
+  };
 
   return (
     <>
@@ -90,7 +109,7 @@ export function DashboardSidebar() {
           <SidebarMenu>
             {menuItems.map((item) => (
               <SidebarMenuItem key={item.href}>
-                <SidebarMenuButton asChild isActive={pathname === item.href}>
+                <SidebarMenuButton className="" asChild isActive={pathname === item.href}>
                   <Link href={item.href}>
                     <item.icon className="size-4" />
                     <span>{item.title}</span>
@@ -99,19 +118,27 @@ export function DashboardSidebar() {
               </SidebarMenuItem>
             ))}
           </SidebarMenu>
-          <div className="pt-20 md:pt-24 lg:pt-28 xl:pt-32">
-            <Button
-              onClick={() => signOut({ callbackUrl: "/" })}
-              className="w-full "
-              variant={"destructive"}
-            >
-              Log Out
-            </Button>
-          </div>
         </SidebarContent>
+        <SidebarFooter className="px-4 pb-6">
+          <Button
+            onClick={() => setIsOpen(true)}
+            variant="destructive"
+            className="w-full flex items-center justify-start gap-4 text-lg font-medium text-white leading-[120%] shadow-none border-none"
+          >
+            <LogOut className="text-white"/> Log out
+          </Button>
+        </SidebarFooter>
 
         <SidebarRail />
       </Sidebar>
+      {/* Logout modal */}
+      {isOpen && (
+        <LogoutModal
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
+          onConfirm={handleLogout}
+        />
+      )}
       <div className="md:hidden fixed top-4 left-4 z-50">
         <SidebarTrigger />
       </div>
