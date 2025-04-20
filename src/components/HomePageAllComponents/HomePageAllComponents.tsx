@@ -6,24 +6,16 @@ import OurServices from "./OurServices/OurServices";
 import ContactUs from "./ContactUs/ContactUs";
 import ManagedService from "./ManagedService/ManagedService";
 import Navbar from "../shared/Navbar/Navbar";
-import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
 import { AllHomeDataResponse } from "../types/allFrontendDataType";
 
 const HomePageAllComponents = () => {
-  const session = useSession();
-  const token = (session?.data?.user as { token?: string })?.token;
-  console.log(token);
-
   const { data } = useQuery<AllHomeDataResponse>({
     queryKey: ["all-data"],
     queryFn: () =>
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/frontend-data`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }).then((res) => res.json()),
-    enabled: !!token,
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/frontend-data`).then(
+        (res) => res.json()
+      ),
   });
   console.log(data?.navbar);
 
@@ -32,31 +24,68 @@ const HomePageAllComponents = () => {
   const serviceId = data?.navbar?.[0]?.itemlink3?.replace("#", "") || "";
   const contactUsId = data?.navbar?.[0]?.itemlink4?.replace("#", "") || "";
 
+  console.log(homeId, aboutUsId, serviceId, contactUsId);
+
   return (
     <div>
+      {/* navbar  */}
       <section className="sticky top-0 z-50">
-        <Navbar data={data?.navbar?.[0]} />
+        {data?.navbar && data?.navbar?.[0] && (
+          <Navbar data={data?.navbar?.[0]} />
+        )}
       </section>
 
+      {/* banner  */}
       <section id={homeId}>
-        <Banner data={data?.banner?.[0]} />
+        {data?.banner && data?.banner?.[0] && (
+          <Banner data={data?.banner?.[0]} />
+        )}
       </section>
 
+      {/* we are / about us */}
       <section id={aboutUsId}>
-        <WeAre
-          data={data?.about?.[0]}
-          aboutUsSecondData={data?.aboutsec2?.[0]}
-        />
+        {data?.about &&
+          data?.about?.[0] &&
+          data?.aboutsec2 &&
+          data?.aboutsec2?.[0] && (
+            <WeAre
+              data={data?.about?.[0]}
+              aboutUsSecondData={data?.aboutsec2?.[0]}
+            />
+          )}
       </section>
+
+      {/* our services  */}
 
       <section id={serviceId}>
-        <OurServices />
+        {data?.services_background &&
+          data?.services_background?.[0] &&
+          data?.services_heading &&
+          data?.services_heading?.[0] &&
+          data?.services_projectmanagement &&
+          data?.services_projectmanagement?.[0] &&
+          data?.services_delivery &&
+          data?.services_delivery?.[0] &&
+          data?.services_support &&
+          data?.services_support?.[0] && (
+            <OurServices
+              data={data?.services_background?.[0]}
+              serviceHeading={data?.services_heading?.[0]}
+              projectManagementData={data?.services_projectmanagement?.[0]}
+              serviceDeliveryData={data?.services_delivery?.[0]}
+              serviceSupportData={data?.services_support?.[0]}
+            />
+          )}
       </section>
 
+      {/* managed service  */}
       <section>
-        <ManagedService />
+        {data?.ourcorevalue && data?.ourcorevalue?.[0] && data?.whychooseus && data?.whychooseus?.[0] && data?.service && data?.service?.[0] && data?.poweredbymrpc && data?.poweredbymrpc?.[0] && (
+          <ManagedService data={data?.ourcorevalue?.[0]} whyChooseUsData={data?.whychooseus?.[0]} serviceFeaturesData={data?.service?.[0]} poweredByMrpcData={data?.poweredbymrpc?.[0]} />
+        )}
       </section>
 
+      {/* Contact us  */}
       <section id={contactUsId}>
         <ContactUs data={data?.address?.[0]} />
       </section>

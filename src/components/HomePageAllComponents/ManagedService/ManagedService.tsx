@@ -1,7 +1,26 @@
-import Image from "next/image"
-import Link from "next/link"
+import {
+  CoreValue,
+  PoweredByMRPC,
+  ServiceItem,
+  WhyChooseUsItem,
+} from "@/components/types/allFrontendDataType";
+import Image from "next/image";
+import Link from "next/link";
 
-export default function ManagedService() {
+type ManagedServiceProps = {
+  data: CoreValue;
+  whyChooseUsData: WhyChooseUsItem;
+  serviceFeaturesData: ServiceItem;
+  poweredByMrpcData : PoweredByMRPC
+};
+
+const ManagedService: React.FC<ManagedServiceProps> = ({
+  data,
+  whyChooseUsData,
+  serviceFeaturesData,
+  poweredByMrpcData
+}) => {
+  console.log(  poweredByMrpcData );
   return (
     <div className="overflow-x-hidden">
       <section className="bg-gradient-to-r from-[#fcfdfd] to-[#cce5ed] py-6 md:py-8">
@@ -9,7 +28,7 @@ export default function ManagedService() {
           {/* Column 1 - Managed IT Services */}
           <div className="lg:col-span-2 rounded-lg p-4 md:p-6 flex flex-col">
             <h2 className="z-30 text-3xl md:text-4xl lg:text-5xl font-bold text-yellow-500 leading-normal">
-              MANAGED <span className="text-gray-800">IT</span> <br /> SERVICES
+              {data?.title}
             </h2>
             <div className="z-30 w-full flex items-center justify-start ml-6 md:ml-8 lg:ml-10">
               <div className="w-16 md:w-24 h-1 bg-[#555be7]" />
@@ -18,7 +37,7 @@ export default function ManagedService() {
               <div className="flex flex-row gap-3 md:gap-5 ">
                 <div className="flex-shrink-0 z-10 -mt-[44px] md:-mt-[50px]">
                   <Image
-                    src="/assets/service/serviceMan.jpeg"
+                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/OurCoreValue/${data?.img}`}
                     alt="a person holding laptop"
                     width={400}
                     height={420}
@@ -27,148 +46,157 @@ export default function ManagedService() {
                 </div>
                 <div className="w-full sm:w-[150px] -mt-7 md:mt-0">
                   <Image
-                    src="/assets/service/tab_pen.png"
+                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/OurCoreValue/${data?.icon1}`}
                     alt="a person holding laptop"
                     width={400}
                     height={600}
                     className="w-[100px] sm:w-[100px] h-[120px] sm:h-[150px] object-cover"
                   />
                   <div className="w-full flex items-start gap-[1px] md:gap-1">
-                  <p className="text-xs">
-                    Transform your IT operations into a powerhouse with our nationwide managed IT services. Imagine
-                    expert support, remote management, and on-site solutions all working in harmony to keep your
-                    business running effortlessly. Our
-                  </p>
-                  <Image className=" w-7 h-7 " src="/assets/service/serviceIcon9.png" alt="blulk" width={30} height={30}/>
+                    <p className="text-xs">{data?.description1}</p>
+                    <Image
+                      className="w-7 h-7"
+                      src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/OurCoreValue/${data?.icon2}`}
+                      alt="blulk"
+                      width={30}
+                      height={30}
+                    />
                   </div>
                 </div>
               </div>
-              <p className="text-xs sm:text-sm">
-                dedicated team ensures flawless performance and rapid issue resolution, covering everything from network agents to elite security measures. With DITW, you get scalable, secure, and cost-effective services that feel just like having your own in-house IT team. Ready to elevate your business? Let&apos;s make it happen!
-              </p>
+              <p className="text-xs sm:text-sm">{data?.description2}</p>
             </div>
           </div>
 
           {/* Column 2 - Why Choose Us */}
           <div className="lg:col-span-3 w-full h-full flex flex-col justify-center">
-            <h2 className="text-xl font-medium leading-normal text-black mb-3 md:mb-4">WHY CHOOSE US?</h2>
+            <h2 className="text-xl font-medium leading-normal text-black mb-3 md:mb-4">
+              {whyChooseUsData?.title}
+            </h2>
             <p className="text-xs sm:text-sm font-normal leading-normal text-black">
-              In today&apos;s fast-paced business world, choosing the right managed services provider is key to staying
-              competitive. Our comprehensive solutions are tailored to your unique needs, offering proactive support,
-              cost efficiency, scalability, and top-notch security. Let us handle your IT, so you can focus on growing
-              your business. Ready to elevate your operations?
+              {whyChooseUsData?.description}
             </p>
             <div className="flex justify-end mb-4 md:mb-6 mt-3">
               <Link
-                href="#"
+                href={whyChooseUsData?.button_url || "#"}
                 className="bg-[#1d0fbf] text-white px-4 sm:px-6 py-1 rounded-full text-sm font-medium transition-colors hover:bg-[#1a0da8]"
               >
-                Get a Quote
+                {whyChooseUsData?.button_name}
               </Link>
             </div>
 
-            <h2 className="text-base sm:text-lg font-medium text-black leading-normal">WHAT YOU GET WITH DITW</h2>
+            <h2 className="text-base sm:text-lg font-medium text-black leading-normal">
+              {serviceFeaturesData?.heading}
+            </h2>
             <div className="w-full flex items-center justify-start">
               <div className="w-36 sm:w-48 h-1 bg-[#555be7] mt-1" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 lg:gap-5 xl:gap-7 mt-3 md:mt-4">
-              {/* Benefits Grid */}
+              {/* first data  */}
               <div className="flex items-center gap-2">
                 <div className="flex-shrink-0">
                   <Image
-                    src="/assets/service/serviceIcon1.png"
+                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/Services/icons/${serviceFeaturesData?.icon}`}
                     alt="service icon"
                     width={40}
                     height={40}
                     className="w-[40px] h-[40px]"
                   />
                 </div>
-                <p className="text-xs">No long-term contracts and no cancellation fees</p>
+                <p className="text-xs">{serviceFeaturesData?.title}</p>
               </div>
+              {/* first data  */}
               <div className="flex items-center gap-2">
                 <div className="flex-shrink-0">
                   <Image
-                    src="/assets/service/serviceIcon2.png"
+                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/Services/icons/${serviceFeaturesData?.icon1}`}
                     alt="service icon"
                     width={40}
                     height={40}
                     className="w-[40px] h-[40px]"
                   />
                 </div>
-                <p className="text-xs">Solutions customized to fit your business</p>
+                <p className="text-xs">{serviceFeaturesData?.title1}</p>
               </div>
+              {/* two data  */}
               <div className="flex items-center gap-2">
                 <div className="flex-shrink-0">
                   <Image
-                    src="/assets/service/serviceIcon3.png"
+                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/Services/icons/${serviceFeaturesData?.icon2}`}
                     alt="service icon"
                     width={40}
                     height={40}
                     className="w-[40px] h-[40px]"
                   />
                 </div>
-                <p className="text-xs">Options to fit businesses of all sizes</p>
+                <p className="text-xs">{serviceFeaturesData?.title2}</p>
               </div>
+              {/* three data  */}
               <div className="flex items-center gap-2">
                 <div className="flex-shrink-0">
                   <Image
-                    src="/assets/service/serviceIcon4.png"
+                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/Services/icons/${serviceFeaturesData?.icon3}`}
                     alt="service icon"
                     width={40}
                     height={40}
                     className="w-[40px] h-[40px]"
                   />
                 </div>
-                <p className="text-xs">Support from IT Experts both centralized and local-based</p>
+                <p className="text-xs">{serviceFeaturesData?.title3}</p>
               </div>
+              {/* five data  */}
               <div className="flex items-center gap-2">
                 <div className="flex-shrink-0">
                   <Image
-                    src="/assets/service/serviceIcon5.png"
+                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/Services/icons/${serviceFeaturesData?.icon4}`}
                     alt="service icon"
                     width={40}
                     height={40}
                     className="w-[40px] h-[40px]"
                   />
                 </div>
-                <p className="text-xs">Predictable costs with flat rate pricing</p>
+                <p className="text-xs">{serviceFeaturesData?.title4}</p>
               </div>
+              {/* six data  */}
               <div className="flex items-center gap-2">
                 <div className="flex-shrink-0">
                   <Image
-                    src="/assets/service/serviceIcon6.png"
+                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/Services/icons/${serviceFeaturesData?.icon5}`}
                     alt="service icon"
                     width={40}
                     height={40}
                     className="w-[40px] h-[40px]"
                   />
                 </div>
-                <p className="text-xs">A dedicated support team just for your company</p>
+                <p className="text-xs">{serviceFeaturesData?.title5}</p>
               </div>
+              {/* seven data  */}
               <div className="flex items-center gap-2">
                 <div className="flex-shrink-0">
                   <Image
-                    src="/assets/service/serviceIcon7.png"
+                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/Services/icons/${serviceFeaturesData?.icon6}`}
                     alt="service icon"
                     width={40}
                     height={40}
                     className="w-[40px] h-[40px]"
                   />
                 </div>
-                <p className="text-xs">Easy access 24/7/365 in 15 minutes or less</p>
+                <p className="text-xs">{serviceFeaturesData?.title6}</p>
               </div>
+              {/* eight data  */}
               <div className="flex items-center gap-2">
                 <div className="flex-shrink-0">
                   <Image
-                    src="/assets/service/serviceIcon8.png"
+                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/Services/icons/${serviceFeaturesData?.icon7}`}
                     alt="service icon"
                     width={40}
                     height={40}
                     className="w-[40px] h-[40px]"
                   />
                 </div>
-                <p className="text-xs">Proactive IT Support that fixes issues before they happen</p>
+                <p className="text-xs">{serviceFeaturesData?.title7}</p>
               </div>
+
             </div>
           </div>
 
@@ -176,27 +204,34 @@ export default function ManagedService() {
           <div className="lg:col-span-2">
             <div className="mb-4 w-full flex flex-col items-center">
               <Image
-                src="/assets/service/ditw_logo.png"
+                src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/mrpc/${poweredByMrpcData?.logo}`}
                 alt="ditw logo"
                 width={250}
                 height={120}
                 className="pt-[10px] w-[250px] h-[120px] mx-auto"
               />
-              <h2 className="text-base sm:text-lg text-center font-semibold my-2">INTEGRITY IN TECH</h2>
+              <h2 className="text-base sm:text-lg text-center font-semibold my-2">
+                {poweredByMrpcData?.title}
+              </h2>
               <p className="w-full sm:w-2/3 text-xs text-[#8ba4df] mt-2 text-center">
-                With our expert managed IT services, we guarantee your IT infrastructure is not only secure but also
-                optimized for maximum efficiency and profitability.
+                {poweredByMrpcData?.description}
               </p>
             </div>
 
             <div className="flex-1 flex items-center justify-center">
-              <div className=" ">
-                <Image src="/assets/service/hand__phone.png" alt="hand mobile" width={500} height={500} className="translate-z-12 w-[350px] h-[550px]" />
-              </div>
+              <Image
+                src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/mrpc/${poweredByMrpcData?.img}`}
+                alt="hand mobile"
+                width={500}
+                height={500}
+                className="translate-z-12 w-[350px] h-[550px]"
+              />
             </div>
           </div>
         </div>
       </section>
     </div>
-  )
-}
+  );
+};
+
+export default ManagedService;

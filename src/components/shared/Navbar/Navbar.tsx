@@ -44,6 +44,8 @@ const Navbar: React.FC<NavbarProps> = ({ data }) => {
 
   if (!data) return null;
 
+  console.log(data?.itemlink2);
+
   return (
     <div className="bg-[#D9D9D9] sticky top-0 z-50 w-full">
       <div className="container mx-auto px-4 sm:px-6 flex items-center justify-between">
@@ -65,32 +67,16 @@ const Navbar: React.FC<NavbarProps> = ({ data }) => {
         <div className="hidden md:block">
           <ul className="flex items-center gap-4 lg:gap-[54px]">
             <li className="text-sm lg:text-base font-semibold text-black leading-normal cursor-pointer">
-              {/* <Link href="#home"> */}
-              <Link href={data?.itemlink1}>
-                {/* Home */}
-                {data?.itemname1}
-              </Link>
+              <Link href={data?.itemlink1}>{data?.itemname1}</Link>
             </li>
             <li className="text-sm lg:text-base font-semibold text-black leading-normal cursor-pointer">
-              {/* <Link href="#about_us">  */}
-              <Link href={data?.itemname2}>
-                {/* About Us */}
-                {data?.itemname2}
-              </Link>
+              <Link href={data?.itemlink2}>{data?.itemname2}</Link>
             </li>
             <li className="text-sm lg:text-base font-semibold text-black leading-normal cursor-pointer">
-              {/* <Link href="#services"> */}
-              <Link href={data?.itemlink3}>
-                {/* Services */}
-                {data?.itemname3}
-              </Link>
+              <Link href={data?.itemlink3}>{data?.itemname3}</Link>
             </li>
             <li className="text-sm lg:text-base font-semibold text-black leading-normal cursor-pointer">
-              {/* <Link href="#contact_us"> */}
-              <Link href={data?.itemname4}>
-                {/* Contact Us */}
-                {data?.itemname4}
-              </Link>
+              <Link href={data?.itemlink4}>{data?.itemname4}</Link>
             </li>
           </ul>
         </div>
