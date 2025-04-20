@@ -3,11 +3,11 @@ import Image from "next/image";
 import { TfiEmail } from "react-icons/tfi";
 import ContactForm from "./ContactForm";
 import ReviewCart from "./ReviewCart";
-import { Address } from "@/components/types/allFrontendDataType";
+import {  AddressItem } from "@/components/types/allFrontendDataType";
 import React from "react";
 
 type contactUsProps = {
-  data?: Address;
+  data?: AddressItem;
 };
 
 const ContactUs: React.FC<contactUsProps> = ({ data }) => {
