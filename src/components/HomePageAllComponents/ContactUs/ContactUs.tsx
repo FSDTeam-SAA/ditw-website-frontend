@@ -14,7 +14,7 @@ const ContactUs: React.FC<contactUsProps> = ({ data }) => {
   console.log(data);
 
   return (
-    <div id="contact_us">
+    <div>
       {/* Header Section */}
       <div className="bg-black">
         <div className="container mx-auto px-4 sm:px-6 md:px-8 pb-5">

@@ -50,7 +50,7 @@ const OurServices = () => {
   ];
 
   return (
-    <div id="services" className="relative overflow-hidden">
+    <div className="relative overflow-hidden">
       {/* Background image */}
       <div
         style={{ backgroundImage: `url('/assets/service/ourService_bg.jpeg')` }}

@@ -19,18 +19,15 @@ import FileUpload from "@/components/ui/FileUpload";
 import { useSession } from "next-auth/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Label } from "@/components/ui/label";
-import { ColorPicker } from "@/components/ui/ColorPicker";
 import Loading from "@/components/shared/Loading/Loading";
 import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
+import { ColorPicker } from "@/components/ui/color-picker";
 
 const formSchema = z.object({
   title: z.string().min(2, {
     message: "Heading must be at least 2 characters.",
   }),
-  backgroundColor: z.string().min(4, {
-    message: "Please pick a background color.",
-  }),
+  back_color: z.string().optional(),
 });
 
 type CustomerFeedbackResponse = {
@@ -39,7 +36,7 @@ type CustomerFeedbackResponse = {
   data: {
     id: number;
     title: string;
-    back_color: string;
+    back_color?: string | null;
     img: string | null;
     created_at: string; // ISO 8601 timestamp
     updated_at: string; // ISO 8601 timestamp
@@ -48,7 +45,6 @@ type CustomerFeedbackResponse = {
 
 const ReviewHeading = () => {
   const { data: session } = useSession();
-  const [selectedColor, setSelectedColor] = useState<string>("");
   const [img, setImage] = useState<File | null>(null);
 
   const token = (session?.user as { token?: string })?.token;
@@ -68,7 +64,7 @@ const ReviewHeading = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
-      backgroundColor: "",
+      back_color: "#000000",
     },
   });
 
@@ -76,15 +72,10 @@ const ReviewHeading = () => {
     if (data?.data) {
       form.reset({
         title: data.data.title || "",
-        backgroundColor: data.data.back_color || "",
+        back_color: data.data.back_color || "#000000",
       });
     }
   }, [data, form]);
-
-  const handleColorChange = (color: string) => {
-    setSelectedColor(color);
-    form.setValue("backgroundColor", color);
-  };
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["management-it-support"],
@@ -106,7 +97,6 @@ const ReviewHeading = () => {
         return;
       }
       form.reset();
-      setSelectedColor("");
       setImage(null);
       toast.success(data.message, {
         position: "top-right",
@@ -122,7 +112,7 @@ const ReviewHeading = () => {
     }
     formData.append("title", values.title);
 
-    formData.append("backgroundColor", values.backgroundColor);
+    formData.append("back_color", values.back_color || "");
     console.log(formData);
 
     mutate(formData);
@@ -165,14 +155,26 @@ const ReviewHeading = () => {
                 )}
               />
 
+              {/* Color Picker */}
               <div className="pt-4">
-                <Label className="text-base font-bold text-black">
-                  Background Color
-                </Label>
-                <ColorPicker
-                  selectedColor={selectedColor}
-                  onColorChange={handleColorChange}
-                  previousColor={selectedColor}
+                <FormField
+                  control={form.control}
+                  name="back_color"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-base font-bold text-black">
+                        Add Background Color
+                      </FormLabel>
+                      <FormControl>
+                        <ColorPicker
+                          selectedColor={field.value ?? "#FFFFFF"}
+                          onColorChange={field.onChange}
+                          previousColor={data?.data?.back_color || "#000000"}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
             </div>

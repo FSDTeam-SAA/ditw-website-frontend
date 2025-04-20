@@ -16,8 +16,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useSession } from "next-auth/react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify";
+import { useEffect } from "react";
+import Loading from "@/components/shared/Loading/Loading";
+import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -34,9 +37,36 @@ const formSchema = z.object({
   }),
 });
 
+type WhyChooseUsResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    id: number;
+    title: string;
+    description: string;
+    button_name: string;
+    button_url: string;
+    created_at: string; // ISO timestamp
+    updated_at: string; // ISO timestamp
+  };
+};
+
 const WhyChooseUs = () => {
   const session = useSession();
   const token = (session?.data?.user as { token?: string })?.token;
+
+  const { data, isLoading, isError, error } = useQuery<WhyChooseUsResponse>({
+    queryKey: ["why-choose-us"],
+    queryFn: () =>
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/managedservices/whychooseus`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      ).then((res) => res.json()),
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -47,6 +77,17 @@ const WhyChooseUs = () => {
       buttonUrl: "",
     },
   });
+
+  useEffect(() => {
+    if (data?.data) {
+      form.reset({
+        title: data.data.title || "",
+        description: data.data.description || "",
+        buttonName: data.data.button_name || "",
+        buttonUrl: data.data.button_url || "",
+      });
+    }
+  }, [data, form]);
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["banner"],
@@ -84,6 +125,14 @@ const WhyChooseUs = () => {
     formData.append("button_url", values.buttonUrl);
     console.log("FormData Submitted Successfully", formData);
     mutate(formData);
+  }
+
+  if (isLoading) {
+    return <Loading />;
+  } else if (isError) {
+    <div className="w-full h-[500px]">
+      <ErrorContainer message={error?.message || "Something went Wrong"} />
+    </div>;
   }
   return (
     <div className="px-10 pb-10">
