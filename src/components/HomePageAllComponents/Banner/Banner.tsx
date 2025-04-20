@@ -12,7 +12,7 @@ const Banner : React.FC<BannerProps> = ({data}) => {
   console.log(data.back_img)
 
   return (
-    <div id="home">
+    <div >
       <div
         // style={{ backgroundImage: `url('/assets/banner.jpeg')` }}
         style={{ backgroundImage: `url(${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/Banners/${data.back_img})` }}

@@ -14,14 +14,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { ColorPicker } from "@/components/ui/ColorPicker";
-import { Label } from "@/components/ui/label";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Loading from "@/components/shared/Loading/Loading";
 import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
+import { ColorPicker } from "@/components/ui/color-picker";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -46,7 +45,7 @@ type ContactInfoResponse = {
   message: string;
   data: {
     id: number;
-    color: string;
+    color?: string | null;
     title: string;
     subtitle: string;
     button_name: string;
@@ -56,24 +55,18 @@ type ContactInfoResponse = {
   };
 };
 
-
 const ContactUsHeading = () => {
   const session = useSession();
   const token = (session?.data?.user as { token?: string })?.token;
 
-  const [selectedColor, setSelectedColor] = useState<string>("");
-
   const { data, isLoading, isError, error } = useQuery<ContactInfoResponse>({
     queryKey: ["contact-us-heading"],
     queryFn: () =>
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contact`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      ).then((res) => res.json()),
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contact`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).then((res) => res.json()),
   });
 
   // console.log(data?.data.color)
@@ -85,26 +78,21 @@ const ContactUsHeading = () => {
       subtitle: "",
       button_name: "",
       button_url: "",
-      color: "",
+      color: "#000000",
     },
   });
 
   useEffect(() => {
-      if (data?.data) {
-        form.reset({
-          title: data.data.title || "",
-          subtitle: data.data.subtitle || "",
-          button_name: data.data.button_name || "",
-          button_url: data.data.button_url || "",
-          color: data.data.color || "",
-        });
-      }
-    }, [data, form]);
-
-  const handleColorChange = (color: string) => {
-    setSelectedColor(color);
-    form.setValue("color", color);
-  };
+    if (data?.data) {
+      form.reset({
+        title: data.data.title || "",
+        subtitle: data.data.subtitle || "",
+        button_name: data.data.button_name || "",
+        button_url: data.data.button_url || "",
+        color: data.data.color || "#000000",
+      });
+    }
+  }, [data, form]);
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["contact-us-heading"],
@@ -126,7 +114,6 @@ const ContactUsHeading = () => {
         return;
       }
       form.reset();
-      setSelectedColor("");
       toast.success(data.message, {
         position: "top-right",
         richColors: true,
@@ -140,7 +127,7 @@ const ContactUsHeading = () => {
     formData.append("subtitle", values.subtitle);
     formData.append("button_name", values.button_name);
     formData.append("button_url", values.button_url);
-    formData.append("color", selectedColor);
+    formData.append("color", values.color || "");
 
     mutate(formData);
   };
@@ -165,12 +152,26 @@ const ContactUsHeading = () => {
               Contact Us Heading
             </h2>
 
-            <div className="space-y-2">
-              <Label>Background Color</Label>
-              <ColorPicker
-                selectedColor={selectedColor}
-                onColorChange={handleColorChange}
-                previousColor={selectedColor}
+            <div>
+              {/* Color Picker */}
+              <FormField
+                control={form.control}
+                name="color"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-base font-bold text-black">
+                      Add Backgorund Color
+                    </FormLabel>
+                    <FormControl>
+                      <ColorPicker
+                        selectedColor={field.value ?? "#FFFFFF"}
+                        onColorChange={field.onChange}
+                        previousColor={data?.data?.color || "#000000"}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
             </div>
 

@@ -22,8 +22,7 @@ import FileUpload from "@/components/ui/FileUpload";
 import { toast } from "react-toastify";
 import Loading from "@/components/shared/Loading/Loading";
 import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
-import { Label } from "@/components/ui/label";
-import { ColorPicker } from "@/components/ui/ColorPicker";
+import { ColorPicker } from "@/components/ui/color-picker";
 
 // data type
 type NavbarResponse = {
@@ -32,7 +31,7 @@ type NavbarResponse = {
   data: {
     id: number;
     logo: string; // URL to logo image
-    back_img: string; // URL to background image
+    back_img?: string | null; // URL to background image
     itemname1: string;
     itemlink1: string;
     itemname2: string;
@@ -79,9 +78,7 @@ const formSchema = z.object({
     .refine((val) => !val || val.includes("#"), {
       message: "Item link must include a # character",
     }),
-  back_img: z.string().min(6, {
-    message: "Please pick a background color.",
-  }),
+  back_img: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -91,7 +88,6 @@ export default function Navbar() {
   const token = (session?.data?.user as { token?: string })?.token;
 
   const [logo, setLogo] = useState<File | null>(null);
-  const [selectedColor, setSelectedColor] = useState<string>("#dddddd");
 
   const { data, isLoading, isError, error } = useQuery<NavbarResponse>({
     queryKey: ["navbar"],
@@ -108,7 +104,7 @@ export default function Navbar() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      back_img: "",
+      back_img: "#000000",
       itemname1: "",
       itemlink1: "",
       itemname2: "",
@@ -117,14 +113,13 @@ export default function Navbar() {
       itemlink3: "",
       itemname4: "",
       itemlink4: "",
-      
     },
   });
 
   useEffect(() => {
     if (data?.data) {
       form.reset({
-        back_img: data.data.back_img || "",
+        back_img: data.data.back_img || "#000000",
         itemname1: data.data.itemname1 || "",
         itemlink1: data.data.itemlink1 || "",
         itemname2: data.data.itemname2 || "",
@@ -133,16 +128,9 @@ export default function Navbar() {
         itemlink3: data.data.itemlink3 || "",
         itemname4: data.data.itemname4 || "",
         itemlink4: data.data.itemlink4 || "",
-        
       });
     }
   }, [data, form]);
-
-  const handleColorChange = (back_img: string) => {
-    setSelectedColor(back_img);
-    form.setValue("back_img", back_img);
-  };
-
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["navbar-settings"],
@@ -162,7 +150,6 @@ export default function Navbar() {
       }
 
       form.reset();
-      setSelectedColor("");
       setLogo(null);
 
       toast.success(data.message || "Submitted successfully!");
@@ -177,7 +164,7 @@ export default function Navbar() {
     });
 
     if (logo) formData.append("logo", logo);
-    formData.append("back_img", selectedColor);
+    formData.append("back_img", values.back_img || "");
 
     console.log("form summitted successfully", formData);
 
@@ -213,15 +200,27 @@ export default function Navbar() {
               existingUrl={data?.data?.logo}
             />
             <div>
-          <Label className="text-base font-bold text-black">
-                Background Color
-              </Label>
-              <ColorPicker
-                selectedColor={selectedColor}
-                onColorChange={handleColorChange}
-                previousColor={selectedColor}
+              {/* Color Picker */}
+              <FormField
+                control={form.control}
+                name="back_img"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-base font-bold text-black">
+                      Add Background Color
+                    </FormLabel>
+                    <FormControl>
+                      <ColorPicker
+                        selectedColor={field.value ?? "#FFFFFF"}
+                        onColorChange={field.onChange}
+                        previousColor={data?.data?.back_img || "#000000"}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-          </div>
+            </div>
           </div>
 
           <h2 className="text-lg font-semibold pt-6">Header Menu Items</h2>

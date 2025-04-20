@@ -67,7 +67,7 @@ const WeAre: React.FC<weAreProps> = ({ data, aboutUsSecondData }) => {
   if (!data || !aboutUsSecondData) return null;
 
   return (
-    <div id="about_us" className="container py-10 px-4 sm:px-6 lg:px-8">
+    <div className="container py-10 px-4 sm:px-6 lg:px-8">
       <div>
         <h2 className="text-3xl sm:text-4xl font-bold text-amber-400 leading-normal">
           {/* WE ARE */}

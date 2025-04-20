@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react";
 import Banner from "./Banner/Banner";
 import WeAre from "./WeAre/WeAre";
@@ -13,33 +13,43 @@ import { AllHomeDataResponse } from "../types/allFrontendDataType";
 const HomePageAllComponents = () => {
   const session = useSession();
   const token = (session?.data?.user as { token?: string })?.token;
-  console.log(token)
+  console.log(token);
 
-  const {data} = useQuery<AllHomeDataResponse>({
-    queryKey : ["all-data"],
-    queryFn : ()=> fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/frontend-data`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }).then((res)=>res.json()),
+  const { data } = useQuery<AllHomeDataResponse>({
+    queryKey: ["all-data"],
+    queryFn: () =>
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/frontend-data`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).then((res) => res.json()),
     enabled: !!token,
-  })
-  console.log("dfddd", data?.aboutsec2?.[0])
+  });
+  console.log(data?.navbar);
+
+  const homeId = data?.navbar?.[0]?.itemlink1?.replace("#", "") || "";
+  const aboutUsId = data?.navbar?.[0]?.itemlink2?.replace("#", "") || "";
+  const serviceId = data?.navbar?.[0]?.itemlink3?.replace("#", "") || "";
+  const contactUsId = data?.navbar?.[0]?.itemlink4?.replace("#", "") || "";
+
   return (
     <div>
       <section className="sticky top-0 z-50">
-        <Navbar data={data?.navbar?.[0]}/>
+        <Navbar data={data?.navbar?.[0]} />
       </section>
 
-      <section>
-        <Banner data={data?.banner?.[0]}/>
+      <section id={homeId}>
+        <Banner data={data?.banner?.[0]} />
       </section>
 
-      <section>
-        <WeAre data={data?.about?.[0]} aboutUsSecondData={data?.aboutsec2?.[0]}/>
+      <section id={aboutUsId}>
+        <WeAre
+          data={data?.about?.[0]}
+          aboutUsSecondData={data?.aboutsec2?.[0]}
+        />
       </section>
 
-      <section>
+      <section id={serviceId}>
         <OurServices />
       </section>
 
@@ -47,8 +57,8 @@ const HomePageAllComponents = () => {
         <ManagedService />
       </section>
 
-      <section>
-        <ContactUs data={data?.address?.[0]}/>
+      <section id={contactUsId}>
+        <ContactUs data={data?.address?.[0]} />
       </section>
     </div>
   );
