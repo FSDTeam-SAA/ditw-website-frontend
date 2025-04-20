@@ -17,7 +17,7 @@ const HomePageAllComponents = () => {
         (res) => res.json()
       ),
   });
-  console.log(data?.navbar);
+  // console.log(data?.navbar);
 
   const homeId = data?.navbar?.[0]?.itemlink1?.replace("#", "") || "";
   const aboutUsId = data?.navbar?.[0]?.itemlink2?.replace("#", "") || "";
@@ -25,6 +25,8 @@ const HomePageAllComponents = () => {
   const contactUsId = data?.navbar?.[0]?.itemlink4?.replace("#", "") || "";
 
   console.log(homeId, aboutUsId, serviceId, contactUsId);
+
+  if (!data) return <div>Loading...</div>;
 
   return (
     <div>
@@ -80,14 +82,38 @@ const HomePageAllComponents = () => {
 
       {/* managed service  */}
       <section>
-        {data?.ourcorevalue && data?.ourcorevalue?.[0] && data?.whychooseus && data?.whychooseus?.[0] && data?.service && data?.service?.[0] && data?.poweredbymrpc && data?.poweredbymrpc?.[0] && (
-          <ManagedService data={data?.ourcorevalue?.[0]} whyChooseUsData={data?.whychooseus?.[0]} serviceFeaturesData={data?.service?.[0]} poweredByMrpcData={data?.poweredbymrpc?.[0]} />
-        )}
+        {data?.ourcorevalue &&
+          data?.ourcorevalue?.[0] &&
+          data?.whychooseus &&
+          data?.whychooseus?.[0] &&
+          data?.service &&
+          data?.service?.[0] &&
+          data?.poweredbymrpc &&
+          data?.poweredbymrpc?.[0] && (
+            <ManagedService
+              data={data?.ourcorevalue?.[0]}
+              whyChooseUsData={data?.whychooseus?.[0]}
+              serviceFeaturesData={data?.service?.[0]}
+              poweredByMrpcData={data?.poweredbymrpc?.[0]}
+            />
+          )}
       </section>
 
       {/* Contact us  */}
       <section id={contactUsId}>
-        <ContactUs data={data?.address?.[0]} />
+        {((data?.contact && data?.contact?.[0]) ||
+          (data?.address && data?.address?.[0]) ||
+          (data?.ourcontact && data?.ourcontact?.[0]) ||
+          (data?.footer && data?.footer?.[0]) ||
+          (data?.review && data?.review?.[0])) && (
+          <ContactUs
+            data={data?.contact?.[0]}
+            addressData={data?.address?.[0]}
+            ourContactData={data?.ourcontact?.[0]}
+            footerData={data?.footer?.[0]}
+            reviewHeadingData={data?.review?.[0]}
+          />
+        )}
       </section>
     </div>
   );
