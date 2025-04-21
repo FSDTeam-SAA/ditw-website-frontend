@@ -107,13 +107,15 @@ const HomePageAllComponents = () => {
           (data?.address && data?.address?.[0]) ||
           (data?.ourcontact && data?.ourcontact?.[0]) ||
           (data?.footer && data?.footer?.[0]) ||
-          (data?.review && data?.review?.[0])) && (
+          (data?.review && data?.review?.[0]) ||
+          (data?.reviewBackimg && data?.reviewBackimg?.[0])) && (
           <ContactUs
             data={data?.contact?.[0]}
             addressData={data?.address?.[0]}
             ourContactData={data?.ourcontact?.[0]}
             footerData={data?.footer?.[0]}
             reviewHeadingData={data?.review?.[0]}
+            reviewBackImgData={data?.reviewBackimg?.[0]}
           />
         )}
       </section>

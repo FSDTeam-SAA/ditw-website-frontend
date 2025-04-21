@@ -24,7 +24,10 @@ const OurServices: React.FC<ourServiceTypeProps> = ({
   serviceDeliveryData,
   serviceSupportData,
 }) => {
-  console.log('fdfdf',`url(${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/Menus/${data?.back_img}})`);
+  console.log(
+    "fdfdf",
+    `url(${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/Menus/${data?.back_img}})`
+  );
 
   return (
     <div className="relative overflow-hidden">
@@ -44,9 +47,10 @@ const OurServices: React.FC<ourServiceTypeProps> = ({
         <div className="container">
           {/* Header Section */}
           <div className="mb-8 md:mb-12">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold">
-              {serviceHeading?.title}
-            </h2>
+            <h2
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold"
+              dangerouslySetInnerHTML={{ __html: serviceHeading?.title || "" }}
+            />
 
             <div className="w-full flex items-center justify-start">
               <div className="w-32 sm:w-40 md:w-60 h-1 bg-blue-600 mt-2" />

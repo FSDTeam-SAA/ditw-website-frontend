@@ -34,8 +34,8 @@ const formSchema = z.object({
   button_name: z.string().min(2, {
     message: "Button name must be at least 2 characters.",
   }),
-  button_url: z.string().min(2, {
-    message: "Button URL must be at least 2 characters.",
+  button_url: z.string().min(1, {
+    message: "Button URL must be at least 1 characters.",
   }),
 });
 

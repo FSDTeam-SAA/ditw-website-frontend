@@ -24,8 +24,8 @@ const formSchema = z.object({
   name: z.string().min(2, {
     message: "Heading must be at least 2 characters.",
   }),
-  content: z.string().min(10, {
-    message: "First Description must be at least 10 characters.",
+  content: z.string().refine((val) => val.trim().split(/\s+/).length <= 25, {
+    message: "Review content must not exceed 200 words",
   }),
   star: z
     .number({
@@ -187,20 +187,37 @@ const EditReview = ({
                   <FormField
                     control={form.control}
                     name="content"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-base font-bold text-black">
-                          Review Content
-                        </FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Enter a review Content"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    render={({ field }) => {
+                      const wordCount =
+                        field.value?.trim().split(/\s+/).length || 0;
+                      return (
+                        <FormItem>
+                          <FormLabel className="text-base font-bold text-black">
+                            Review Content
+                          </FormLabel>
+                          <FormControl>
+                            <div>
+                              <Textarea
+                                placeholder="Enter a review content"
+                                {...field}
+                                onChange={(e) => {
+                                  const words = e.target.value
+                                    .trim()
+                                    .split(/\s+/);
+                                  if (words.length <= 25) {
+                                    field.onChange(e);
+                                  }
+                                }}
+                              />
+                              <p className="text-sm text-gray-500 mt-1">
+                                {wordCount}/100 words
+                              </p>
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
                   />
                 </div>
 

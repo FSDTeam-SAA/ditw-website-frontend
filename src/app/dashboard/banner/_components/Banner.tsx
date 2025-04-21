@@ -22,6 +22,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Loading from "@/components/shared/Loading/Loading";
 import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
+import QuillEditor from "@/components/ui/quill-editor";
 
 type BannerResponse = {
   success: boolean;
@@ -53,8 +54,8 @@ const formSchema = z.object({
   button_name: z.string().min(2, {
     message: "button name must be at least 2 characters.",
   }),
-  button_url: z.string().min(2, {
-    message: "button url must be at least 2 characters.",
+  button_url: z.string().min(1, {
+    message: "button url must be at least 1 characters.",
   }),
 });
 
@@ -173,12 +174,33 @@ const Banner = () => {
                     Heading
                   </FormLabel>
                   <FormControl>
-                    <Input placeholder="Heading" {...field} />
+                    <QuillEditor
+                      id="heading"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
+            {/* <FormField
+              control={form.control}
+              name="heading"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-base font-bold text-black">
+                    Heading
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="Heading" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            /> */}
+
             {/* sub heading  */}
             <FormField
               control={form.control}
