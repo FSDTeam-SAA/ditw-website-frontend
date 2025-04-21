@@ -81,7 +81,7 @@ const AllReviewData = () => {
             Add Review
           </button>
         </div>
-        <h2 className="text-3xl font-bold text-black leading-normal text-center py-6">
+        <h2 className="text-3xl font-bold text-black leading-normal text-center pb-6">
           All Review Data
         </h2>
         <table className="w-full">

@@ -18,7 +18,7 @@ import { useEffect, useState } from "react";
 import FileUpload from "@/components/ui/FileUpload";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Loading from "@/components/shared/Loading/Loading";
 import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
 
@@ -57,11 +57,13 @@ const OurContact = () => {
   const session = useSession();
   const token = (session?.data?.user as { token?: string })?.token;
 
+  const queryClient = useQueryClient();
+
   const [email_icon, setEmailIcon] = useState<File | null>(null);
   const [phone_icon, setPhoneIcon] = useState<File | null>(null);
 
   const { data, isLoading, isError, error } = useQuery<ContactDetailsResponse>({
-    queryKey: ["our contact"],
+    queryKey: ["our-contact"],
     queryFn: () =>
       fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/ourcontact`, {
         headers: {
@@ -103,18 +105,20 @@ const OurContact = () => {
         body: formData,
       }).then((res) => res.json()),
 
-    onSuccess: (data) => {
-      if (!data?.success) {
-        toast.error(data.message || "Something went wrong", {
-          position: "top-right",
-        });
-        return;
-      }
-      form.reset();
-      toast.success(data.message, {
-        position: "top-right",
-      });
-    },
+      onSuccess: (data) => {
+        if (!data?.success) {
+          toast.error(data.message || "Submission failed");
+          return;
+        }
+  
+        form.reset();
+        setEmailIcon(null);
+        setPhoneIcon(null);
+  
+        toast.success(data.message || "Submitted successfully!");
+  
+        queryClient.invalidateQueries({ queryKey: ["our-contact"] });
+      },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {

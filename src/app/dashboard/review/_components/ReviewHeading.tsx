@@ -17,8 +17,8 @@ import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import FileUpload from "@/components/ui/FileUpload";
 import { useSession } from "next-auth/react";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 import Loading from "@/components/shared/Loading/Loading";
 import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
 import { ColorPicker } from "@/components/ui/color-picker";
@@ -45,13 +45,14 @@ type CustomerFeedbackResponse = {
 
 const ReviewHeading = () => {
   const { data: session } = useSession();
-  const [img, setImage] = useState<File | null>(null);
-
   const token = (session?.user as { token?: string })?.token;
+  const queryClient = useQueryClient();
+
+  const [img, setImage] = useState<File | null>(null);
 
   const { data, isLoading, isError, error } =
     useQuery<CustomerFeedbackResponse>({
-      queryKey: ["review heading"],
+      queryKey: ["review-heading"],
       queryFn: () =>
         fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/review/heading`, {
           headers: {
@@ -88,21 +89,19 @@ const ReviewHeading = () => {
         body: formData,
       }).then((res) => res.json()),
 
-    onSuccess: (data) => {
-      if (!data?.success) {
-        toast.error(data.message, {
-          position: "top-right",
-          richColors: true,
-        });
-        return;
-      }
-      form.reset();
-      setImage(null);
-      toast.success(data.message, {
-        position: "top-right",
-        richColors: true,
-      });
-    },
+      onSuccess: (data) => {
+        if (!data?.success) {
+          toast.error(data.message || "Submission failed");
+          return;
+        }
+  
+        form.reset();
+        setImage(null);
+  
+        toast.success(data.message || "Submitted successfully!");
+  
+        queryClient.invalidateQueries({ queryKey: ["review-heading"] });
+      },
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {

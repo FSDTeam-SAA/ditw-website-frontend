@@ -1,7 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["dynamic3zabeer.scaleupdevagency.com", "1744970141_logo.jpg"],
+    remotePatterns: [
+      {
+        hostname: "dynamic3zabeer.scaleupdevagency.com",
+        protocol: "https",
+      },
+      // {
+      //   hostname: "1744970141_logo.jpg",
+      //   protocol: "https"
+      // }
+    ],
   },
 };
 
