@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useSession } from "next-auth/react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
 import Loading from "@/components/shared/Loading/Loading";
@@ -54,6 +54,8 @@ type WhyChooseUsResponse = {
 const WhyChooseUs = () => {
   const session = useSession();
   const token = (session?.data?.user as { token?: string })?.token;
+
+  const queryClient = useQueryClient();
 
   const { data, isLoading, isError, error } = useQuery<WhyChooseUsResponse>({
     queryKey: ["why-choose-us"],
@@ -112,6 +114,8 @@ const WhyChooseUs = () => {
       form.reset();
 
       toast.success(data.message || "Submitted successfully!");
+
+      queryClient.invalidateQueries({ queryKey: ["why-choose-us"] });
     },
   });
 

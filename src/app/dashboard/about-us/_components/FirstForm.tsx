@@ -15,11 +15,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useSession } from "next-auth/react";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import Loading from "@/components/shared/Loading/Loading";
 import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
+import { toast } from "react-toastify";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -58,7 +58,7 @@ const FirstForm = () => {
   const { data: session } = useSession();
   const token = (session?.user as { token?: string })?.token;
   // console.log(token)
-  // const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
   const { data, isLoading, isError, error } = useQuery<AboutUsResponse>({
     queryKey: ["about-us-first-form"],
@@ -113,18 +113,15 @@ const FirstForm = () => {
 
     onSuccess: (data) => {
       if (!data?.success) {
-        toast.error(data.message, {
-          position: "top-right",
-          richColors: true,
-        });
+        toast.error(data.message || "Submission failed");
         return;
       }
+
       form.reset();
-      toast.success(data.message, {
-        position: "top-right",
-        richColors: true,
-      });
-      // queryClient.invalidateQueries({ queryKey: ["first-form"] });
+
+      toast.success(data.message || "Submitted successfully!");
+
+      queryClient.invalidateQueries({ queryKey: ["about-us-first-form"] });
     },
   });
 
@@ -253,7 +250,7 @@ const FirstForm = () => {
               className="bg-blue-500 text-lg font-bold px-10 py-2"
               type="submit"
             >
-              {isPending ? "Submitting" : "Submit"}
+              {isPending ? "Submitting..." : "Submit"}
             </Button>
           </div>
         </form>

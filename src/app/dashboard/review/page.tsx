@@ -1,13 +1,13 @@
 import React from "react";
 import ReviewHeading from "./_components/ReviewHeading";
-import ReviewCart from "./_components/ReviewCart";
 import AllReviewData from "./_components/AllReviewData";
+import ReviewCartBackground from "./_components/ReviewCart";
 
 const Page = () => {
   return (
     <div>
       <ReviewHeading />
-      <ReviewCart />
+      <ReviewCartBackground />
 
       <AllReviewData/>
     </div>

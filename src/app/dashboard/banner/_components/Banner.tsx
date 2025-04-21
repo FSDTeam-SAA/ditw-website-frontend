@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useSession } from "next-auth/react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import FileUpload from "@/components/ui/FileUpload";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -63,6 +63,8 @@ const Banner = () => {
   const session = useSession();
   const token = (session?.data?.user as { token?: string })?.token;
   console.log(token);
+
+  const queryClient = useQueryClient();
 
   const { data, isLoading, isError, error } = useQuery<BannerResponse>({
     queryKey: ["banner"],
@@ -120,6 +122,8 @@ const Banner = () => {
       setBack_img(null);
 
       toast.success(data.message || "Submitted successfully!");
+
+      queryClient.invalidateQueries({ queryKey: ["banner"] });
     },
   });
 

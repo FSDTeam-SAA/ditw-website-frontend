@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import FileUpload from "@/components/ui/FileUpload";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { useSession } from "next-auth/react";
 import Loading from "@/components/shared/Loading/Loading";
@@ -65,7 +65,7 @@ type ManagedFeatureResponse = {
     title2: string;
     icon2: string;
     title3: string;
-    icon3: string;  
+    icon3: string;
     icon4: string;
     title4: string;
     icon5: string;
@@ -82,6 +82,8 @@ type ManagedFeatureResponse = {
 const ManagedFeature = () => {
   const session = useSession();
   const token = (session?.data?.user as { token?: string })?.token;
+
+  const queryClient = useQueryClient();
 
   const { data, isLoading, isError, error } = useQuery<ManagedFeatureResponse>({
     queryKey: ["managed-feature-items"],
@@ -137,10 +139,10 @@ const ManagedFeature = () => {
   }, [data, form]);
 
   const { mutate, isPending } = useMutation({
-    mutationKey: ["powered-by-mrpc"],
+    mutationKey: ["managed-feature-items-post"],
     mutationFn: (formData: FormData) =>
       fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/managedservices/poweredbymrpc`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/managedservices/projectmanagement`,
         {
           method: "POST",
           headers: {
@@ -157,8 +159,18 @@ const ManagedFeature = () => {
       }
 
       form.reset();
+      setIcon(null);
+      setIcon1(null);
+      setIcon2(null);
+      setIcon3(null);
+      setIcon4(null);
+      setIcon5(null);
+      setIcon6(null);
+      setIcon7(null);
 
       toast.success(data.message || "Submitted successfully!");
+
+      queryClient.invalidateQueries({ queryKey: ["managed-feature-items"] });
     },
   });
 

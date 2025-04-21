@@ -1,4 +1,8 @@
 "use client";
+import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
+import Loading from "@/components/shared/Loading/Loading";
+import { useQuery } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { FaStar } from "react-icons/fa";
 
@@ -23,12 +27,27 @@ const breakpoints = {
     spaceBetween: 30,
   },
   1440: {
-    slidesPerView: 2,
+    slidesPerView: 3,
     spaceBetween: 30,
   },
 };
 
 const ReviewCart = () => {
+  const session = useSession();
+  const token = (session?.data?.user as { token?: string })?.token;
+
+  const { data, isError, error, isLoading } = useQuery({
+    queryKey: ["all-review-data"],
+    queryFn: () =>
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/review-data`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).then((res) => res.json()),
+  });
+
+  console.log(data);
+
   const reviewContent = [
     {
       id: 1,
@@ -68,6 +87,14 @@ const ReviewCart = () => {
     },
   ];
 
+  if (isLoading) {
+    return <Loading />;
+  } else if (isError) {
+    <div className="w-full h-[500px]">
+      <ErrorContainer message={error?.message || "Something went Wrong"} />
+    </div>;
+  }
+
   return (
     <div className="w-full flex items-center justify-center gap-10">
       <Swiper
@@ -96,11 +123,21 @@ const ReviewCart = () => {
               />
               <div className="absolute inset-0 flex flex-col justify-center px-6 py-4">
                 <div className="flex items-center gap-2">
-                  <span><FaStar className="w-5 h-5 text-yellow-500"/></span>
-                  <span><FaStar className="w-5 h-5 text-yellow-500"/></span>
-                  <span><FaStar className="w-5 h-5 text-yellow-500"/></span>
-                  <span><FaStar className="w-5 h-5 text-yellow-500"/></span>
-                  <span><FaStar className="w-5 h-5 text-yellow-500"/></span>
+                  <span>
+                    <FaStar className="w-5 h-5 text-yellow-500" />
+                  </span>
+                  <span>
+                    <FaStar className="w-5 h-5 text-yellow-500" />
+                  </span>
+                  <span>
+                    <FaStar className="w-5 h-5 text-yellow-500" />
+                  </span>
+                  <span>
+                    <FaStar className="w-5 h-5 text-yellow-500" />
+                  </span>
+                  <span>
+                    <FaStar className="w-5 h-5 text-yellow-500" />
+                  </span>
                 </div>
                 <p className="text-xs sm:text-sm pt-3">{data.review}</p>
                 <p className="text-xs font-normal pt-2 text-right">

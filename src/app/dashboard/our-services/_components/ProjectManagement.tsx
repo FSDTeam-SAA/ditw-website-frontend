@@ -18,8 +18,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useState } from "react";
 import FileUpload from "@/components/ui/FileUpload";
 import { useSession } from "next-auth/react";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 import Loading from "@/components/shared/Loading/Loading";
 import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
 
@@ -72,6 +72,8 @@ const ProjectManagement = () => {
   const session = useSession();
   const token = (session?.data?.user as { token?: string })?.token;
   // console.log(token);
+
+  const queryClient = useQueryClient();
 
   const { data, isLoading, isError, error } = useQuery<ProjectManagementContentResponse>({
     queryKey: ["project-management"],
@@ -128,20 +130,21 @@ const ProjectManagement = () => {
         }
       ).then((res) => res.json()),
 
-    onSuccess: (data) => {
-      if (!data?.success) {
-        toast.error(data.message, {
-          position: "top-right",
-          richColors: true,
-        });
-        return;
-      }
-      form.reset();
-      toast.success(data.message, {
-        position: "top-right",
-        richColors: true,
-      });
-    },
+      onSuccess: (data) => {
+        if (!data?.success) {
+          toast.error(data.message || "Submission failed");
+          return;
+        }
+  
+        form.reset();
+        setImg1(null);
+        setImg2(null);
+        setImg3(null);  
+  
+        toast.success(data.message || "Submitted successfully!");
+  
+        queryClient.invalidateQueries({ queryKey: ["project-management"] });
+      },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {

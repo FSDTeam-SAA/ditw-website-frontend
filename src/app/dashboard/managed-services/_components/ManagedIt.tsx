@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import FileUpload from "@/components/ui/FileUpload";
 import { Textarea } from "@/components/ui/textarea";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 import Loading from "@/components/shared/Loading/Loading";
@@ -54,6 +54,7 @@ type ManagedITServicesResponse = {
 const ManagedIt = () => {
   const session = useSession();
   const token = (session?.data?.user as { token?: string })?.token;
+  const queryClient = useQueryClient();
 
   const [img, setImage] = useState<File | null>(null);
   const [icon1, setIcon1] = useState<File | null>(null);
@@ -61,7 +62,7 @@ const ManagedIt = () => {
 
 
   const { data, isLoading, isError, error } = useQuery<ManagedITServicesResponse>({
-    queryKey: ["managed it"],
+    queryKey: ["managed-it"],
     queryFn: () =>
       fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/managedservices/it`, {
         headers: {
@@ -100,18 +101,21 @@ const ManagedIt = () => {
         body: formData,
       }).then((res) => res.json()),
 
-    onSuccess: (data) => {
-      if (!data?.success) {
-        toast.error(data.message || "Something went wrong", {
-          position: "top-right",
-        });
-        return;
-      }
-      form.reset();
-      toast.success(data.message, {
-        position: "top-right",
-      });
-    },
+      onSuccess: (data) => {
+        if (!data?.success) {
+          toast.error(data.message || "Submission failed");
+          return;
+        }
+  
+        form.reset();
+        setImage(null);
+        setIcon1(null);
+        setIcon2(null);
+  
+        toast.success(data.message || "Submitted successfully!");
+  
+        queryClient.invalidateQueries({ queryKey: ["managed-it"] });
+      },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
