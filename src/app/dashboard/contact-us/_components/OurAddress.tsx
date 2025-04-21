@@ -17,8 +17,8 @@ import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import FileUpload from "@/components/ui/FileUpload";
 import { useSession } from "next-auth/react";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 import Loading from "@/components/shared/Loading/Loading";
 import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
 
@@ -44,24 +44,22 @@ type AddressDataResponse = {
   };
 };
 
-
 const OurAddress = () => {
   const session = useSession();
   const token = (session?.data?.user as { token?: string })?.token;
+
+  const queryClient = useQueryClient();
 
   const [icon, setIcon] = useState<File | null>(null);
 
   const { data, isLoading, isError, error } = useQuery<AddressDataResponse>({
     queryKey: ["contact-us-address"],
     queryFn: () =>
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/address`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      ).then((res) => res.json()),
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/address`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).then((res) => res.json()),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -73,13 +71,13 @@ const OurAddress = () => {
   });
 
   useEffect(() => {
-        if (data?.data) {
-          form.reset({
-            title: data.data.title || "",
-            location: data.data.location || "",
-          });
-        }
-      }, [data, form]);
+    if (data?.data) {
+      form.reset({
+        title: data.data.title || "",
+        location: data.data.location || "",
+      });
+    }
+  }, [data, form]);
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["contact-us-address"],
@@ -94,17 +92,16 @@ const OurAddress = () => {
 
     onSuccess: (data) => {
       if (!data?.success) {
-        toast.error(data.message || "Something went wrong", {
-          position: "top-right",
-          richColors: true,
-        });
+        toast.error(data.message || "Submission failed");
         return;
       }
+
       form.reset();
-      toast.success(data.message, {
-        position: "top-right",
-        richColors: true,
-      });
+      setIcon(null);
+
+      toast.success(data.message || "Submitted successfully!");
+
+      queryClient.invalidateQueries({ queryKey: ["contact-us-address"] });
     },
   });
 

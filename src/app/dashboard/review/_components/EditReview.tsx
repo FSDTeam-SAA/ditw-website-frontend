@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
+import { Textarea } from "@/components/ui/textarea";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -158,16 +159,21 @@ const EditReview = ({
                   <div className="md:col-span-1">
                     <FormField
                       control={form.control}
-                      name="content"
+                      name="star"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-base font-bold text-black">
-                            Review Content
-                          </FormLabel>
+                          <FormLabel>Rating (1 to 5)</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="Enter a review Content"
+                              type="number"
+                              min={1}
+                              max={5}
+                              placeholder="Enter a star"
                               {...field}
+                              value={field.value ?? ""}
+                              onChange={(e) =>
+                                field.onChange(Number(e.target.value))
+                              }
                             />
                           </FormControl>
                           <FormMessage />
@@ -180,21 +186,16 @@ const EditReview = ({
                 <div>
                   <FormField
                     control={form.control}
-                    name="star"
+                    name="content"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Rating (1 to 5)</FormLabel>
+                        <FormLabel className="text-base font-bold text-black">
+                          Review Content
+                        </FormLabel>
                         <FormControl>
-                          <Input
-                            type="number"
-                            min={1}
-                            max={5}
-                            placeholder="Enter a star"
+                          <Textarea
+                            placeholder="Enter a review Content"
                             {...field}
-                            value={field.value ?? ""}
-                            onChange={(e) =>
-                              field.onChange(Number(e.target.value))
-                            }
                           />
                         </FormControl>
                         <FormMessage />

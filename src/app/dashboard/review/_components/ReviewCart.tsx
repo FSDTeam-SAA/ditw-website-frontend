@@ -4,8 +4,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import FileUpload from "@/components/ui/FileUpload";
 import { useSession } from "next-auth/react";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 import Loading from "@/components/shared/Loading/Loading";
 import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
 
@@ -20,27 +20,22 @@ type ReviewContentResponse = {
   };
 };
 
-
 const ReviewCartBackground = () => {
   const { data: session } = useSession();
   const token = (session?.user as { token?: string })?.token;
   // console.log(token)
+  const queryClient = useQueryClient();
   const [back_img, setBack_img] = useState<File | null>(null);
 
-  const { data, isLoading, isError, error } = useQuery<ReviewContentResponse>(
-    {
-      queryKey: ["review-cart-background"],
-      queryFn: () =>
-        fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/review/content`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        ).then((res) => res.json()),
-    }
-  );
+  const { data, isLoading, isError, error } = useQuery<ReviewContentResponse>({
+    queryKey: ["review-cart-background"],
+    queryFn: () =>
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/review/content`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).then((res) => res.json()),
+  });
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["review-background-image"],
@@ -55,16 +50,14 @@ const ReviewCartBackground = () => {
 
     onSuccess: (data) => {
       if (!data?.success) {
-        toast.error(data.message, {
-          position: "top-right",
-          richColors: true,
-        });
+        toast.error(data.message || "Submission failed");
         return;
       }
-      toast.success(data.message, {
-        position: "top-right",
-        richColors: true,
-      });
+      setBack_img(null);
+
+      toast.success(data.message || "Submitted successfully!");
+
+      queryClient.invalidateQueries({ queryKey: ["review-cart-background"] });
     },
   });
 
@@ -123,4 +116,3 @@ const ReviewCartBackground = () => {
 };
 
 export default ReviewCartBackground;
-

@@ -16,8 +16,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { toast } from "sonner";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Loading from "@/components/shared/Loading/Loading";
 import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
 import { ColorPicker } from "@/components/ui/color-picker";
@@ -58,6 +58,8 @@ type ContactInfoResponse = {
 const ContactUsHeading = () => {
   const session = useSession();
   const token = (session?.data?.user as { token?: string })?.token;
+
+  const queryClient = useQueryClient();
 
   const { data, isLoading, isError, error } = useQuery<ContactInfoResponse>({
     queryKey: ["contact-us-heading"],
@@ -107,17 +109,15 @@ const ContactUsHeading = () => {
 
     onSuccess: (data) => {
       if (!data?.success) {
-        toast.error(data.message || "Something went wrong", {
-          position: "top-right",
-          richColors: true,
-        });
+        toast.error(data.message || "Submission failed");
         return;
       }
+
       form.reset();
-      toast.success(data.message, {
-        position: "top-right",
-        richColors: true,
-      });
+
+      toast.success(data.message || "Submitted successfully!");
+
+      queryClient.invalidateQueries({ queryKey: ["contact-us-heading"] });
     },
   });
 

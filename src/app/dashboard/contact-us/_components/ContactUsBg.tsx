@@ -16,8 +16,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 import Loading from "@/components/shared/Loading/Loading";
 import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
 import { ColorPicker } from "@/components/ui/color-picker";
@@ -49,6 +49,8 @@ const ContactUsBg = () => {
   const { data: session } = useSession();
 
   const token = (session?.user as { token?: string })?.token;
+
+  const queryClient = useQueryClient();
 
   const { data, isLoading, isError, error } = useQuery<ContactUsBgDataType>({
     queryKey: ["contact-us-bg"],
@@ -92,17 +94,15 @@ const ContactUsBg = () => {
 
     onSuccess: (data) => {
       if (!data?.success) {
-        toast.error(data.message, {
-          position: "top-right",
-          richColors: true,
-        });
+        toast.error(data.message || "Submission failed");
         return;
       }
+
       form.reset();
-      toast.success(data.message, {
-        position: "top-right",
-        richColors: true,
-      });
+
+      toast.success(data.message || "Submitted successfully!");
+
+      queryClient.invalidateQueries({ queryKey: ["contact-us-bg"] });
     },
   });
 
