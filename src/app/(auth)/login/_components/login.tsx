@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
-import "@/app/globals.css"
+import "@/app/globals.css";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -57,12 +57,10 @@ export function LoginForm() {
       console.log("Login successful:", values);
       toast.success("Login successful");
       router.push("/dashboard");
-    } 
-    catch (error: unknown) {
+    } catch (error: unknown) {
       const err = error as Error;
       toast.error(`Login failed: ${err.message}`);
-    }
-     finally {
+    } finally {
       setIsLoading(false); // Stop loading state
     }
   }
