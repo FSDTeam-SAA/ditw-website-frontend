@@ -11,25 +11,26 @@ type ManagedServiceProps = {
   data: CoreValue;
   whyChooseUsData: WhyChooseUsItem;
   serviceFeaturesData: ServiceItem;
-  poweredByMrpcData : PoweredByMRPC
+  poweredByMrpcData: PoweredByMRPC;
 };
 
 const ManagedService: React.FC<ManagedServiceProps> = ({
   data,
   whyChooseUsData,
   serviceFeaturesData,
-  poweredByMrpcData
+  poweredByMrpcData,
 }) => {
-  console.log(  poweredByMrpcData );
+  console.log(poweredByMrpcData);
   return (
     <div className="overflow-x-hidden">
       <section className="bg-gradient-to-r from-[#fcfdfd] to-[#cce5ed] py-6 md:py-8">
         <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-6 md:gap-10">
           {/* Column 1 - Managed IT Services */}
           <div className="lg:col-span-2 rounded-lg p-4 md:p-6 flex flex-col">
-            <h2 className="z-30 text-3xl md:text-4xl lg:text-5xl font-bold text-yellow-500 leading-normal">
-              {data?.title}
-            </h2>
+            <h2
+              className="z-30 text-3xl md:text-4xl lg:text-5xl font-bold text-yellow-500 leading-normal"
+              dangerouslySetInnerHTML={{ __html: data?.title || "" }}
+            />
             <div className="z-30 w-full flex items-center justify-start ml-6 md:ml-8 lg:ml-10">
               <div className="w-16 md:w-24 h-1 bg-[#555be7]" />
             </div>
@@ -196,7 +197,6 @@ const ManagedService: React.FC<ManagedServiceProps> = ({
                 </div>
                 <p className="text-xs">{serviceFeaturesData?.title7}</p>
               </div>
-
             </div>
           </div>
 

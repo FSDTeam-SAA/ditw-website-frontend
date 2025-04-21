@@ -6,6 +6,7 @@ import {
   ContactSection,
   FooterItem,
   OurContact,
+  ReviewBackImg,
   ReviewItem,
 } from "@/components/types/allFrontendDataType";
 import React from "react";
@@ -17,6 +18,7 @@ type contactUsProps = {
   ourContactData?: OurContact;
   footerData?: FooterItem;
   reviewHeadingData?: ReviewItem;
+  reviewBackImgData?: ReviewBackImg;
 };
 
 const ContactUs: React.FC<contactUsProps> = ({
@@ -25,8 +27,9 @@ const ContactUs: React.FC<contactUsProps> = ({
   ourContactData,
   footerData,
   reviewHeadingData,
+  reviewBackImgData
 }) => {
-  console.log(reviewHeadingData);
+  console.log(reviewBackImgData?.back_img);
 
   return (
     <div>
@@ -74,7 +77,7 @@ const ContactUs: React.FC<contactUsProps> = ({
             </div>
 
             <div className="md:col-span-3">
-              <ReviewCart />
+              <ReviewCart reviewBackImgData={reviewBackImgData}/>
             </div>
           </div>
         </div>

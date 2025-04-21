@@ -109,10 +109,10 @@ const AllReviewData = () => {
                   <td className="border-r-[2px] border-black text-center py-2">
                     {item.star}
                   </td>
-                  <td className="border-r-[2px] border-black text-center py-2">
+                  <td className="border-r-[2px] border-black text-center p-2">
                     {item.content}
                   </td>
-                  <td className="w-full flex items-center justify-between px-3 md:px-5 lg:px-7 xl:px-10 py-1">
+                  <td className="w-full flex items-center justify-between gap-6 px-3 md:px-5 lg:px-7 xl:px-10 py-1">
                     <div>
                       <button
                         onClick={() => {

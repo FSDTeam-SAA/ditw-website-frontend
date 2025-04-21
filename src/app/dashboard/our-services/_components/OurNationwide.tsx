@@ -21,6 +21,7 @@ import { toast } from "react-toastify";
 import Loading from "@/components/shared/Loading/Loading";
 import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
 import { useEffect } from "react";
+import QuillEditor from "@/components/ui/quill-editor";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -38,8 +39,8 @@ const formSchema = z.object({
   button_name: z.string().min(2, {
     message: "button name must be at least 2 characters.",
   }),
-  button_url: z.string().min(2, {
-    message: "button url must be at least 2 characters.",
+  button_url: z.string().min(1, {
+    message: "button url must be at least 1 characters.",
   }),
 });
 
@@ -170,12 +171,17 @@ const OurNationwide = () => {
                     Title
                   </FormLabel>
                   <FormControl>
-                    <Input placeholder="Title" {...field} />
+                    <QuillEditor
+                      id="heading"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             {/* sub title  */}
             <FormField
               control={form.control}

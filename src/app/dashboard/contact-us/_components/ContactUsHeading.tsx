@@ -21,6 +21,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Loading from "@/components/shared/Loading/Loading";
 import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
 import { ColorPicker } from "@/components/ui/color-picker";
+import QuillEditor from "@/components/ui/quill-editor";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -182,10 +183,14 @@ const ContactUsHeading = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-base font-bold text-black">
-                    Title
+                    Heading
                   </FormLabel>
                   <FormControl>
-                    <Input placeholder="Title" {...field} />
+                    <QuillEditor
+                      id="title"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

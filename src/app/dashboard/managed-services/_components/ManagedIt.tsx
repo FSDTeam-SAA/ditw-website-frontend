@@ -13,7 +13,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import FileUpload from "@/components/ui/FileUpload";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,6 +21,7 @@ import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 import Loading from "@/components/shared/Loading/Loading";
 import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
+import QuillEditor from "@/components/ui/quill-editor";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -60,16 +60,16 @@ const ManagedIt = () => {
   const [icon1, setIcon1] = useState<File | null>(null);
   const [icon2, setIcon2] = useState<File | null>(null);
 
-
-  const { data, isLoading, isError, error } = useQuery<ManagedITServicesResponse>({
-    queryKey: ["managed-it"],
-    queryFn: () =>
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/managedservices/it`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }).then((res) => res.json()),
-  });
+  const { data, isLoading, isError, error } =
+    useQuery<ManagedITServicesResponse>({
+      queryKey: ["managed-it"],
+      queryFn: () =>
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/managedservices/it`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }).then((res) => res.json()),
+    });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -81,14 +81,14 @@ const ManagedIt = () => {
   });
 
   useEffect(() => {
-      if (data?.data) {
-        form.reset({
-          title: data.data.title || "",
-          description1: data.data.description1 || "",
-          description2: data.data.description2 || "",
-        });
-      }
-    }, [data, form]);
+    if (data?.data) {
+      form.reset({
+        title: data.data.title || "",
+        description1: data.data.description1 || "",
+        description2: data.data.description2 || "",
+      });
+    }
+  }, [data, form]);
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["managed-it"],
@@ -101,21 +101,21 @@ const ManagedIt = () => {
         body: formData,
       }).then((res) => res.json()),
 
-      onSuccess: (data) => {
-        if (!data?.success) {
-          toast.error(data.message || "Submission failed");
-          return;
-        }
-  
-        form.reset();
-        setImage(null);
-        setIcon1(null);
-        setIcon2(null);
-  
-        toast.success(data.message || "Submitted successfully!");
-  
-        queryClient.invalidateQueries({ queryKey: ["managed-it"] });
-      },
+    onSuccess: (data) => {
+      if (!data?.success) {
+        toast.error(data.message || "Submission failed");
+        return;
+      }
+
+      form.reset();
+      setImage(null);
+      setIcon1(null);
+      setIcon2(null);
+
+      toast.success(data.message || "Submitted successfully!");
+
+      queryClient.invalidateQueries({ queryKey: ["managed-it"] });
+    },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -173,7 +173,11 @@ const ManagedIt = () => {
                           Heading
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter a title" {...field} />
+                          <QuillEditor
+                            id="heading"
+                            value={field.value}
+                            onChange={field.onChange}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
