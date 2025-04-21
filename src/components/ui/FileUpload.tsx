@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
+import Image from "next/image";
 
 type FileUploadProps = {
   label: string;
-  file: File | null ;
+  file: File | null;
   setFile: (file: File | null) => void;
   existingUrl?: string | null;
   type?: "image" | "video";
@@ -56,9 +57,11 @@ export default function FileUpload({
       {preview && (
         <div className="relative mt-3 w-fit">
           {type === "image" ? (
-            <img
+            <Image
               src={preview}
               alt="Preview"
+              width={128}
+              height={128}
               className="w-32 h-32 object-cover rounded border"
             />
           ) : (
