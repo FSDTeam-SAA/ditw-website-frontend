@@ -4,8 +4,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import FileUpload from "@/components/ui/FileUpload";
 import { useSession } from "next-auth/react";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 import Loading from "@/components/shared/Loading/Loading";
 import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
 
@@ -24,6 +24,7 @@ const BackgroundImage = () => {
   const { data: session } = useSession();
   const token = (session?.user as { token?: string })?.token;
   // console.log(token)
+  const queryClient = useQueryClient();
   const [back_img, setBack_img] = useState<File | null>(null);
 
   const { data, isLoading, isError, error } = useQuery<BackgroundImageResponse>(
@@ -54,16 +55,15 @@ const BackgroundImage = () => {
 
     onSuccess: (data) => {
       if (!data?.success) {
-        toast.error(data.message, {
-          position: "top-right",
-          richColors: true,
-        });
+        toast.error(data.message || "Submission failed");
         return;
       }
-      toast.success(data.message, {
-        position: "top-right",
-        richColors: true,
-      });
+
+      setBack_img(null);
+
+      toast.success(data.message || "Submitted successfully!");
+
+      queryClient.invalidateQueries({ queryKey: ["services-background"] });
     },
   });
 
@@ -94,7 +94,7 @@ const BackgroundImage = () => {
         className="space-y-6 border shadow-lg p-10 rounded-lg"
       >
         <h2 className="text-2xl font-bold text-black text-center">
-          UPLOAD BACKGROUND IMAGE
+          Upload Background Image
         </h2>
 
         <div className="shadow-lg p-6 border rounded-lg">

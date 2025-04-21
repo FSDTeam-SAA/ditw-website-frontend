@@ -16,8 +16,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useSession } from "next-auth/react";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 import Loading from "@/components/shared/Loading/Loading";
 import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
 import { useEffect } from "react";
@@ -59,21 +59,22 @@ type ServiceHeadingResponse = {
   };
 };
 
-
 const OurNationwide = () => {
   const session = useSession();
   const token = (session?.data?.user as { token?: string })?.token;
   console.log(token);
 
+  const queryClient = useQueryClient();
+
   const { data, isLoading, isError, error } = useQuery<ServiceHeadingResponse>({
-      queryKey: ["our-service-heading"],
-      queryFn: () =>
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/services/heading`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }).then((res) => res.json()),
-    });
+    queryKey: ["our-service-heading"],
+    queryFn: () =>
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/services/heading`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).then((res) => res.json()),
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -87,18 +88,18 @@ const OurNationwide = () => {
     },
   });
 
-   useEffect(() => {
-        if (data?.data) {
-          form.reset({
-            title: data.data.title || "",
-            subtitle: data.data.subtitle || "",
-            description: data.data.description || "",
-            button_title: data.data.button_title || "",
-            button_name: data.data.button_name || "",
-            button_url: data.data.button_url || "",
-          });
-        }
-      }, [data, form]);
+  useEffect(() => {
+    if (data?.data) {
+      form.reset({
+        title: data.data.title || "",
+        subtitle: data.data.subtitle || "",
+        description: data.data.description || "",
+        button_title: data.data.button_title || "",
+        button_name: data.data.button_name || "",
+        button_url: data.data.button_url || "",
+      });
+    }
+  }, [data, form]);
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["our-nationwide"],
@@ -113,17 +114,15 @@ const OurNationwide = () => {
 
     onSuccess: (data) => {
       if (!data?.success) {
-        toast.error(data.message, {
-          position: "top-right",
-          richColors: true,
-        });
+        toast.error(data.message || "Submission failed");
         return;
       }
+
       form.reset();
-      toast.success(data.message, {
-        position: "top-right",
-        richColors: true,
-      });
+
+      toast.success(data.message || "Submitted successfully!");
+
+      queryClient.invalidateQueries({ queryKey: ["our-service-heading"] });
     },
   });
 
@@ -271,7 +270,7 @@ const OurNationwide = () => {
 
             <div className="pt-4">
               <Button
-              disabled={isPending}
+                disabled={isPending}
                 className="bg-blue-500 text-lg font-bold px-10 py-2"
                 type="submit"
               >

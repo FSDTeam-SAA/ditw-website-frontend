@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import FileUpload from "@/components/ui/FileUpload";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 import Loading from "@/components/shared/Loading/Loading";
@@ -48,6 +48,8 @@ type MRPCResponse = {
 const PoweredByMrpc = () => {
   const session = useSession();
   const token = (session?.data?.user as { token?: string })?.token;
+
+  const queryClient = useQueryClient();
 
   const { data, isLoading, isError, error } = useQuery<MRPCResponse>({
     queryKey: ["powered-by-mrpc"],
@@ -96,18 +98,20 @@ const PoweredByMrpc = () => {
         }
       ).then((res) => res.json()),
 
-    onSuccess: (data) => {
-      if (!data?.success) {
-        toast.error(data.message || "Submission failed");
-        return;
-      }
-
-      form.reset();
-      setImage(null);
-      setLogo(null);
-
-      toast.success(data.message || "Submitted successfully!");
-    },
+      onSuccess: (data) => {
+        if (!data?.success) {
+          toast.error(data.message || "Submission failed");
+          return;
+        }
+  
+        form.reset();
+        setLogo(null);
+        setImage(null);
+  
+        toast.success(data.message || "Submitted successfully!");
+  
+        queryClient.invalidateQueries({ queryKey: ["powered-by-mrpc"] });
+      },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {

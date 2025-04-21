@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useState, useEffect } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import FileUpload from "@/components/ui/FileUpload";
 import { toast } from "react-toastify";
@@ -87,6 +87,8 @@ export default function Navbar() {
   const session = useSession();
   const token = (session?.data?.user as { token?: string })?.token;
 
+  const queryClient = useQueryClient();
+
   const [logo, setLogo] = useState<File | null>(null);
 
   const { data, isLoading, isError, error } = useQuery<NavbarResponse>({
@@ -153,6 +155,8 @@ export default function Navbar() {
       setLogo(null);
 
       toast.success(data.message || "Submitted successfully!");
+
+      queryClient.invalidateQueries({ queryKey: ["navbar"] });
     },
   });
 
