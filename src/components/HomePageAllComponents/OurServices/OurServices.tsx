@@ -24,10 +24,6 @@ const OurServices: React.FC<ourServiceTypeProps> = ({
   serviceDeliveryData,
   serviceSupportData,
 }) => {
-  console.log(
-    "fdfdf",
-    `url(${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/Menus/${data?.back_img}})`
-  );
 
   return (
     <div className="relative overflow-hidden">

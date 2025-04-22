@@ -162,10 +162,10 @@ const ProjectManagement = () => {
       formData.append("img1", img1);
     }
     if (img2) {
-      formData.append("img1", img2);
+      formData.append("img2", img2);
     }
     if (img3) {
-      formData.append("img1", img3);
+      formData.append("img3", img3);
     }
 
     mutate(formData);
