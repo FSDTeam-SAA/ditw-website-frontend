@@ -16,7 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
 import { useMutation } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
+// import { useSession } from "next-auth/react";
 
 const formSchema = z.object({
   first_name: z.string().min(1, "First name is required"),
@@ -28,8 +28,8 @@ const formSchema = z.object({
 });
 
 export default function ContactForm() {
-  const { data: session } = useSession();
-  const token = (session?.user as { token?: string })?.token;
+  // const { data: session } = useSession();
+  // const token = (session?.user as { token?: string })?.token;
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -50,9 +50,9 @@ export default function ContactForm() {
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contactMessage`,
         {
           method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          // headers: {
+          //   Authorization: `Bearer ${token}`,
+          // },
           body: formData,
         }
       );
