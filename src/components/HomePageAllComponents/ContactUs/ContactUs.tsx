@@ -29,7 +29,7 @@ const ContactUs: React.FC<contactUsProps> = ({
   reviewHeadingData,
   reviewBackImgData,
 }) => {
-  console.log(reviewBackImgData?.back_img);
+  console.log("data1", reviewHeadingData);
 
   return (
     <div>

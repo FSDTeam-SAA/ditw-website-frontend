@@ -52,7 +52,7 @@ const ReviewHeading = () => {
 
   const { data, isLoading, isError, error } =
     useQuery<CustomerFeedbackResponse>({
-      queryKey: ["review-heading"],
+      queryKey: ["review-heading-data"],
       queryFn: () =>
         fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/review/heading`, {
           headers: {
@@ -60,6 +60,8 @@ const ReviewHeading = () => {
           },
         }).then((res) => res.json()),
     });
+
+    console.log("review dataffd", data)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -79,9 +81,9 @@ const ReviewHeading = () => {
   }, [data, form]);
 
   const { mutate, isPending } = useMutation({
-    mutationKey: ["management-it-support"],
+    mutationKey: ["review-heading"],
     mutationFn: (formData: FormData) =>
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/services/support`, {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/review/heading`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -100,7 +102,7 @@ const ReviewHeading = () => {
   
         toast.success(data.message || "Submitted successfully!");
   
-        queryClient.invalidateQueries({ queryKey: ["review-heading"] });
+        queryClient.invalidateQueries({ queryKey: ["review-heading-data"] });
       },
   });
 

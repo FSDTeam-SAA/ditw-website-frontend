@@ -26,7 +26,6 @@ const WeAre: React.FC<weAreProps> = ({ data, aboutUsSecondData }) => {
     }
   }, []);
 
-
   if (!data || !aboutUsSecondData) return null;
 
   return (
@@ -35,13 +34,15 @@ const WeAre: React.FC<weAreProps> = ({ data, aboutUsSecondData }) => {
         <h2 className="text-3xl sm:text-4xl font-bold text-amber-400 leading-normal">
           {data?.title}
         </h2>
+        <div className="w-full items-center justify-start ml-10 md:ml-12 lg:ml-14 xl:ml-16">
+          <div className="w-12 md:w-16 h-1 bg-[#555be7]" />
+        </div>
         <p className="text-base sm:text-lg font-bold text-[#555be7] leading-normal">
           {data?.subtitle}
         </p>
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-start gap-4 pb-6 sm:pb-8">
           <p className="w-full sm:max-w-xl lg:max-w-2xl text-sm sm:text-[15px] font-normal text-black leading-tight pt-4 sm:pt-[15px]">
-            
             {data?.description}
           </p>
           <Link href={data?.button_url || "#"}>
@@ -56,9 +57,8 @@ const WeAre: React.FC<weAreProps> = ({ data, aboutUsSecondData }) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-6 sm:gap-4 lg:gap-6">
           {/* Features List */}
           <div className="sm:col-span-1 lg:col-span-3 space-y-1">
-
             {/* first  */}
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-3">
               <div className="flex-shrink-0 w-16 sm:w-20 md:w-24">
                 <Image
                   src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/AboutSec2/icons/${aboutUsSecondData?.icon1}`}
@@ -76,7 +76,7 @@ const WeAre: React.FC<weAreProps> = ({ data, aboutUsSecondData }) => {
               </p>
             </div>
             {/* two  */}
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-3">
               <div className="flex-shrink-0 w-16 sm:w-20 md:w-24">
                 <Image
                   src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/AboutSec2/icons/${aboutUsSecondData?.icon2}`}
@@ -94,7 +94,7 @@ const WeAre: React.FC<weAreProps> = ({ data, aboutUsSecondData }) => {
               </p>
             </div>
             {/* three  */}
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-3">
               <div className="flex-shrink-0 w-16 sm:w-20 md:w-24">
                 <Image
                   src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/AboutSec2/icons/${aboutUsSecondData?.icon3}`}
@@ -112,7 +112,7 @@ const WeAre: React.FC<weAreProps> = ({ data, aboutUsSecondData }) => {
               </p>
             </div>
             {/* four  */}
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-3">
               <div className="flex-shrink-0 w-16 sm:w-20 md:w-24">
                 <Image
                   src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/AboutSec2/icons/${aboutUsSecondData?.icon4}`}
@@ -130,7 +130,7 @@ const WeAre: React.FC<weAreProps> = ({ data, aboutUsSecondData }) => {
               </p>
             </div>
             {/* five  */}
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-3">
               <div className="flex-shrink-0 w-16 sm:w-20 md:w-24">
                 <Image
                   src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/AboutSec2/icons/${aboutUsSecondData?.icon5}`}
