@@ -210,7 +210,7 @@ const EditReview = ({
                                 }}
                               />
                               <p className="text-sm text-gray-500 mt-1">
-                                {wordCount}/100 words
+                                {wordCount}/25 words
                               </p>
                             </div>
                           </FormControl>
