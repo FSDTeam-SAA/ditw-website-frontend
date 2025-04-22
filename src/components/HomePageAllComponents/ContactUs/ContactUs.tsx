@@ -27,7 +27,7 @@ const ContactUs: React.FC<contactUsProps> = ({
   ourContactData,
   footerData,
   reviewHeadingData,
-  reviewBackImgData
+  reviewBackImgData,
 }) => {
   console.log(reviewBackImgData?.back_img);
 
@@ -36,9 +36,10 @@ const ContactUs: React.FC<contactUsProps> = ({
       {/* Header Section */}
       <div style={{ backgroundColor: `${data?.color}` }}>
         <div className="container mx-auto px-4 sm:px-6 md:px-8 pb-5">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white text-left pt-8 sm:pt-[45px]">
-            {data?.title}
-          </h2>
+          <h2
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white text-left pt-8 sm:pt-[45px]"
+            dangerouslySetInnerHTML={{ __html: data?.title || "" }}
+          />
 
           <div className="w-full flex items-center justify-start">
             <div className="w-32 sm:w-60 h-1 bg-[#555be7] mt-2 ml-4 sm:ml-14" />
@@ -62,7 +63,7 @@ const ContactUs: React.FC<contactUsProps> = ({
         <div className="container mx-auto px-4 sm:px-6 md:px-8 py-6 sm:py-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8">
             <div className="md:col-span-1 w-full flex flex-col justify-center items-center md:items-start">
-              <h4 className="text-xl sm:text-2xl font-bold text-black text-center md:text-left leading-normal">
+              <h4 className=" text-xl sm:text-2xl font-bold text-black text-center md:text-left leading-normal">
                 {reviewHeadingData?.title}
               </h4>
               <div className="w-full flex items-center justify-center md:justify-start mt-2">
@@ -77,7 +78,7 @@ const ContactUs: React.FC<contactUsProps> = ({
             </div>
 
             <div className="md:col-span-3">
-              <ReviewCart reviewBackImgData={reviewBackImgData}/>
+              <ReviewCart reviewBackImgData={reviewBackImgData} />
             </div>
           </div>
         </div>
@@ -108,7 +109,7 @@ const ContactUs: React.FC<contactUsProps> = ({
                 <div>
                   <div className="mb-8 sm:mb-10">
                     <h2 className="text-2xl sm:text-3xl font-bold text-white pt-4 sm:pt-[18px] pb-2">
-                      {data?.title}
+                      {addressData?.title}
                     </h2>
                     <div className="w-full flex items-center justify-start">
                       <div className="w-24 sm:w-36 h-1 bg-[#3847af] ml-6 sm:ml-9" />
