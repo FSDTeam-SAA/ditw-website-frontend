@@ -8,6 +8,7 @@ import "@/app/globals.css";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { FaRegEye } from "react-icons/fa6";
@@ -32,7 +33,7 @@ export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   //eslint-disable-next-line
   const [isLoading, setIsLoading] = useState(false);
-  
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -55,7 +56,7 @@ export function LoginForm() {
       }
       console.log("Login successful:", values);
       toast.success("Login successful");
-      window.location.href = "/dashboard";
+      router.push("/dashboard");
     } catch (error: unknown) {
       const err = error as Error;
       toast.error(`Login failed: ${err.message}`);
