@@ -4,7 +4,6 @@ import Loading from "@/components/shared/Loading/Loading";
 import { ReviewBackImg } from "@/components/types/allFrontendDataType";
 import { ReviewResponse } from "@/components/types/reviewDataType";
 import { useQuery } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { FaRegStar, FaStar } from "react-icons/fa";
 
@@ -40,17 +39,11 @@ type reviewCartBgDataType = {
 
 const ReviewCart: React.FC<reviewCartBgDataType> = ({ reviewBackImgData }) => {
   // console.log(reviewBackImgData)
-  const session = useSession();
-  const token = (session?.data?.user as { token?: string })?.token;
 
   const { data, isError, error, isLoading } = useQuery<ReviewResponse>({
     queryKey: ["all-review-data"],
     queryFn: () =>
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/review-data`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }).then((res) => res.json()),
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/review-data-front`).then((res) => res.json()),
   });
 
   const reviewAllData = data?.data;

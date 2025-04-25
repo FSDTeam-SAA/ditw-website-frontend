@@ -27,7 +27,7 @@ const HomePageAllComponents = () => {
   console.log(homeId, aboutUsId, serviceId, contactUsId);
 
   if (!data) {
-    return <div>Loading....</div>;
+    return null
   }
 
   return (
