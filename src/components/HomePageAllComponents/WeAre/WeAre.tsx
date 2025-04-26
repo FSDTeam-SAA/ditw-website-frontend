@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import {
   AboutSection,
   aboutSecondPartDataType,
 } from "@/components/types/allFrontendDataType";
-import Link from "next/link";
+// import Link from "next/link";
+import SendContactForm from "@/components/shared/Modals/SendContactForm";
 
 type weAreProps = {
   data?: AboutSection;
@@ -14,7 +15,7 @@ type weAreProps = {
 };
 
 const WeAre: React.FC<weAreProps> = ({ data, aboutUsSecondData }) => {
-  console.log("dfdf", aboutUsSecondData);
+  const [sendContactForm, setSendContactForm] = useState<boolean>(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -43,12 +44,16 @@ const WeAre: React.FC<weAreProps> = ({ data, aboutUsSecondData }) => {
           <p className="w-full sm:max-w-xl lg:max-w-2xl text-sm sm:text-[15px] font-normal text-black leading-tight pt-4 sm:pt-[15px]">
             {data?.description}
           </p>
-          <Link href={data?.button_url || "#"}>
-            <button className="text-sm sm:text-base font-semibold leading-normal text-white bg-[#555be7] py-1 px-4 rounded-full w-fit">
+          {/* <Link href={data?.button_url || "#"}>
+            <button type="button" onClick={() => setSendContactForm(true)} className="text-sm sm:text-base font-semibold leading-normal text-white bg-[#555be7] py-1 px-4 rounded-full w-fit">
+              
+              {data?.button_name}
+            </button>
+          </Link> */}
+           <button type="button" onClick={() => setSendContactForm(true)} className="text-sm sm:text-base font-semibold leading-normal text-white bg-[#555be7] py-1 px-4 rounded-full w-fit">
               {/* Get a Quote */}
               {data?.button_name}
             </button>
-          </Link>
         </div>
 
         {/* Features and Image Section */}
@@ -184,6 +189,16 @@ const WeAre: React.FC<weAreProps> = ({ data, aboutUsSecondData }) => {
           </div>
         </div>
       </div>
+
+      {/* send contact form modal  */}
+      {sendContactForm && (
+        <div className="!px-10 md:px-0">
+          <SendContactForm
+            onOpen={sendContactForm}
+            onOpenChange={() => setSendContactForm(false)}
+          />
+        </div>
+      )}
     </div>
   );
 };

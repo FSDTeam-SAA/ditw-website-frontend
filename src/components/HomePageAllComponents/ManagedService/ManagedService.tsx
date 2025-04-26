@@ -1,3 +1,5 @@
+"use client";
+import SendContactForm from "@/components/shared/Modals/SendContactForm";
 import {
   CoreValue,
   PoweredByMRPC,
@@ -5,7 +7,8 @@ import {
   WhyChooseUsItem,
 } from "@/components/types/allFrontendDataType";
 import Image from "next/image";
-import Link from "next/link";
+// import Link from "next/link";
+import { useState } from "react";
 
 type ManagedServiceProps = {
   data: CoreValue;
@@ -20,7 +23,7 @@ const ManagedService: React.FC<ManagedServiceProps> = ({
   serviceFeaturesData,
   poweredByMrpcData,
 }) => {
-  console.log(poweredByMrpcData);
+  const [sendContactForm, setSendContactForm] = useState<boolean>(false);
   return (
     <div className="overflow-x-hidden">
       <section className="bg-gradient-to-r from-[#fcfdfd] to-[#cce5ed] py-6 md:py-8">
@@ -78,12 +81,20 @@ const ManagedService: React.FC<ManagedServiceProps> = ({
               {whyChooseUsData?.description}
             </p>
             <div className="flex justify-end mb-4 md:mb-6 mt-3">
-              <Link
-                href={whyChooseUsData?.button_url || "#"}
-                className="bg-[#1d0fbf] text-white px-4 sm:px-6 py-1 rounded-full text-sm font-medium transition-colors hover:bg-[#1a0da8]"
-              >
-                {whyChooseUsData?.button_name}
-              </Link>
+              {/* <Link href={whyChooseUsData?.button_url || "#"}>
+                <button
+                  onClick={() => setSendContactForm(true)}
+                  className="bg-[#1d0fbf] text-white px-4 sm:px-6 py-1 rounded-full text-sm font-medium transition-colors hover:bg-[#1a0da8]"
+                >
+                  {whyChooseUsData?.button_name}
+                </button>
+              </Link> */}
+              <button
+                  onClick={() => setSendContactForm(true)}
+                  className="bg-[#1d0fbf] text-white px-4 sm:px-6 py-1 rounded-full text-sm font-medium transition-colors hover:bg-[#1a0da8]"
+                >
+                  {whyChooseUsData?.button_name}
+                </button>
             </div>
 
             <h2 className="text-base sm:text-lg font-medium text-black leading-normal">
@@ -213,7 +224,12 @@ const ManagedService: React.FC<ManagedServiceProps> = ({
               <h2 className="text-base sm:text-lg text-center font-semibold my-2">
                 {poweredByMrpcData?.title}
               </h2>
-              <p className="w-full sm:w-2/3 text-xs mt-2 text-center" dangerouslySetInnerHTML={{__html : poweredByMrpcData?.description || ""}}/>
+              <p
+                className="w-full sm:w-2/3 text-xs mt-2 text-center"
+                dangerouslySetInnerHTML={{
+                  __html: poweredByMrpcData?.description || "",
+                }}
+              />
             </div>
 
             <div className="flex-1 flex items-center justify-center">
@@ -228,6 +244,15 @@ const ManagedService: React.FC<ManagedServiceProps> = ({
           </div>
         </div>
       </section>
+      {/* send contact form modal  */}
+      {sendContactForm && (
+        <div className="!px-10 md:px-0">
+          <SendContactForm
+            onOpen={sendContactForm}
+            onOpenChange={() => setSendContactForm(false)}
+          />
+        </div>
+      )}
     </div>
   );
 };

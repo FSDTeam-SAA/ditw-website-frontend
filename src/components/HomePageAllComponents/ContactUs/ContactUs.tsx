@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import ContactForm from "./ContactForm";
 import ReviewCart from "./ReviewCart";
@@ -9,9 +10,10 @@ import {
   ReviewBackImg,
   ReviewItem,
 } from "@/components/types/allFrontendDataType";
-import React from "react";
-import Link from "next/link";
+import React, { useState } from "react";
+// import Link from "next/link";
 import { Metadata } from "next";
+import SendContactForm from "@/components/shared/Modals/SendContactForm";
 
 type contactUsProps = {
   data?: ContactSection;
@@ -21,7 +23,6 @@ type contactUsProps = {
   reviewHeadingData?: ReviewItem;
   reviewBackImgData?: ReviewBackImg;
 };
-
 
 export const metadata: Metadata = {
   title: "Home page",
@@ -35,7 +36,7 @@ const ContactUs: React.FC<contactUsProps> = ({
   reviewHeadingData,
   reviewBackImgData,
 }) => {
-  console.log("data1", reviewHeadingData);
+  const [sendContactForm, setSendContactForm] = useState<boolean>(false);
 
   return (
     <div>
@@ -55,11 +56,22 @@ const ContactUs: React.FC<contactUsProps> = ({
             <p className="text-sm sm:text-base font-normal leading-normal text-white text-left">
               {data?.subtitle}
             </p>
-            <Link href={data?.button_url || "#"}>
-              <button className="text-sm sm:text-base font-semibold text-white leading-normal bg-[#1d0fbf] hover:bg-[#2a1cc7] py-1 px-4 rounded-full">
+            {/* <Link href={data?.button_url || "#"}>
+              <button
+                type="button"
+                onClick={() => setSendContactForm(true)}
+                className="text-sm sm:text-base font-semibold text-white leading-normal bg-[#1d0fbf] hover:bg-[#2a1cc7] py-1 px-4 rounded-full"
+              >
                 {data?.button_name}
               </button>
-            </Link>
+            </Link> */}
+            <button
+                type="button"
+                onClick={() => setSendContactForm(true)}
+                className="text-sm sm:text-base font-semibold text-white leading-normal bg-[#1d0fbf] hover:bg-[#2a1cc7] py-1 px-4 rounded-full"
+              >
+                {data?.button_name}
+              </button>
           </div>
         </div>
       </div>
@@ -172,6 +184,15 @@ const ContactUs: React.FC<contactUsProps> = ({
           </div>
         </div>
       </div>
+      {/* send contact form modal  */}
+      {sendContactForm && (
+        <div className="!px-10 md:px-0">
+          <SendContactForm
+            onOpen={sendContactForm}
+            onOpenChange={() => setSendContactForm(false)}
+          />
+        </div>
+      )}
     </div>
   );
 };

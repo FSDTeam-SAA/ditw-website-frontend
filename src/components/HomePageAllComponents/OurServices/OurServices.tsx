@@ -1,3 +1,5 @@
+"use client";
+import SendContactForm from "@/components/shared/Modals/SendContactForm";
 import {
   ProjectManagement,
   ServiceDeliveryDataType,
@@ -6,8 +8,8 @@ import {
   ServicesSupport,
 } from "@/components/types/allFrontendDataType";
 import Image from "next/image";
-import Link from "next/link";
-import React from "react";
+// import Link from "next/link";
+import React, { useState } from "react";
 
 type ourServiceTypeProps = {
   data: ServicesBackground;
@@ -24,6 +26,7 @@ const OurServices: React.FC<ourServiceTypeProps> = ({
   serviceDeliveryData,
   serviceSupportData,
 }) => {
+  const [sendContactForm, setSendContactForm] = useState<boolean>(false);
 
   return (
     <div className="relative overflow-hidden">
@@ -65,11 +68,22 @@ const OurServices: React.FC<ourServiceTypeProps> = ({
                   <p className="w-1/2 text-base sm:text-lg text-white">
                     {serviceHeading?.button_title}
                   </p>
-                  <Link href={serviceHeading?.button_url || "#"}>
-                    <button className="bg-indigo-700 hover:bg-indigo-800 text-white font-semibold py-2 px-6 rounded-full w-fit">
+                  {/* <Link href={serviceHeading?.button_url || "#"}>
+                    <button
+                      type="button"
+                      onClick={() => setSendContactForm(true)}
+                      className="bg-indigo-700 hover:bg-indigo-800 text-white font-semibold py-2 px-6 rounded-full w-fit"
+                    >
                       {serviceHeading?.button_name}
                     </button>
-                  </Link>
+                  </Link> */}
+                  <button
+                      type="button"
+                      onClick={() => setSendContactForm(true)}
+                      className="bg-indigo-700 hover:bg-indigo-800 text-white font-semibold py-2 px-6 rounded-full w-fit"
+                    >
+                      {serviceHeading?.button_name}
+                    </button>
                 </div>
               </div>
             </div>
@@ -79,7 +93,12 @@ const OurServices: React.FC<ourServiceTypeProps> = ({
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 ">
             {/* Project Management Section */}
             <div>
-              <h4 className="text-xl sm:text-2xl font-bold text-yellow-400 mb-2" dangerouslySetInnerHTML={{__html : projectManagementData?.heading || ""}}/>
+              <h4
+                className="text-xl sm:text-2xl font-bold text-yellow-400 mb-2"
+                dangerouslySetInnerHTML={{
+                  __html: projectManagementData?.heading || "",
+                }}
+              />
               <div className="w-full flex items-center justify-start mb-4 sm:mb-6">
                 <div className="w-28 sm:w-36 md:w-52 h-1 bg-blue-600" />
               </div>
@@ -141,7 +160,12 @@ const OurServices: React.FC<ourServiceTypeProps> = ({
 
             {/* End-to-End Delivery Section */}
             <div>
-              <h4 className="text-xl sm:text-2xl font-bold text-yellow-400 mb-2" dangerouslySetInnerHTML={{__html : serviceDeliveryData?.heading || ""}}/>
+              <h4
+                className="text-xl sm:text-2xl font-bold text-yellow-400 mb-2"
+                dangerouslySetInnerHTML={{
+                  __html: serviceDeliveryData?.heading || "",
+                }}
+              />
               <div className="w-full flex items-center justify-start mb-4 sm:mb-6">
                 <div className="w-28 sm:w-36 md:w-52 h-1 bg-blue-600" />
               </div>
@@ -222,7 +246,12 @@ const OurServices: React.FC<ourServiceTypeProps> = ({
           {/* Managed IT Support */}
           <div className="mt-10 sm:mt-12 flex flex-col items-center sm:items-start">
             <div className="flex flex-col sm:flex-row items-center gap-2">
-              <h4 className="text-xl sm:text-2xl font-bold text-yellow-400 text-center sm:text-left" dangerouslySetInnerHTML={{__html : serviceSupportData?.title || ""}}/>
+              <h4
+                className="text-xl sm:text-2xl font-bold text-yellow-400 text-center sm:text-left"
+                dangerouslySetInnerHTML={{
+                  __html: serviceSupportData?.title || "",
+                }}
+              />
               <div className="relative w-24 h-6 sm:w-28 md:w-32 md:h-8">
                 <Image
                   src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/Body2/${serviceSupportData?.icon}`}
@@ -238,6 +267,15 @@ const OurServices: React.FC<ourServiceTypeProps> = ({
           </div>
         </div>
       </div>
+      {/* send contact form modal  */}
+      {sendContactForm && (
+        <div className="!px-10 md:px-0">
+          <SendContactForm
+            onOpen={sendContactForm}
+            onOpenChange={() => setSendContactForm(false)}
+          />
+        </div>
+      )}
     </div>
   );
 };
