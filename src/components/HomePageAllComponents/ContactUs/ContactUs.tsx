@@ -11,6 +11,7 @@ import {
 } from "@/components/types/allFrontendDataType";
 import React from "react";
 import Link from "next/link";
+import { Metadata } from "next";
 
 type contactUsProps = {
   data?: ContactSection;
@@ -19,6 +20,11 @@ type contactUsProps = {
   footerData?: FooterItem;
   reviewHeadingData?: ReviewItem;
   reviewBackImgData?: ReviewBackImg;
+};
+
+
+export const metadata: Metadata = {
+  title: "Home page",
 };
 
 const ContactUs: React.FC<contactUsProps> = ({

@@ -79,9 +79,7 @@ const OurServices: React.FC<ourServiceTypeProps> = ({
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 ">
             {/* Project Management Section */}
             <div>
-              <h4 className="text-xl sm:text-2xl font-bold text-yellow-400 mb-2">
-                {projectManagementData?.heading}
-              </h4>
+              <h4 className="text-xl sm:text-2xl font-bold text-yellow-400 mb-2" dangerouslySetInnerHTML={{__html : projectManagementData?.heading || ""}}/>
               <div className="w-full flex items-center justify-start mb-4 sm:mb-6">
                 <div className="w-28 sm:w-36 md:w-52 h-1 bg-blue-600" />
               </div>
@@ -143,9 +141,7 @@ const OurServices: React.FC<ourServiceTypeProps> = ({
 
             {/* End-to-End Delivery Section */}
             <div>
-              <h4 className="text-xl sm:text-2xl font-bold text-yellow-400 mb-2">
-                {serviceDeliveryData?.heading}
-              </h4>
+              <h4 className="text-xl sm:text-2xl font-bold text-yellow-400 mb-2" dangerouslySetInnerHTML={{__html : serviceDeliveryData?.heading || ""}}/>
               <div className="w-full flex items-center justify-start mb-4 sm:mb-6">
                 <div className="w-28 sm:w-36 md:w-52 h-1 bg-blue-600" />
               </div>
@@ -226,9 +222,7 @@ const OurServices: React.FC<ourServiceTypeProps> = ({
           {/* Managed IT Support */}
           <div className="mt-10 sm:mt-12 flex flex-col items-center sm:items-start">
             <div className="flex flex-col sm:flex-row items-center gap-2">
-              <h4 className="text-xl sm:text-2xl font-bold text-yellow-400 text-center sm:text-left">
-                {serviceSupportData?.title}
-              </h4>
+              <h4 className="text-xl sm:text-2xl font-bold text-yellow-400 text-center sm:text-left" dangerouslySetInnerHTML={{__html : serviceSupportData?.title || ""}}/>
               <div className="relative w-24 h-6 sm:w-28 md:w-32 md:h-8">
                 <Image
                   src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/Body2/${serviceSupportData?.icon}`}

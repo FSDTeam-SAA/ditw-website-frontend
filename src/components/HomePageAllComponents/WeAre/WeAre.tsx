@@ -31,9 +31,7 @@ const WeAre: React.FC<weAreProps> = ({ data, aboutUsSecondData }) => {
   return (
     <div className="container py-10 px-4 sm:px-6 lg:px-8">
       <div>
-        <h2 className="text-3xl sm:text-4xl font-bold text-amber-400 leading-normal">
-          {data?.title}
-        </h2>
+        <h2 className="text-3xl sm:text-4xl font-bold leading-normal" dangerouslySetInnerHTML={{ __html : data?.title || ""}} />
         <div className="w-full items-center justify-start ml-10 md:ml-12 lg:ml-14 xl:ml-16">
           <div className="w-12 md:w-16 h-1 bg-[#555be7]" />
         </div>

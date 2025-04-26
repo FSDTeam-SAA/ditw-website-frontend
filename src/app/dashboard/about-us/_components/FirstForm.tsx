@@ -20,6 +20,7 @@ import { useEffect } from "react";
 import Loading from "@/components/shared/Loading/Loading";
 import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
 import { toast } from "react-toastify";
+import QuillEditor from "@/components/ui/quill-editor";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -162,7 +163,11 @@ const FirstForm = () => {
                   Title
                 </FormLabel>
                 <FormControl>
-                  <Input placeholder="Title" {...field} />
+                  <QuillEditor
+                    id="heading"
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

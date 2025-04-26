@@ -22,6 +22,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import Loading from "@/components/shared/Loading/Loading";
 import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
+import QuillEditor from "@/components/ui/quill-editor";
 
 const formSchema = z.object({
   heading: z.string().min(2, {
@@ -67,7 +68,6 @@ type ProjectManagementContentResponse = {
   };
 };
 
-
 const ProjectManagement = () => {
   const session = useSession();
   const token = (session?.data?.user as { token?: string })?.token;
@@ -75,15 +75,19 @@ const ProjectManagement = () => {
 
   const queryClient = useQueryClient();
 
-  const { data, isLoading, isError, error } = useQuery<ProjectManagementContentResponse>({
-    queryKey: ["project-management"],
-    queryFn: () =>
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/services/projectmanagement`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }).then((res) => res.json()),
-  });
+  const { data, isLoading, isError, error } =
+    useQuery<ProjectManagementContentResponse>({
+      queryKey: ["project-management"],
+      queryFn: () =>
+        fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/services/projectmanagement`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        ).then((res) => res.json()),
+    });
 
   const [img1, setImg1] = useState<File | null>(null);
   const [img2, setImg2] = useState<File | null>(null);
@@ -103,18 +107,18 @@ const ProjectManagement = () => {
   });
 
   useEffect(() => {
-          if (data?.data) {
-            form.reset({
-              heading: data.data.heading || "",
-              title1: data.data.title1 || "",
-              description1: data.data.description1 || "",
-              title2: data.data.title2 || "",
-              description2: data.data.description2 || "",
-              title3: data.data.title3 || "",
-              description3: data.data.description3 || "",
-            });
-          }
-        }, [data, form]);
+    if (data?.data) {
+      form.reset({
+        heading: data.data.heading || "",
+        title1: data.data.title1 || "",
+        description1: data.data.description1 || "",
+        title2: data.data.title2 || "",
+        description2: data.data.description2 || "",
+        title3: data.data.title3 || "",
+        description3: data.data.description3 || "",
+      });
+    }
+  }, [data, form]);
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["project-management"],
@@ -130,21 +134,21 @@ const ProjectManagement = () => {
         }
       ).then((res) => res.json()),
 
-      onSuccess: (data) => {
-        if (!data?.success) {
-          toast.error(data.message || "Submission failed");
-          return;
-        }
-  
-        form.reset();
-        setImg1(null);
-        setImg2(null);
-        setImg3(null);  
-  
-        toast.success(data.message || "Submitted successfully!");
-  
-        queryClient.invalidateQueries({ queryKey: ["project-management"] });
-      },
+    onSuccess: (data) => {
+      if (!data?.success) {
+        toast.error(data.message || "Submission failed");
+        return;
+      }
+
+      form.reset();
+      setImg1(null);
+      setImg2(null);
+      setImg3(null);
+
+      toast.success(data.message || "Submitted successfully!");
+
+      queryClient.invalidateQueries({ queryKey: ["project-management"] });
+    },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -203,7 +207,11 @@ const ProjectManagement = () => {
                     Heading
                   </FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter a Heading" {...field} />
+                    <QuillEditor
+                      id="heading"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

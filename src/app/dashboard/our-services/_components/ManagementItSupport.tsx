@@ -13,7 +13,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import FileUpload from "@/components/ui/FileUpload";
 import { useSession } from "next-auth/react";
@@ -21,6 +20,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import Loading from "@/components/shared/Loading/Loading";
 import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
+import QuillEditor from "@/components/ui/quill-editor";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -143,10 +143,14 @@ const ManagementItSupport = () => {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-base font-bold text-black">
-                          Title
+                          Heading
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter a title" {...field} />
+                          <QuillEditor
+                            id="heading"
+                            value={field.value}
+                            onChange={field.onChange}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
