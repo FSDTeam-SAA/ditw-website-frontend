@@ -1,7 +1,11 @@
-
 "use client";
 import React from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -26,7 +30,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useMutation } from "@tanstack/react-query";
-// import { toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -50,15 +54,49 @@ const formSchema = z.object({
     .string()
     .min(2, { message: "Description must be at least 2 characters." }),
   building_plans: z.string(),
-  upload_building_plans: z.array(z.instanceof(File)).nullable().refine((files) => !files || files.length === 1, {
-    message: "Please upload exactly one PDF file.",
-  }).refine((files) => !files || files[0]?.type === "application/pdf", {
-    message: "Only PDF files allowed.",
-  }),
+  // upload_building_plans: z
+  //   .instanceof(FileList)
+  //   .nullable()
+  //   .refine((files) => !files || files.length === 1, {
+  //     message: "Please upload exactly one PDF file.",
+  //   })
+  //   .refine(
+  //     (files) => !files || Array.from(files)[0]?.type === "application/pdf",
+  //     {
+  //       message: "Only PDF files are allowed.",
+  //     }
+  //   ),
+
+  upload_building_plans: z
+    .any()
+    .nullable()
+    .refine(
+      (files) => {
+        if (!files) return true;
+        const fileArray = Array.isArray(files) ? files : [files];
+        return fileArray.length === 1;
+      },
+      {
+        message: "Please upload exactly one PDF file.",
+      }
+    )
+    .refine(
+      (files) => {
+        if (!files) return true;
+        const fileArray = Array.isArray(files) ? files : [files];
+        return fileArray[0]?.type === "application/pdf";
+      },
+      {
+        message: "Only PDF files are allowed.",
+      }
+    ),
+
   requested_time_and_date: z
     .string()
     .min(2, { message: "Date and Time must be at least 2 characters." }),
-  start_date: z.string().min(2, { message: "Date must be at least 2 characters." }),
+  start_date: z
+    .string()
+    .min(2, { message: "Date must be at least 2 characters." }),
   budget_range: z
     .string()
     .min(2, { message: "Budget Range must be at least 2 characters." }),
@@ -92,7 +130,7 @@ const SendContactForm = ({
       type_of_service: "",
       project_description: "",
       building_plans: "",
-      upload_building_plans: null,
+      // upload_building_plans: null,
       requested_time_and_date: "",
       start_date: "",
       budget_range: "",
@@ -100,26 +138,25 @@ const SendContactForm = ({
     },
   });
 
-
   const { mutate, isPending } = useMutation({
-      mutationKey: ["send-contact-form"],
-      mutationFn: (formData: FormData) =>
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/project-requests`, {
-          method: "POST",
-          body: formData,
-        }).then((res) => res.json()),
-  
-    //   onSuccess: (data) => {
-    //     if (!data?.success) {
-    //       toast.error(data.message || "Submission failed");
-    //       return;
-    //     }
-  
-    //     form.reset();
-  
-    //     toast.success(data.message || "Submitted successfully!");
-    //   },
-    });
+    mutationKey: ["send-contact-form"],
+    mutationFn: (formData: FormData) =>
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/project-requests`, {
+        method: "POST",
+        body: formData,
+      }).then((res) => res.json()),
+
+    onSuccess: (data) => {
+      if (!data?.success) {
+        toast.error(data.message || "Submission failed");
+        return;
+      }
+
+      form.reset();
+
+      toast.success(data.message || "Submitted successfully!");
+    },
+  });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     const formData = new FormData();
@@ -136,13 +173,16 @@ const SendContactForm = ({
     formData.append("requested_time_and_date", values.requested_time_and_date);
     formData.append("start_date", values.start_date);
     formData.append("budget_range", values.budget_range);
-    formData.append("how_do_you_know_about_us", values.how_do_you_know_about_us);
+    formData.append(
+      "how_do_you_know_about_us",
+      values.how_do_you_know_about_us
+    );
 
     if (values.upload_building_plans) {
       formData.append("upload_building_plans", values.upload_building_plans[0]);
     }
 
-    mutate(formData)
+    mutate(formData);
 
     console.log(values);
   };
@@ -151,9 +191,11 @@ const SendContactForm = ({
     <Dialog open={onOpen} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-        <DialogTitle className="text-xl font-bold text-center leading-normal">Request A Quote</DialogTitle>
+          <DialogTitle className="text-xl font-bold text-center leading-normal">
+            Request A Quote
+          </DialogTitle>
         </DialogHeader>
-          
+
         <ScrollArea className="h-[400px] md:h-[500px] lg:h-[520px] w-full md:max-w-[800px]">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -331,9 +373,13 @@ const SendContactForm = ({
                         className="flex gap-4"
                       >
                         <RadioGroupItem value="Yes" />
-                        <label className="-mt-1" htmlFor="yes">Yes</label>
+                        <label className="-mt-1" htmlFor="yes">
+                          Yes
+                        </label>
                         <RadioGroupItem value="No" />
-                        <label className="-mt-1" htmlFor="no">No</label>
+                        <label className="-mt-1" htmlFor="no">
+                          No
+                        </label>
                       </RadioGroup>
                     </FormControl>
                     <FormMessage />
@@ -439,7 +485,9 @@ const SendContactForm = ({
               </div>
 
               <div className="flex justify-center pt-4">
-                <Button disabled={isPending} type="submit">{isPending ? "Sending..." : "Submit"}</Button>
+                <Button disabled={isPending} type="submit">
+                  {isPending ? "Sending..." : "Submit"}
+                </Button>
               </div>
             </form>
           </Form>
