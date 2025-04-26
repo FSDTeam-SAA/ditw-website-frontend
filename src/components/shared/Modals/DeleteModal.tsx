@@ -2,7 +2,6 @@ import React from "react";
 import {
   Dialog,
   DialogContent,
-//   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -20,10 +19,6 @@ const DeleteModal = ({ isOpen, onClose, onConfirm }: logoutModalProps) => {
       <DialogContent className="max-w-[420px]">
         <DialogHeader>
           <DialogTitle>Are you sure you want to delete this review ?</DialogTitle>
-          {/* <DialogDescription>
-            You are about to log out of your account. You will need to log in
-            again to continue using the services.
-          </DialogDescription> */}
         </DialogHeader>
         <DialogFooter className="w-full flex items-center justify-end gap-7 mt-5">
           <button

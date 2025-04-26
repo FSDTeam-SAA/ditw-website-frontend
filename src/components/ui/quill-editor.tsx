@@ -11,7 +11,7 @@ interface QuillEditorProps {
 
 const ReactQuill = dynamic(() => import("react-quill"), {
   ssr: false,
-  loading: () => <div className="min-h-[200px] bg-gray-100 animate-pulse rounded-md" />,
+  loading: () => <div className="min-h-[150px] bg-gray-100 animate-pulse rounded-md" />,
 })
 
 import "react-quill/dist/quill.snow.css"
@@ -64,7 +64,7 @@ const QuillEditor = ({ value, onChange, id }: QuillEditorProps) => {
           border-color: #e2e8f0;
           border-bottom-left-radius: 0.375rem;
           border-bottom-right-radius: 0.375rem;
-          min-height: 200px;
+          min-height: 150px;
           font-size: 1rem;
         }
         .quill-editor-wrapper .ql-toolbar {
@@ -74,7 +74,7 @@ const QuillEditor = ({ value, onChange, id }: QuillEditorProps) => {
           background: #f8fafc;
         }
         .quill-editor-wrapper .ql-editor {
-          min-height: 200px;
+          min-height: 150px;
         }
       `}</style>
     </div>

@@ -247,7 +247,7 @@ const OurContact = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-base font-bold text-black">
-                      Copy Ritht Message
+                      CopyRight Message
                     </FormLabel>
                     <FormControl>
                       <Input

@@ -3,13 +3,14 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import {
-  Home,
   Users,
   Phone,
-  BriefcaseBusiness,
   AppWindowMac,
   MessageCircleCode,
   LogOut,
+  Menu,
+  Notebook,
+  CalendarCog,
 } from "lucide-react";
 
 import {
@@ -33,12 +34,12 @@ import { toast } from "react-toastify";
 const menuItems = [
   {
     title: "Navbar",
-    icon: BriefcaseBusiness,
+    icon: Menu,
     href: "/dashboard/navbar",
   },
   {
     title: "Banner",
-    icon: Home,
+    icon: Notebook,
     href: "/dashboard/banner",
   },
   {
@@ -53,7 +54,7 @@ const menuItems = [
   },
   {
     title: "Managed Services",
-    icon: AppWindowMac,
+    icon: CalendarCog,
     href: "/dashboard/managed-services",
   },
   {
@@ -109,7 +110,11 @@ export function DashboardSidebar() {
           <SidebarMenu>
             {menuItems.map((item) => (
               <SidebarMenuItem key={item.href}>
-                <SidebarMenuButton className="" asChild isActive={pathname === item.href}>
+                <SidebarMenuButton
+                  className=""
+                  asChild
+                  isActive={pathname === item.href}
+                >
                   <Link href={item.href}>
                     <item.icon className="size-4" />
                     <span>{item.title}</span>
@@ -125,7 +130,7 @@ export function DashboardSidebar() {
             variant="destructive"
             className="w-full flex items-center justify-start gap-4 text-lg font-medium text-white leading-[120%] shadow-none border-none"
           >
-            <LogOut className="text-white"/> Log out
+            <LogOut className="text-white" /> Log out
           </Button>
         </SidebarFooter>
 

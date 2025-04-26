@@ -197,7 +197,7 @@ const ManagedIt = () => {
                         <FormControl>
                           <Textarea
                             placeholder="Enter a first description"
-                            className="min-h-[230px]"
+                            className="min-h-[150px]"
                             {...field}
                           />
                         </FormControl>
@@ -219,7 +219,7 @@ const ManagedIt = () => {
                         <FormControl>
                           <Textarea
                             placeholder="Enter a second description"
-                            className="min-h-[235px]"
+                            className="min-h-[150px]"
                             {...field}
                           />
                         </FormControl>

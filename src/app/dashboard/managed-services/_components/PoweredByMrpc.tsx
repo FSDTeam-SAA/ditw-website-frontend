@@ -21,6 +21,7 @@ import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 import Loading from "@/components/shared/Loading/Loading";
 import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
+import QuillEditor from "@/components/ui/quill-editor";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -98,20 +99,20 @@ const PoweredByMrpc = () => {
         }
       ).then((res) => res.json()),
 
-      onSuccess: (data) => {
-        if (!data?.success) {
-          toast.error(data.message || "Submission failed");
-          return;
-        }
-  
-        form.reset();
-        setLogo(null);
-        setImage(null);
-  
-        toast.success(data.message || "Submitted successfully!");
-  
-        queryClient.invalidateQueries({ queryKey: ["powered-by-mrpc"] });
-      },
+    onSuccess: (data) => {
+      if (!data?.success) {
+        toast.error(data.message || "Submission failed");
+        return;
+      }
+
+      form.reset();
+      setLogo(null);
+      setImage(null);
+
+      toast.success(data.message || "Submitted successfully!");
+
+      queryClient.invalidateQueries({ queryKey: ["powered-by-mrpc"] });
+    },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -178,10 +179,14 @@ const PoweredByMrpc = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-base font-bold text-black">
-                        Description
+                        Title
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter a description" {...field} />
+                        <QuillEditor
+                          id="heading"
+                          value={field.value}
+                          onChange={field.onChange}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

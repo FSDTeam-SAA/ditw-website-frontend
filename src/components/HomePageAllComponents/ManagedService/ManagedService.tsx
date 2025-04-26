@@ -213,9 +213,7 @@ const ManagedService: React.FC<ManagedServiceProps> = ({
               <h2 className="text-base sm:text-lg text-center font-semibold my-2">
                 {poweredByMrpcData?.title}
               </h2>
-              <p className="w-full sm:w-2/3 text-xs text-[#8ba4df] mt-2 text-center">
-                {poweredByMrpcData?.description}
-              </p>
+              <p className="w-full sm:w-2/3 text-xs mt-2 text-center" dangerouslySetInnerHTML={{__html : poweredByMrpcData?.description || ""}}/>
             </div>
 
             <div className="flex-1 flex items-center justify-center">

@@ -22,6 +22,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import Loading from "@/components/shared/Loading/Loading";
 import ErrorContainer from "@/components/shared/ErrorContainer/ErrorContainer";
+import QuillEditor from "@/components/ui/quill-editor";
 
 const formSchema = z.object({
   heading: z.string().min(2, {
@@ -218,7 +219,11 @@ const EndToEndDelivery = () => {
                     Heading
                   </FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter a Heading" {...field} />
+                    <QuillEditor
+                      id="heading"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

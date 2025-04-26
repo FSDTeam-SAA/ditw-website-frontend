@@ -9,7 +9,10 @@ import { Toaster } from "sonner";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "DITW",
+  title: {
+    default: "DITW - Home",
+    template: "%s | DITW",
+  },
   description: "DITW Website",
 };
 
