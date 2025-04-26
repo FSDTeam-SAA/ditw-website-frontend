@@ -54,42 +54,19 @@ const formSchema = z.object({
     .string()
     .min(2, { message: "Description must be at least 2 characters." }),
   building_plans: z.string(),
-  // upload_building_plans: z
-  //   .instanceof(FileList)
-  //   .nullable()
-  //   .refine((files) => !files || files.length === 1, {
-  //     message: "Please upload exactly one PDF file.",
-  //   })
-  //   .refine(
-  //     (files) => !files || Array.from(files)[0]?.type === "application/pdf",
-  //     {
-  //       message: "Only PDF files are allowed.",
-  //     }
-  //   ),
 
   upload_building_plans: z
     .any()
     .nullable()
-    .refine(
-      (files) => {
-        if (!files) return true;
-        const fileArray = Array.isArray(files) ? files : [files];
-        return fileArray.length === 1;
-      },
-      {
-        message: "Please upload exactly one PDF file.",
-      }
-    )
-    .refine(
-      (files) => {
-        if (!files) return true;
-        const fileArray = Array.isArray(files) ? files : [files];
-        return fileArray[0]?.type === "application/pdf";
-      },
-      {
-        message: "Only PDF files are allowed.",
-      }
-    ),
+    .refine((files) => !files || files instanceof FileList, {
+      message: "Invalid file input.",
+    })
+    .refine((files) => !files || files.length === 1, {
+      message: "Please upload exactly one PDF file.",
+    })
+    .refine((files) => !files || files[0].type === "application/pdf", {
+      message: "Only PDF files are allowed.",
+    }),
 
   requested_time_and_date: z
     .string()
@@ -106,9 +83,39 @@ const formSchema = z.object({
 });
 
 const typeOfServiceOptions = [
-  { id: 1, name: "Light", value: "Light" },
-  { id: 2, name: "System", value: "System" },
-  { id: 3, name: "Dark", value: "Dark" },
+  { id: 1, name: "Structured Cabling", value: "Structured Cabling" },
+  { id: 2, name: "Overhead Paging System", value: "Overhead Paging System" },
+  { id: 3, name: "Digital Signage", value: "Digital Signage" },
+  { id: 4, name: "A/V Systems", value: "A/V Systems" },
+  { id: 5, name: "New Construction", value: "New Construction" },
+  { id: 6, name: "Low Voltage Cabling", value: "Low Voltage Cabling" },
+  { id: 7, name: "Managed Services", value: "Managed Services" },
+  {
+    id: 8,
+    name: "Preventative Maintenance",
+    value: "Preventative Maintenance",
+  },
+  { id: 9, name: "Point of Sale", value: "Point of Sale" },
+  { id: 10, name: "Access & Alarms", value: "Access & Alarms" },
+  { id: 11, name: "Fiber Cabling", value: "Fiber Cabling" },
+  { id: 12, name: "Kiosk / ATM", value: "Kiosk / ATM" },
+  { id: 13, name: "Telecom", value: "Telecom" },
+  { id: 14, name: "Server & Networking", value: "Server & Networking" },
+  { id: 15, name: "Surveillance Equipment", value: "Surveillance Equipment" },
+];
+const budgetRangeOptions = [
+  { id: 1, name: "Under $1,000", value: "under-1000" },
+  { id: 2, name: "$1,000 - $5,000", value: "1000-5000" },
+  { id: 3, name: "$5,000 - $10,000", value: "5000-10000" },
+  { id: 4, name: "Over $10,000", value: "over-10000" },
+];
+const howDoYouHearAboutUs = [
+  { id: 1, name: "Google", value: "google" },
+  { id: 2, name: "Friend/Colleague", value: "friend-colleague" },
+  { id: 3, name: "Social Media", value: "social-media" },
+  { id: 4, name: "Client Referral", value: "client-referral" },
+  { id: 5, name: "Online Advertisement", value: "online-advertisement" },
+  { id: 6, name: "Other", value: "other" },
 ];
 
 const SendContactForm = ({
@@ -130,7 +137,7 @@ const SendContactForm = ({
       type_of_service: "",
       project_description: "",
       building_plans: "",
-      // upload_building_plans: null,
+      upload_building_plans: null as unknown as FileList,
       requested_time_and_date: "",
       start_date: "",
       budget_range: "",
@@ -456,7 +463,24 @@ const SendContactForm = ({
                         Budget Range <sup className="text-red-600">*</sup>
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter your budget" {...field} />
+                        <Select
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Service" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {budgetRangeOptions.map((service) => (
+                              <SelectItem
+                                key={service.id}
+                                value={service.value}
+                              >
+                                {service.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -473,10 +497,24 @@ const SendContactForm = ({
                         <sup className="text-red-600">*</sup>
                       </FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Referral, Google, etc."
-                          {...field}
-                        />
+                        <Select
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Service" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {howDoYouHearAboutUs.map((service) => (
+                              <SelectItem
+                                key={service.id}
+                                value={service.value}
+                              >
+                                {service.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
