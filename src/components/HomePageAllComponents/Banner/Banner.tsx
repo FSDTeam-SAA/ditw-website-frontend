@@ -1,15 +1,16 @@
+"use client";
+import SendContactForm from "@/components/shared/Modals/SendContactForm";
 import { BannerItem } from "@/components/types/allFrontendDataType";
-import Link from "next/link";
-import React from "react";
+// import Link from "next/link";
+import React, { useState } from "react";
 
 type BannerProps = {
   data?: BannerItem;
 };
 
 const Banner: React.FC<BannerProps> = ({ data }) => {
+  const [sendContactForm, setSendContactForm] = useState<boolean>(false);
   if (!data) return null;
-
-  console.log(data.back_img);
 
   return (
     <div>
@@ -32,17 +33,38 @@ const Banner: React.FC<BannerProps> = ({ data }) => {
             {data?.title}
           </p>
           <div className="w-full flex items-center justify-start md:justify-end pt-[18px]">
-            <Link href={data?.button_url || "#"}>
-              <button className="text-base font-semibold leading-normal text-black bg-white py-1 px-4 rounded-full">
+            {/* <Link href={data?.button_url || "#"}>
+              <button
+              type="button"
+                onClick={() => setSendContactForm(true)}
+                className="text-base font-semibold leading-normal text-black bg-white py-1 px-4 rounded-full"
+              >
                 {data?.button_name}
               </button>
-            </Link>
+            </Link> */}
+            <button
+              type="button"
+              onClick={() => setSendContactForm(true)}
+              className="text-base font-semibold leading-normal text-black bg-white py-1 px-4 rounded-full"
+            >
+              {data?.button_name}
+            </button>
           </div>
           <p className="w-full md:w-1/3 text-[15px] font-normal leading-normal text-white text-left pt-4 md:pt-0">
             {data?.description}
           </p>
         </div>
       </div>
+
+      {/* send contact form modal  */}
+      {sendContactForm && (
+        <div className="!px-10 md:px-0">
+          <SendContactForm
+            onOpen={sendContactForm}
+            onOpenChange={() => setSendContactForm(false)}
+          />
+        </div>
+      )}
     </div>
   );
 };

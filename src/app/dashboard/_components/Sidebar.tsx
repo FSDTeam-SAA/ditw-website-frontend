@@ -117,7 +117,7 @@ export function DashboardSidebar() {
                 >
                   <Link href={item.href}>
                     <item.icon className="size-4" />
-                    <span>{item.title}</span>
+                    <span className={`${pathname === item.href ? "font-bold" : "font-medium"}`}>{item.title}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
