@@ -222,7 +222,7 @@ const SendContactForm = ({
               alt="nav logo"
               width={235}
               height={90}
-              className="w-[200px] h-[50px]"
+              className="w-[200px] h-[75px]"
             />
             Request A Quote
           </DialogTitle>
