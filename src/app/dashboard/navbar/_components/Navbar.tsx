@@ -94,11 +94,7 @@ export default function Navbar() {
   const { data, isLoading, isError, error } = useQuery<NavbarResponse>({
     queryKey: ["navbar"],
     queryFn: () =>
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/navbar`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }).then((res) => res.json()),
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/navbar`).then((res) => res.json()),
   });
 
   // console.log(data?.data?.itemname1);

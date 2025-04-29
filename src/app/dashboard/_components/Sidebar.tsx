@@ -30,6 +30,8 @@ import { signOut } from "next-auth/react";
 import { useState } from "react";
 import LogoutModal from "@/components/shared/Modals/logoutModal";
 import { toast } from "react-toastify";
+import { useQuery } from "@tanstack/react-query";
+import { NavbarResponse } from "@/components/types/NavbarDataType";
 
 const menuItems = [
   {
@@ -73,6 +75,14 @@ export function DashboardSidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
+  const { data } = useQuery<NavbarResponse>({
+    queryKey: ["navbar"],
+    queryFn: () =>
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/navbar`).then((res) => res.json()),
+  });
+
+
+
   const handleLogout = async () => {
     try {
       toast.success("You have successfully logged out!"); // Show toast first
@@ -95,7 +105,7 @@ export function DashboardSidebar() {
               <SidebarMenuButton size="lg" asChild className="mt-10">
                 <Link href="/">
                   <Image
-                    src="/assets/logo.png"
+                     src={data?.data?.logo ?? '/assets/logo.png'} 
                     alt="nav logo"
                     width={235}
                     height={90}

@@ -29,8 +29,10 @@ import {
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify";
+import Image from "next/image";
+import { NavbarResponse } from "@/components/types/NavbarDataType";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -83,26 +85,32 @@ const formSchema = z.object({
 });
 
 const typeOfServiceOptions = [
-  { id: 1, name: "Structured Cabling", value: "Structured Cabling" },
-  { id: 2, name: "Overhead Paging System", value: "Overhead Paging System" },
+  { id: 1, name: "Access & Alarms", value: "Access & Alarms" },
+  { id: 2, name: "A/V Systems", value: "A/V Systems" },
   { id: 3, name: "Digital Signage", value: "Digital Signage" },
-  { id: 4, name: "A/V Systems", value: "A/V Systems" },
-  { id: 5, name: "New Construction", value: "New Construction" },
+  { id: 4, name: "Fiber Cabling", value: "Fiber Cabling" },
+  { id: 5, name: "Kiosk / ATM", value: "Kiosk / ATM" },
   { id: 6, name: "Low Voltage Cabling", value: "Low Voltage Cabling" },
   { id: 7, name: "Managed Services", value: "Managed Services" },
+  { id: 8, name: "New Construction", value: "New Construction" },
+  { id: 9, name: "Point of Sale", value: "Point of Sale" },
   {
-    id: 8,
+    id: 10,
     name: "Preventative Maintenance",
     value: "Preventative Maintenance",
   },
-  { id: 9, name: "Point of Sale", value: "Point of Sale" },
-  { id: 10, name: "Access & Alarms", value: "Access & Alarms" },
-  { id: 11, name: "Fiber Cabling", value: "Fiber Cabling" },
-  { id: 12, name: "Kiosk / ATM", value: "Kiosk / ATM" },
-  { id: 13, name: "Telecom", value: "Telecom" },
-  { id: 14, name: "Server & Networking", value: "Server & Networking" },
-  { id: 15, name: "Surveillance Equipment", value: "Surveillance Equipment" },
+  { id: 11, name: "Server & Networking", value: "Server & Networking" },
+  { id: 12, name: "Structured Cabling", value: "Structured Cabling" },
+  { id: 13, name: "Surveillance Equipment", value: "Surveillance Equipment" },
+  { id: 14, name: "Telecom", value: "Telecom" },
+  { id: 15, name: "Overhead Paging System", value: "Overhead Paging System" },
+  {
+    id: 16,
+    name: "On-site Support",
+    value: "On-site Support",
+  },
 ];
+
 const budgetRangeOptions = [
   { id: 1, name: "Under $1,000", value: "under-1000" },
   { id: 2, name: "$1,000 - $5,000", value: "1000-5000" },
@@ -145,6 +153,16 @@ const SendContactForm = ({
     },
   });
 
+  // navbar get api integration
+  const { data } = useQuery<NavbarResponse>({
+    queryKey: ["navbar"],
+    queryFn: () =>
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/navbar`).then((res) =>
+        res.json()
+      ),
+  });
+
+  // send contact form post api integratio
   const { mutate, isPending } = useMutation({
     mutationKey: ["send-contact-form"],
     mutationFn: (formData: FormData) =>
@@ -196,16 +214,26 @@ const SendContactForm = ({
 
   return (
     <Dialog open={onOpen} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-center leading-normal">
+          <DialogTitle className="flex items-center gap-1 md:gap-10 xl:gap-16 text-xl font-bold text-center leading-normal">
+            <Image
+              src={data?.data?.logo ?? "/assets/logo.png"}
+              alt="nav logo"
+              width={235}
+              height={90}
+              className="w-[200px] h-[50px]"
+            />
             Request A Quote
           </DialogTitle>
         </DialogHeader>
 
-        <ScrollArea className="h-[400px] md:h-[500px] lg:h-[520px] w-full md:max-w-[800px]">
+        <ScrollArea className="h-[400px] md:h-[420px] lg:h-[520px] w-full md:max-w-[900px]">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-4 px-5 pb-3"
+            >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/** Name */}
                 <FormField
@@ -217,7 +245,11 @@ const SendContactForm = ({
                         Name <sup className="text-red-600">*</sup>
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="Your Name" {...field} />
+                        <Input
+                          placeholder="Your Name"
+                          {...field}
+                          className="h-[40px] placeholder:text-secondary-100 focus-visible:ring-0"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -234,7 +266,11 @@ const SendContactForm = ({
                         Email <sup className="text-red-600">*</sup>
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="Your Email" {...field} />
+                        <Input
+                          placeholder="Your Email"
+                          {...field}
+                          className="h-[40px] placeholder:text-secondary-100 focus-visible:ring-0"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -251,7 +287,11 @@ const SendContactForm = ({
                         Phone Number <sup className="text-red-600">*</sup>
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="Your Phone Number" {...field} />
+                        <Input
+                          placeholder="Your Phone Number"
+                          {...field}
+                          className="h-[40px] placeholder:text-secondary-100 focus-visible:ring-0"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -268,7 +308,11 @@ const SendContactForm = ({
                         Company Name <sup className="text-red-600">*</sup>
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="Your Company Name" {...field} />
+                        <Input
+                          placeholder="Your Company Name"
+                          {...field}
+                          className="h-[40px] placeholder:text-secondary-100 focus-visible:ring-0"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -285,7 +329,11 @@ const SendContactForm = ({
                         Customer Address <sup className="text-red-600">*</sup>
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="Customer Address" {...field} />
+                        <Input
+                          placeholder="Customer Address"
+                          {...field}
+                          className="h-[40px] placeholder:text-secondary-100 focus-visible:ring-0"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -302,7 +350,11 @@ const SendContactForm = ({
                         Site Location <sup className="text-red-600">*</sup>
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="Site Location" {...field} />
+                        <Input
+                          placeholder="Site Location"
+                          {...field}
+                          className="h-[40px] placeholder:text-secondary-100 focus-visible:ring-0"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -356,6 +408,7 @@ const SendContactForm = ({
                       <Textarea
                         placeholder="Describe your project..."
                         {...field}
+                        className="h-[100px] placeholder:text-secondary-100 focus-visible:ring-0"
                       />
                     </FormControl>
                     <FormMessage />
@@ -427,7 +480,11 @@ const SendContactForm = ({
                         Requested Date <sup className="text-red-600">*</sup>
                       </FormLabel>
                       <FormControl>
-                        <Input type="date" {...field} />
+                        <Input
+                          type="date"
+                          {...field}
+                          className="h-[40px] placeholder:text-secondary-100 focus-visible:ring-0"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -444,7 +501,11 @@ const SendContactForm = ({
                         <sup className="text-red-600">*</sup>
                       </FormLabel>
                       <FormControl>
-                        <Input type="datetime-local" {...field} />
+                        <Input
+                          type="datetime-local"
+                          {...field}
+                          className="h-[40px] placeholder:text-secondary-100 focus-visible:ring-0"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -468,7 +529,7 @@ const SendContactForm = ({
                           onValueChange={field.onChange}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Select Service" />
+                            <SelectValue placeholder="Select Budge Range" />
                           </SelectTrigger>
                           <SelectContent>
                             {budgetRangeOptions.map((service) => (
@@ -502,7 +563,7 @@ const SendContactForm = ({
                           onValueChange={field.onChange}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Select Service" />
+                            <SelectValue placeholder="Select how did you hear about us" />
                           </SelectTrigger>
                           <SelectContent>
                             {howDoYouHearAboutUs.map((service) => (
