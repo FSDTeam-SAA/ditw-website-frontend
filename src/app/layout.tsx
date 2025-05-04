@@ -23,7 +23,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} antialiased overflow-hidden`}>
+      <body className={`${inter.className} antialiased`}>
+        <main className="overflow-hidden">
         <AuthProvider>
           <AppProvider>
             {children}
@@ -31,6 +32,7 @@ export default function RootLayout({
             <Toaster position="top-right" />
           </AppProvider>
         </AuthProvider>
+        </main>
       </body>
     </html>
   );
