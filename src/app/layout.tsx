@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} antialiased`}>
-        <main className="overflow-hidden">
+        <main className="overflow-hidden md:overflow-visible">
         <AuthProvider>
           <AppProvider>
             {children}

@@ -33,11 +33,11 @@ const HomePageAllComponents = () => {
   return (
     <div>
       {/* navbar  */}
-      <nav className="sticky top-0 z-50">
+      <section className="sticky top-0 z-50">
         {data?.navbar && data?.navbar?.[0] && (
           <Navbar data={data?.navbar?.[0]} />
         )}
-      </nav>
+      </section>
 
       {/* banner  */}
       <section id={homeId}>
