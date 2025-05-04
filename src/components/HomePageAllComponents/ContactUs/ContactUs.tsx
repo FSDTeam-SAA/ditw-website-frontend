@@ -152,7 +152,7 @@ const ContactUs: React.FC<contactUsProps> = ({
                     <div className="w-full flex items-center justify-start">
                       <div className="w-16 sm:w-20 h-1 bg-[#3847af] ml-12 sm:ml-16" />
                     </div>
-                    <div className="flex items-center mt-4 sm:mt-6">
+                    <div className="flex items-center gap-2 mt-4 sm:mt-6">
                       <Image
                         src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/OurContacts/${ourContactData?.email_icon}`}
                         alt="phone icon"
