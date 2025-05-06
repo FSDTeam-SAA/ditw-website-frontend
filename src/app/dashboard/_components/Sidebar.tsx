@@ -11,6 +11,7 @@ import {
   Menu,
   Notebook,
   CalendarCog,
+  Settings,
 } from "lucide-react";
 
 import {
@@ -78,10 +79,10 @@ export function DashboardSidebar() {
   const { data } = useQuery<NavbarResponse>({
     queryKey: ["navbar"],
     queryFn: () =>
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/navbar`).then((res) => res.json()),
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/navbar`).then((res) =>
+        res.json()
+      ),
   });
-
-
 
   const handleLogout = async () => {
     try {
@@ -105,7 +106,7 @@ export function DashboardSidebar() {
               <SidebarMenuButton size="lg" asChild className="mt-10">
                 <Link href="/">
                   <Image
-                     src={data?.data?.logo ?? '/assets/logo.png'} 
+                    src={data?.data?.logo ?? "/assets/logo.png"}
                     alt="nav logo"
                     width={235}
                     height={90}
@@ -127,7 +128,13 @@ export function DashboardSidebar() {
                 >
                   <Link href={item.href}>
                     <item.icon className="size-4" />
-                    <span className={`${pathname === item.href ? "font-bold" : "font-medium"}`}>{item.title}</span>
+                    <span
+                      className={`${
+                        pathname === item.href ? "font-bold" : "font-medium"
+                      }`}
+                    >
+                      {item.title}
+                    </span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -135,6 +142,17 @@ export function DashboardSidebar() {
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter className="px-4 pb-6">
+          
+          <Link href="/dashboard/settings">
+          <div className="mb-6">
+            <Button
+              variant="ghost"
+              className="w-full flex items-center justify-start gap-4 text-lg font-medium text-black leading-[120%] shadow-none border-none"
+            >
+              <Settings className="text-black" /> Settings
+            </Button>
+          </div>
+          </Link>
           <Button
             onClick={() => setIsOpen(true)}
             variant="destructive"
@@ -146,6 +164,7 @@ export function DashboardSidebar() {
 
         <SidebarRail />
       </Sidebar>
+
       {/* Logout modal */}
       {isOpen && (
         <LogoutModal
@@ -154,6 +173,9 @@ export function DashboardSidebar() {
           onConfirm={handleLogout}
         />
       )}
+
+      
+      
       <div className="md:hidden fixed top-4 left-4 z-50">
         <SidebarTrigger />
       </div>
