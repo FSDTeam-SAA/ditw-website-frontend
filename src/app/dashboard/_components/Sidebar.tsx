@@ -84,16 +84,31 @@ export function DashboardSidebar() {
       ),
   });
 
+  // const handleLogout = async () => {
+  //   try {
+  //     toast.success("You have successfully logged out!"); // Show toast first
+
+  //     setTimeout(async () => {
+  //       await signOut({ callbackUrl: "/" });
+  //     }, 1000);
+  //   } catch (error) {
+  //     console.error("Logout error:", error);
+  //     toast.error("Failed to log out. Please try again."); // Show error toast
+  //   }
+  // };
+
   const handleLogout = async () => {
     try {
-      toast.success("You have successfully logged out!"); // Show toast first
+      toast.success("You have successfully logged out!");
 
       setTimeout(async () => {
-        await signOut({ callbackUrl: "/" });
+        await signOut({
+          callbackUrl: `${window.location.origin}/`,
+        });
       }, 1000);
     } catch (error) {
       console.error("Logout error:", error);
-      toast.error("Failed to log out. Please try again."); // Show error toast
+      toast.error("Failed to log out. Please try again.");
     }
   };
 
@@ -142,16 +157,15 @@ export function DashboardSidebar() {
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter className="px-4 pb-6">
-          
           <Link href="/dashboard/settings">
-          <div className="mb-6">
-            <Button
-              variant="ghost"
-              className="w-full flex items-center justify-start gap-4 text-lg font-medium text-black leading-[120%] shadow-none border-none"
-            >
-              <Settings className="text-black" /> Settings
-            </Button>
-          </div>
+            <div className="mb-6">
+              <Button
+                variant="ghost"
+                className="w-full flex items-center justify-start gap-4 text-lg font-medium text-black leading-[120%] shadow-none border-none"
+              >
+                <Settings className="text-black" /> Settings
+              </Button>
+            </div>
           </Link>
           <Button
             onClick={() => setIsOpen(true)}
@@ -174,8 +188,6 @@ export function DashboardSidebar() {
         />
       )}
 
-      
-      
       <div className="md:hidden fixed top-4 left-4 z-50">
         <SidebarTrigger />
       </div>
