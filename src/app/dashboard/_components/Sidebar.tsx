@@ -89,8 +89,8 @@ export function DashboardSidebar() {
       toast.success("You have successfully logged out!"); // Show toast first
 
       setTimeout(async () => {
-        await signOut({ callbackUrl: "/" }); // Redirect after toast is shown
-      }, 1000); // Wait for 1 seconds to let toast appear
+        await signOut({ callbackUrl: "/" });
+      }, 1000);
     } catch (error) {
       console.error("Logout error:", error);
       toast.error("Failed to log out. Please try again."); // Show error toast
