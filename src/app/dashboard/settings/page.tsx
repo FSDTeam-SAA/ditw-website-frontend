@@ -1,8 +1,8 @@
 "use client";
 
-import { useSession } from 'next-auth/react';
-import React, { useState, useEffect, FormEvent, ChangeEvent } from 'react';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { useSession } from "next-auth/react";
+import React, { useState, useEffect, FormEvent, ChangeEvent } from "react";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 interface FormData {
   email: string;
@@ -23,12 +23,12 @@ interface ApiResponse {
 
 function Page() {
   const [formData, setFormData] = useState<FormData>({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [message, setMessage] = useState<string>('');
-  const [error, setError] = useState<string>('');
+  const [message, setMessage] = useState<string>("");
+  const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const session = useSession();
@@ -40,12 +40,15 @@ function Page() {
 
       setIsLoading(true);
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/updateEp`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/updateEp`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-        });
+        );
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -53,11 +56,11 @@ function Page() {
 
         const data: ApiResponse = await response.json();
         if (data.data?.email) {
-          setFormData(prev => ({ ...prev, email: data.data!.email }));
+          setFormData((prev) => ({ ...prev, email: data.data!.email }));
         }
       } catch (err) {
-        setError('Failed to fetch email. Please try again later.');
-        console.error('Fetch error:', err);
+        setError("Failed to fetch email. Please try again later.");
+        console.error("Fetch error:", err);
       } finally {
         setIsLoading(false);
       }
@@ -68,9 +71,9 @@ function Page() {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -80,41 +83,48 @@ function Page() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    
+
     // Basic validation
     if (!formData.email) {
-      setError('Email is required');
+      setError("Email is required");
       return;
     }
 
-    setError('');
-    setMessage('');
+    setError("");
+    setMessage("");
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/updateEp`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        })
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/updateEp`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+          }),
+        }
+      );
 
       const data: ApiResponse = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to update. Please try again.');
+        throw new Error(data.error || "Failed to update. Please try again.");
       }
 
-      setMessage(data.message || 'Update successful!');
-      setFormData(prev => ({ ...prev, password: '' }));
+      setMessage(data.message || "Update successful!");
+      setFormData((prev) => ({ ...prev, password: "" }));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred. Please try again.');
-      console.error('Update error:', err);
+      setError(
+        err instanceof Error
+          ? err.message
+          : "An error occurred. Please try again."
+      );
+      console.error("Update error:", err);
     } finally {
       setIsLoading(false);
     }
@@ -122,7 +132,9 @@ function Page() {
 
   return (
     <div className="container p-10">
-      <h1 className="text-2xl font-bold mb-6">Update Email or Password</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">
+        Update Email or Password
+      </h1>
 
       {message && (
         <div className="mb-4 p-3 bg-green-100 text-green-700 rounded">
@@ -130,12 +142,13 @@ function Page() {
         </div>
       )}
       {error && (
-        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
-          {error}
-        </div>
+        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">{error}</div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-4 border rounded-lg p-8 bg-white"
+      >
         <div>
           <label htmlFor="email" className="block mb-1 font-medium">
             Email
@@ -153,7 +166,7 @@ function Page() {
 
         <div>
           <label htmlFor="password" className="block mb-1 font-medium">
-            Password 
+            Password
           </label>
           <div className="relative">
             <input
@@ -182,15 +195,17 @@ function Page() {
           )}
         </div>
 
-        <button
-          type="submit"
-          disabled={isLoading}
-          className={`w-full bg-black text-white py-2 px-4 rounded hover:bg-gray-800 transition ${
-            isLoading ? 'opacity-70 cursor-not-allowed' : ''
-          }`}
-        >
-          {isLoading ? 'Updating...' : 'Update'}
-        </button>
+        <div className="w-full flex items-center justify-center pt-4">
+          <button
+            type="submit"
+            disabled={isLoading}
+            className={` bg-black text-white py-2 px-10 rounded hover:bg-gray-800 transition ${
+              isLoading ? "opacity-70 cursor-not-allowed" : ""
+            }`}
+          >
+            {isLoading ? "Updating..." : "Update"}
+          </button>
+        </div>
       </form>
     </div>
   );
