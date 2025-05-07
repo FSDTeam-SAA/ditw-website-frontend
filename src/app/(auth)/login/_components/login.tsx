@@ -49,7 +49,7 @@ export function LoginForm() {
       const result = await signIn("credentials", {
         email: values.email,
         password: values.password,
-        redirect: false,
+      redirect: false
       });
       if (result?.error) {
         throw new Error(result.error);
