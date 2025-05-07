@@ -5,6 +5,7 @@ import "../../app/globals.css";
 
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "./_components/Sidebar";
+import AuthWrapper from "@/components/Provider/AuthWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,7 +20,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <AuthWrapper>
       <div className={inter.className}>
         <SidebarProvider>
           <div className="flex min-h-screen w-full">
@@ -28,6 +29,6 @@ export default async function RootLayout({
           </div>
         </SidebarProvider>
       </div>
-    </html>
+    </AuthWrapper>
   );
 }

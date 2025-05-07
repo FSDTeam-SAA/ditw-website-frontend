@@ -90,7 +90,7 @@ export function DashboardSidebar() {
 
       setTimeout(async () => {
         await signOut({ callbackUrl: "/" }); // Redirect after toast is shown
-      }, 1000);
+      }, 2000);
     } catch (error) {
       console.error("Logout error:", error);
       toast.error("Failed to log out. Please try again.");
