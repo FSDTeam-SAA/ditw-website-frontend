@@ -102,9 +102,8 @@ export function DashboardSidebar() {
       toast.success("You have successfully logged out!");
 
       setTimeout(async () => {
-        await signOut({
-          callbackUrl: `${window.location.origin}/`,
-        });
+        await signOut();
+        window.location.href = "/login";
       }, 1000);
     } catch (error) {
       console.error("Logout error:", error);
