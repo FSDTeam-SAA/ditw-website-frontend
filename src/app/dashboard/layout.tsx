@@ -5,6 +5,9 @@ import "../../app/globals.css";
 
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "./_components/Sidebar";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,6 +21,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    redirect("/login");
+  }
   return (
     <html lang="en">
       <div className={inter.className}>
