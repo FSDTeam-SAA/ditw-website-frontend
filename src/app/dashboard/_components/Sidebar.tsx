@@ -84,26 +84,12 @@ export function DashboardSidebar() {
       ),
   });
 
-  // const handleLogout = async () => {
-  //   try {
-  //     toast.success("You have successfully logged out!"); // Show toast first
-
-  //     setTimeout(async () => {
-  //       await signOut({ callbackUrl: "/" });
-  //     }, 1000);
-  //   } catch (error) {
-  //     console.error("Logout error:", error);
-  //     toast.error("Failed to log out. Please try again."); // Show error toast
-  //   }
-  // };
-
   const handleLogout = async () => {
     try {
       toast.success("You have successfully logged out!");
 
       setTimeout(async () => {
-        await signOut();
-        window.location.href = "/login";
+        await signOut({ callbackUrl: "/" }); // Redirect after toast is shown
       }, 1000);
     } catch (error) {
       console.error("Logout error:", error);
