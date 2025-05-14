@@ -224,7 +224,7 @@ const SendContactForm = ({
               height={90}
               className="w-[200px] h-[75px]"
             />
-            Request A Quote
+            Request a Quote
           </DialogTitle>
         </DialogHeader>
 
